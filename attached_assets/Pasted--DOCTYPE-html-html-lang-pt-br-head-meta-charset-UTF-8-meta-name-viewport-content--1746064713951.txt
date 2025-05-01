@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Em🙂ji Farm Enhanced v2.3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    :root {
+      --bg-light: #f0f4ec;
+      --bg-panel: #ffffff;
+      --color-primary: #5a8f45;
+      --color-primary-dark: #3e5c27;
+      --color-accent: #f4b942;
+      --color-text: #2e2e2e;
+      --color-grass: #7cfc00;
+      --color-soil: #d2b48c;
+      --color-water: #87cefa;
+      --color-pasture: #fffacd;
+      --radius: 0.75rem;
+      --transition: 0.3s ease;
+      --font-main: 'Inter', sans-serif;
+      --grid-cols: 8;
+      --grid-rows: 7;
+      --tile-size: 50px;
+      --tile-gap: 0.3rem;
+    }
+    * { box-sizing: border-box; }
+    body { display: flex; min-height: 100vh; font-family: var(--font-main); background: var(--bg-light); color: var(--color-text); }
+    main { flex: 1; display: flex; gap: 1rem; padding: 1rem; overflow: auto; }
+    .side-panel { display: flex; flex-direction: column; gap: 1rem; width: 180px; max-height: 100%; overflow-y: auto; }
+    .panel { background: var(--bg-panel); padding: 0.75rem; border-radius: var(--radius); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .panel h3 { margin-bottom: 0.5rem; color: var(--color-accent); }
+    .panel .btn, .panel .resource { width: 100%; background: var(--color-primary); color: #fff; padding: 0.5rem; margin-bottom: 0.5rem; border: none; border-radius: var(--radius); font-size: 0.95rem; text-align: left; cursor: pointer; transition: background var(--transition); }
+    .panel .btn:hover, .panel .btn.active, .panel .resource:hover { background: var(--color-primary-dark); }
+    .resource { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); color: var(--color-text); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 0.5rem; }
+    .resource span { margin: 0 0.25rem; }
+    .sell-btn { background: transparent; border: none; cursor: pointer; font-size: 1rem; }
+    .center { flex: 1; display: flex; flex-direction: column; gap: 1rem; align-items: center; overflow: auto; }
+    #resources { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 1rem; width: 100%; max-width: 800px; }
+    #grid-container { background: var(--bg-panel); padding: 0.5rem; border-radius: var(--radius); box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: relative; }
+    #game-grid { display: grid; grid-template-columns: repeat(var(--grid-cols), var(--tile-size)); grid-template-rows: repeat(var(--grid-rows), var(--tile-size)); gap: var(--tile-gap); }
+    .tile { position: relative; width: var(--tile-size); height: var(--tile-size); background: var(--color-grass); border: 1px solid #ddd; border-radius: var(--radius); cursor: pointer; transition: transform 0.1s ease; display: flex; align-items: center; justify-content: center; }
+    .tile:hover { transform: scale(1.05); }
+    .tile-content { font-size: 1.5rem; pointer-events: none; }
+    .progress-container, .respawn-container { width: 80%; height: 6px; background: #ddd; border-radius: 3px; overflow: hidden; display: none; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); }
+    .progress-bar, .respawn-container .progress-bar { width: 0; height: 100%; background: var(--color-accent); transition: width 0.1s linear; }
+    .agent { position: absolute; width: var(--tile-size); height: var(--tile-size); display: flex; flex-direction: column; align-items: center; }
+    .agent-icon { font-size: 1.5rem; }
+    #chat { width: 100%; max-height: 220px; background: var(--bg-panel); border-radius: var(--radius); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 0.75rem; overflow-y: auto; font-size: 0.9rem; }
+    @media (max-width: 800px) {
+      main { flex-direction: column; }
+      .side-panel { flex-direction: row; width: 100%; overflow-x: auto; }
+      .center { width: 100%; }
+      #chat { max-height: 165px; }
+      .tile { width: calc(var(--tile-size)*0.7); height: calc(var(--tile-size)*0.7); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- Painel Lateral Esquerdo -->
+    <aside class="side-panel">
+      <section class="panel" id="shop-structures"><h3>Estruturas</h3></section>
+      <section class="panel" id="shop-fields"><h3>Campos</h3></section>
+      <section class="panel" id="shop-seeds"><h3>Sementes</h3></section>
+    </aside>
+
+    <!-- Área Central -->
+    <div class="center">
+      <!-- Recursos -->
+      <div id="resources" class="panel"></div>
+      <!-- Mapa de Jogo -->
+      <div id="grid-container">
+        <div id="game-grid"></div>
+        <div id="agent-lumber" class="agent">
+          <div class="agent-icon">🧑🏼‍🦰</div>
+          <div class="progress-container"><div class="progress-bar"></div></div>
+        </div>
+        <div id="agent-miner" class="agent">
+          <div class="agent-icon">👴🏼</div>
+          <div class="progress-container"><div class="progress-bar"></div></div>
+        </div>
+      </div>
+      <!-- Chat -->
+      <div id="chat"></div>
+    </div>
+
+    <!-- Painel Lateral Direito -->
+    <aside class="side-panel">
+      <section class="panel" id="shop-harvest">
+        <h3>Armazém</h3>
+        <div id="storage-panel">
+          <div class="resource"><span>🪵</span><span id="stored-wood">0</span><span></span><span id="wood-price">5</span><button class="sell-btn" id="sell-wood">🛻</button></div>
+          <div class="resource"><span>🪨</span><span id="stored-stone">0</span><span>🪙</span><span id="stone-price">8</span><button class="sell-btn" id="sell-stone">🛻</button></div>
+          <div class="resource"><span>🌾</span><span id="stored-wheat">0</span></div>
+          <div class="resource"><span>🌽</span><span id="stored-corn">0</span></div>
+          <div class="resource"><span>🥕</span><span id="stored-carrot">0</span></div>
+          <div class="resource"><span>🥔</span><span id="stored-potato">0</span></div>
+          <div class="resource"><span>🍅</span><span id="stored-tomato">0</span></div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cols = 8, rows = 7, totalTiles = cols * rows;
+      const resources = {
+        coins: 1000,
+        wood: 0,
+        stone: 0,
+        seeds: { wheat:0, corn:0, carrot:0, potato:0, tomato:0 }
+      };
+      let selected = null;
+
+      const structureMap = {
+        lumberjackHouse: { name:'Casa do Lenhador', cost:{wood:50,stone:20,coins:200}, emoji:'🏡' },
+        minerHouse:      { name:'Casa do Minerador', cost:{wood:60,stone:30,coins:250}, emoji:'🏚' },
+        storage:         { name:'Armazém',            cost:{wood:100,stone:50,coins:500}, emoji:'🏦' }
+      };
+      const fieldMap = {
+        plantio: { name:'Field Plantio', cost:{coins:100}, color:'var(--color-soil)',   emoji:'' },
+        agua:    { name:'Field Água',    cost:{coins:150}, color:'var(--color-water)', emoji:'' },
+        pasto:   { name:'Field Pasto',   cost:{coins:120}, color:'var(--color-pasture)',emoji:'' }
+      };
+      const seedMap = {
+        wheat:  { emoji:'🌾', cost:50 },
+        corn:   { emoji:'🌽', cost:60 },
+        carrot: { emoji:'🥕', cost:40 },
+        potato: { emoji:'🥔', cost:45 },
+        tomato: { emoji:'🍅', cost:70 }
+      };
+
+      const ui = {
+        resDiv: document.getElementById('resources'),
+        grid:   document.getElementById('game-grid'),
+        chat:   document.getElementById('chat'),
+        shops: {
+          structures: document.getElementById('shop-structures'),
+          fields:     document.getElementById('shop-fields'),
+          seeds:      document.getElementById('shop-seeds')
+        }
+      };
+
+      let housePos={}, minerHousePos={}, storagePos={};
+      const agentLumber = { x:0, y:0, state:'idle', timer:0, path:[] };
+      const agentMiner  = { x:0, y:0, state:'idle', timer:0, path:[] };
+      const elLumber = document.getElementById('agent-lumber');
+      const elMiner  = document.getElementById('agent-miner');
+
+      function log(msg, icon='') {
+        const p = document.createElement('div');
+        p.textContent = icon + ' [' + new Date().toLocaleTimeString() + '] ' + msg;
+        ui.chat.append(p);
+        ui.chat.scrollTop = ui.chat.scrollHeight;
+      }
+
+      function renderResources() {
+        ui.resDiv.innerHTML = '';
+        [['🪙','coins'],['🪵','wood'],['🪨','stone']].forEach(([icon,k]) => {
+          const d = document.createElement('div');
+          d.className = 'resource';
+          d.innerHTML = `<span>${icon}</span><span>${resources[k]}</span>`;
+          ui.resDiv.append(d);
+        });
+        document.getElementById('stored-wood').textContent = resources.wood;
+        document.getElementById('stored-stone').textContent = resources.stone;
+        Object.entries(resources.seeds).forEach(([k,v]) => {
+          document.getElementById(`stored-${k}`).textContent = v;
+        });
+      }
+
+      function populateShop() {
+        // Estruturas
+        ui.shops.structures.innerHTML = '<h3>Estruturas</h3>';
+        Object.entries(structureMap).forEach(([key,s]) => {
+          const btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.textContent = `${s.emoji} ${s.name} — ${s.cost.coins}🪙`;
+          btn.onclick = () => {
+            if (selected?.key === key) {
+              selected = null;
+              btn.classList.remove('active');
+              log('Seleção cancelada.');
+            } else {
+              selected = { type:'structure', key };
+              document.querySelectorAll('#shop-structures .btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              log(`Selecionado ${s.name}`);
+            }
+          };
+          ui.shops.structures.append(btn);
+        });
+
+        // Campos
+        ui.shops.fields.innerHTML = '<h3>Campos</h3>';
+        Object.entries(fieldMap).forEach(([key,f]) => {
+          const btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.textContent = `${f.emoji} ${f.name} — ${f.cost.coins}🪙`;
+          btn.onclick = () => {
+            if (selected?.key === key) {
+              selected = null;
+              btn.classList.remove('active');
+              log('Seleção cancelada.');
+            } else {
+              selected = { type:'field', key };
+              document.querySelectorAll('#shop-fields .btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              log(`Selecionado ${f.name}`);
+            }
+          };
+          ui.shops.fields.append(btn);
+        });
+
+        // Sementes
+        ui.shops.seeds.innerHTML = '<h3>Sementes</h3>';
+        Object.entries(seedMap).forEach(([key,s]) => {
+          const row = document.createElement('div');
+          row.className = 'resource';
+          row.innerHTML = `
+            <span>${s.emoji}</span>
+            <span>10</span>
+            <span>🪙</span>
+            <span>${s.cost}</span>
+            <button class="sell-btn" id="buy-${key}">🛒</button>
+          `;
+          ui.shops.seeds.append(row);
+          document.getElementById(`buy-${key}`).onclick = () => {
+            if (resources.coins >= s.cost) {
+              resources.coins -= s.cost;
+              resources.seeds[key] += 10;
+              renderResources();
+              log(`Comprou 10 sementes ${s.emoji}`);
+            } else {
+              log('Moedas insuficientes!');
+            }
+          };
+        });
+      }
+
+      function createGrid() {
+        ui.grid.innerHTML = '';
+        const tiles = [];
+        for (let i = 0; i < totalTiles; i++) {
+          const t = document.createElement('div');
+          t.className = 'tile';
+          t.dataset.x = i % cols;
+          t.dataset.y = Math.floor(i / cols);
+          const r = Math.random();
+          if (r < 0.1) {
+            t.dataset.resource = 'rock';
+            t.innerHTML = '<div class="tile-content">🪨</div>';
+          } else if (r < 0.3) {
+            t.dataset.resource = 'tree';
+            t.innerHTML = '<div class="tile-content">🌲</div>';
+          } else if (r < 0.4) {
+            t.dataset.resource = 'bigTree';
+            t.innerHTML = '<div class="tile-content">🌳</div>';
+          }
+          t.onclick = () => handleTile(t);
+          ui.grid.append(t);
+          tiles.push(t);
+        }
+        // Casas e armazém
+        let hi = Math.floor(Math.random() * tiles.length);
+        tiles[hi].dataset.structure = 'lumberjackHouse';
+        tiles[hi].innerHTML = '<div class="tile-content">🏡</div>';
+        housePos = { x:+tiles[hi].dataset.x, y:+tiles[hi].dataset.y };
+        let mi;
+        do { mi = Math.floor(Math.random() * tiles.length); } while (mi === hi);
+        tiles[mi].dataset.structure = 'minerHouse';
+        tiles[mi].innerHTML = '<div class="tile-content">🏚</div>';
+        minerHousePos = { x:+tiles[mi].dataset.x, y:+tiles[mi].dataset.y };
+        let si;
+        do { si = Math.floor(Math.random() * tiles.length); } while (si === hi || si === mi);
+        tiles[si].dataset.structure = 'storage';
+        tiles[si].innerHTML = '<div class="tile-content">🏦</div>';
+        storagePos = { x:+tiles[si].dataset.x, y:+tiles[si].dataset.y };
+      }
+
+      // Código A* e lógica de movimentação, corte, armazenamento, respawn, venda e loop de agentes
+      class Node {
+        constructor(x,y,g=Infinity,h=Infinity,p=null) { this.x=x; this.y=y; this.g=g; this.h=h; this.f=g+h; this.parent=p; }
+      }
+      const manhattan = (a,b) => Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
+      const getNeighbors = node => [
+        { dx:1, dy:0 }, { dx:-1, dy:0 }, { dx:0, dy:1 }, { dx:0, dy:-1 }
+      ].map(d => new Node(node.x+d.dx, node.y+d.dy))
+       .filter(n => n.x>=0 && n.x<cols && n.y>=0 && n.y<rows);
+
+      function findPath(s,g) {
+        const open = new Map(), closed = new Map();
+        const start = new Node(s.x, s.y, 0, manhattan(s,g));
+        open.set(`${s.x},${s.y}`, start);
+        while (open.size) {
+          let current;
+          for (const n of open.values()) if (!current || n.f < current.f) current = n;
+          if (current.x===g.x && current.y===g.y) {
+            const path = [];
+            for (let p=current; p; p=p.parent) path.push({ x:p.x, y:p.y });
+            return path.reverse();
+          }
+          open.delete(`${current.x},${current.y}`);
+          closed.set(`${current.x},${current.y}`, current);
+          getNeighbors(current).forEach(nb => {
+            const key = `${nb.x},${nb.y}`;
+            if (closed.has(key)) return;
+            const tg = current.g+1, on = open.get(key);
+            if (!on || tg < on.g) {
+              nb.g = tg;
+              nb.h = manhattan(nb,g);
+              nb.f = nb.g+nb.h;
+              nb.parent = current;
+              open.set(key, nb);
+            }
+          });
+        }
+        return [];
+      }
+
+      function handleTile(tile) {
+        const x = +tile.dataset.x, y = +tile.dataset.y;
+        if (!selected) return;
+        if (tile.dataset.structure || tile.dataset.resource || tile.dataset.field) {
+          log('Tile ocupado!');
+          return;
+        }
+        if (selected.type === 'structure') {
+          const s = structureMap[selected.key];
+          if (resources.wood >= s.cost.wood && resources.stone >= s.cost.stone && resources.coins >= s.cost.coins) {
+            resources.wood -= s.cost.wood;
+            resources.stone -= s.cost.stone;
+            resources.coins -= s.cost.coins;
+            tile.dataset.structure = selected.key;
+            tile.innerHTML = `<div class="tile-content">${s.emoji}</div>`;
+            renderResources();
+            log(`${s.name} construída.`);
+          } else {
+            log('Recursos insuficientes!');
+          }
+        }
+        else if (selected.type === 'field') {
+          const f = fieldMap[selected.key];
+          if (resources.coins >= f.cost.coins) {
+            resources.coins -= f.cost.coins;
+            tile.dataset.field = selected.key;
+            tile.style.background = f.color;
+            tile.innerHTML = `<div class="tile-content">${f.emoji}</div>`;
+            renderResources();
+            log(`${f.name} posicionado.`);
+          } else {
+            log('Moedas insuficientes!');
+          }
+        }
+        selected = null;
+        document.querySelectorAll('#shop-structures .btn, #shop-fields .btn').forEach(b => b.classList.remove('active'));
+      }
+
+      function startMoving(agentObj, elObj, dest, stateName, msg) {
+        const path = findPath({ x:agentObj.x, y:agentObj.y }, dest);
+        if (path.length > 1) {
+          agentObj.path = path;
+          agentObj.state = stateName;
+          agentObj.timer = Date.now();
+          elObj.querySelector('.progress-container').style.display = 'none';
+          log(msg, elObj.querySelector('.agent-icon').textContent);
+        } else {
+          log('Caminho não encontrado!', elObj.querySelector('.agent-icon').textContent);
+        }
+      }
+
+      function drawAgent(elObj, agentObj) {
+        const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tile-gap'));
+        elObj.style.left = `calc(${agentObj.x} * var(--tile-size) + ${agentObj.x} * ${gap}px)`;
+        elObj.style.top  = `calc(${agentObj.y} * var(--tile-size) + ${agentObj.y} * ${gap}px)`;
+      }
+
+      function respawnResource(tile, type) {
+        const total = 35000, step = 100; let elapsed = 0;
+        let cont = tile.querySelector('.respawn-container');
+        if (!cont) {
+          cont = document.createElement('div');
+          cont.className = 'respawn-container';
+          cont.innerHTML = '<div class="progress-bar"></div>';
+          tile.append(cont);
+        }
+        cont.style.display = 'block';
+        const bar = cont.querySelector('.progress-bar');
+        const id = setInterval(() => {
+          elapsed += step;
+          bar.style.width = Math.min(elapsed/total*100,100)+'%';
+          if (elapsed >= total) {
+            clearInterval(id);
+            if (type === 'wood') {
+              tile.dataset.resource = 'tree';
+              tile.innerHTML = '<div class="tile-content">🌲</div>';
+            } else {
+              tile.dataset.resource = 'rock';
+              tile.innerHTML = '<div class="tile-content">🪨</div>';
+            }
+          }
+        }, step);
+      }
+
+      function agentLoop(agentObj, elObj, homePos, storagePos, resType, storeType, cutTime, storeTime, toRes, toStore, toHome, msgCut, msgStore, baseIcon, actionIcon) {
+        const now = Date.now();
+        switch(agentObj.state) {
+          case 'idle': {
+            const n = findNearest(resType, agentObj);
+            if (n) startMoving(agentObj, elObj, n, toRes, msgCut);
+            break;
+          }
+          case toRes:
+          case toStore:
+          case toHome: {
+            if (agentObj.path.length > 1) {
+              const nxt = agentObj.path[1];
+              agentObj.x = nxt.x;
+              agentObj.y = nxt.y;
+              agentObj.path.shift();
+              drawAgent(elObj, agentObj);
+            } else {
+              if (agentObj.state === toRes) {
+                agentObj.state = 'cut';
+                agentObj.timer = now;
+                elObj.querySelector('.agent-icon').textContent = actionIcon;
+                elObj.querySelector('.progress-container').style.display = 'block';
+              } else if (agentObj.state === toStore) {
+                agentObj.state = 'store';
+                agentObj.timer = now;
+              } else {
+                agentObj.state = 'idle';
+                elObj.querySelector('.agent-icon').textContent = baseIcon;
+                elObj.querySelector('.progress-container').style.display = 'none';
+                log('NPC retornou para casa.', baseIcon);
+              }
+            }
+            break;
+          }
+          case 'cut': {
+            const elapsed = now - agentObj.timer;
+            elObj.querySelector('.progress-bar').style.width = `${Math.min(elapsed/cutTime*100,100)}%`;
+            if (elapsed >= cutTime) {
+              const tile = document.querySelector(`.tile[data-x="${agentObj.x}"][data-y="${agentObj.y}"]`);
+              tile.dataset.resource = storeType;
+              tile.innerHTML = `<div class="tile-content">${storeType==='wood'?'🪵':'🪨'}</div>`;
+              respawnResource(tile, storeType);
+              elObj.querySelector('.agent-icon').textContent = baseIcon;
+              elObj.querySelector('.progress-container').style.display = 'none';
+              startMoving(agentObj, elObj, storagePos, toStore, msgStore);
+            }
+            break;
+          }
+          case 'store': {
+            const elapsed = now - agentObj.timer;
+            elObj.querySelector('.progress-bar').style.width = `${Math.min(elapsed/storeTime*100,100)}%`;
+            if (elapsed >= storeTime) {
+              resources[storeType]++;
+              renderResources();
+              const nxt = findNearest(resType, agentObj);
+              if (nxt) startMoving(agentObj, elObj, nxt, toRes, msgCut);
+              else startMoving(agentObj, elObj, homePos, toHome, 'Retornando para casa...', baseIcon);
+            }
+            break;
+          }
+        }
+      }
+
+      function findNearest(resource, agentObj) {
+        const sel = resource==='wood'
+          ? '.tile[data-resource="tree"],.tile[data-resource="bigTree"]'
+          : '.tile[data-resource="rock"]';
+        const arr = Array.from(document.querySelectorAll(sel))
+          .map(t => ({ x:+t.dataset.x, y:+t.dataset.y }));
+        if (!arr.length) return null;
+        return arr.reduce((b,p) => manhattan(agentObj, p) < manhattan(agentObj, b) ? p : b);
+      }
+
+      // Botões de venda
+      document.getElementById('sell-wood').onclick = () => {
+        if (resources.wood > 0) {
+          resources.wood--;
+          resources.coins += +document.getElementById('wood-price').textContent;
+          renderResources();
+          log('Madeira vendida!','🪵');
+        }
+      };
+      document.getElementById('sell-stone').onclick = () => {
+        if (resources.stone > 0) {
+          resources.stone--;
+          resources.coins += +document.getElementById('stone-price').textContent;
+          renderResources();
+          log('Pedra vendida!','🪨');
+        }
+      };
+
+      // Início do jogo
+      renderResources();
+      populateShop();
+      createGrid();
+      agentLumber.x = housePos.x;    agentLumber.y = housePos.y;    drawAgent(elLumber, agentLumber);
+      agentMiner.x  = minerHousePos.x; agentMiner.y  = minerHousePos.y; drawAgent(elMiner, agentMiner);
+      log('Bem vindo.😁');
+
+      setInterval(() =>
+        agentLoop(
+          agentLumber, elLumber, housePos, storagePos,
+          'wood','wood',10000,5000,'toRes','toStore','toHome',
+          '🪓 Cortando árvore...','📦 Armazenando madeira...','🧑🏼‍🦰','🪓'
+        ), 100);
+
+      setInterval(() =>
+        agentLoop(
+          agentMiner, elMiner, minerHousePos, storagePos,
+          'rock','stone',8000,5000,'toRes','toStore','toHome',
+          '⛏ Minerando...','📦 Armazenando pedra...','👴🏼','⛏'
+        ), 100);
+
+    });
+  </script>
+</body>
+</html>
