@@ -330,11 +330,35 @@ function getOriginalResourceType(x: number, y: number): ResourceType | undefined
   return undefined;
 }
 
-// Update plant growth
+// Update plant growth and water timers
 function updateGrowth() {
   const { gridTiles, seedMap, updateTile } = getState();
   
   gridTiles.forEach(tile => {
+    // Handle water timer for fields
+    if (tile.type === 'field' && tile.fieldType === 'plantio' && tile.fieldState === 'watered' && tile.waterTimer) {
+      const newWaterTimer = tile.waterTimer - 1;
+      
+      if (newWaterTimer <= 0) {
+        // Water has dried up, field returns to prepared state
+        updateTile({
+          ...tile,
+          fieldState: 'prepared',
+          waterTimer: undefined
+        });
+        
+        const { addLogMessage } = getState();
+        addLogMessage(`A água secou em um campo.`, "💧");
+      } else {
+        // Update water timer
+        updateTile({
+          ...tile,
+          waterTimer: newWaterTimer
+        });
+      }
+    }
+    
+    // Handle plant growth
     if (tile.type === 'field' && tile.fieldType === 'plantio' && tile.planted && tile.growthStage !== undefined && tile.growthStage < 100) {
       // Increase growth by a small amount each tick
       const newGrowthStage = Math.min(100, tile.growthStage + 1);
@@ -359,18 +383,77 @@ function updateAgents() {
   // Update agent positions and state
   updateLumberjack();
   updateMiner();
+  updateFarmer();
   
   // Log agent positions for debugging
   const { agents } = getState();
   console.log(`Lumber: x=${agents.lumber.x}, y=${agents.lumber.y}, state=${agents.lumber.state}`);
   console.log(`Miner: x=${agents.miner.x}, y=${agents.miner.y}, state=${agents.miner.state}`);
+  console.log(`Farmer: x=${agents.farmer.x}, y=${agents.farmer.y}, state=${agents.farmer.state}`);
 }
 
 // Get the house tile for an agent
-function getHouseForAgent(agentType: 'lumber' | 'miner') {
+function getHouseForAgent(agentType: 'lumber' | 'miner' | 'farmer') {
   const { gridTiles } = getState();
-  const structureType = agentType === 'lumber' ? 'lumberjackHouse' : 'minerHouse';
+  let structureType: string;
+  
+  if (agentType === 'lumber') {
+    structureType = 'lumberjackHouse';
+  } else if (agentType === 'miner') {
+    structureType = 'minerHouse';
+  } else {
+    structureType = 'farmerHouse';
+  }
+  
   return gridTiles.find(tile => tile.structure === structureType);
+}
+
+// Get the water well tile
+function getWaterWellTile() {
+  const { gridTiles } = getState();
+  return gridTiles.find(tile => tile.structure === 'waterWell');
+}
+
+// Find a field that needs to be prepared or watered
+function findFieldForFarmer() {
+  const { gridTiles } = getState();
+  
+  // Look for fields that need preparation or watering
+  return gridTiles.find(tile => 
+    tile.type === 'field' && 
+    tile.fieldType === 'plantio' && 
+    (!tile.fieldState || tile.fieldState === 'normal')
+  );
+}
+
+// Find a field that is watered and ready for planting
+function findWateredFieldForPlanting() {
+  const { gridTiles, resources } = getState();
+  
+  // First check if we have any seeds
+  const hasSeeds = Object.values(resources.seeds).some(count => count > 0);
+  if (!hasSeeds) return null;
+  
+  // Look for fields that are watered and ready for planting
+  return gridTiles.find(tile => 
+    tile.type === 'field' && 
+    tile.fieldType === 'plantio' && 
+    tile.fieldState === 'watered' && 
+    !tile.planted
+  );
+}
+
+// Find a field with harvestable crops
+function findFieldForHarvesting() {
+  const { gridTiles } = getState();
+  
+  // Look for fields with harvestable crops
+  return gridTiles.find(tile => 
+    tile.type === 'field' && 
+    tile.fieldType === 'plantio' && 
+    tile.planted && 
+    tile.harvestable
+  );
 }
 
 // Get the storage tile
@@ -1039,8 +1122,772 @@ export function harvestCrop(tile: GridTile) {
     ...tile,
     planted: undefined,
     growthStage: undefined,
-    harvestable: false
+    harvestable: false,
+    fieldState: 'normal' // Reset field state after harvest
   });
   
   addLogMessage(`Colheu 1 ${seedMap[tile.planted].emoji} com sucesso!`, "✂️");
+}
+
+// Update farmer agent
+function updateFarmer() {
+  const { agents, gridTiles, updateAgent, updateResources, resources, updateTile, addLogMessage, seedMap } = getState();
+  const farmer = agents.farmer;
+  
+  // Handle waiting state (initial state in house)
+  if (farmer.state === 'waiting') {
+    const newTimer = farmer.timer + 1;
+    
+    // Wait for 10 seconds (100 ticks) before leaving house
+    if (newTimer >= 100) {
+      updateAgent('farmer', {
+        state: 'idle',
+        timer: 0
+      });
+      addLogMessage("O agricultor saiu de casa para trabalhar.", "👨‍🌾");
+    } else {
+      updateAgent('farmer', {
+        timer: newTimer
+      });
+    }
+    return;
+  }
+  
+  // Handle idle state - find a field to work on or a crop to harvest
+  if (farmer.state === 'idle') {
+    // First priority: Check for harvestable crops
+    const fieldToHarvest = findFieldForHarvesting();
+    if (fieldToHarvest) {
+      updateAgent('farmer', {
+        state: 'moving',
+        target: fieldToHarvest,
+        path: calculatePath(farmer.x, farmer.y, fieldToHarvest.x, fieldToHarvest.y)
+      });
+      addLogMessage("O agricultor está indo colher plantações.", "👨‍🌾");
+      return;
+    }
+    
+    // Second priority: Check for watered fields that need planting
+    if (Object.values(resources.seeds).some(count => count > 0)) {
+      const fieldToPlant = findWateredFieldForPlanting();
+      if (fieldToPlant) {
+        updateAgent('farmer', {
+          state: 'moving',
+          target: fieldToPlant,
+          path: calculatePath(farmer.x, farmer.y, fieldToPlant.x, fieldToPlant.y)
+        });
+        addLogMessage("O agricultor está indo plantar sementes.", "👨‍🌾");
+        return;
+      }
+    }
+    
+    // Third priority: Check for fields that need preparation or watering
+    const fieldToPrepare = findFieldForFarmer();
+    if (fieldToPrepare) {
+      updateAgent('farmer', {
+        state: 'moving',
+        target: fieldToPrepare,
+        path: calculatePath(farmer.x, farmer.y, fieldToPrepare.x, fieldToPrepare.y)
+      });
+      addLogMessage("O agricultor está indo preparar um campo.", "👨‍🌾");
+      return;
+    }
+    
+    // If nothing to do, return to house
+    const house = getHouseForAgent('farmer');
+    if (house) {
+      updateAgent('farmer', {
+        state: 'returning',
+        target: house,
+        path: calculatePath(farmer.x, farmer.y, house.x, house.y)
+      });
+      addLogMessage("Sem tarefas agrícolas. O agricultor está voltando para casa.", "👨‍🌾");
+    }
+  }
+  
+  // Handle moving state - move towards target
+  else if (farmer.state === 'moving' && farmer.target) {
+    // Move towards the target more slowly (move only every 15 ticks)
+    const shouldMove = farmer.timer % 15 === 0;
+    let newX = farmer.x;
+    let newY = farmer.y;
+    
+    if (shouldMove) {
+      if (farmer.x < farmer.target.x) newX += 1;
+      else if (farmer.x > farmer.target.x) newX -= 1;
+      
+      if (farmer.y < farmer.target.y) newY += 1;
+      else if (farmer.y > farmer.target.y) newY -= 1;
+    }
+    
+    // Increment the timer for movement cooldown
+    const newTimer = farmer.timer + 1;
+    
+    // Check if arrived at target
+    const arrived = newX === farmer.target.x && newY === farmer.target.y;
+    
+    if (arrived) {
+      // Check what to do based on the state of the target tile
+      const currentTile = gridTiles.find(
+        tile => tile.x === farmer.target!.x && tile.y === farmer.target!.y
+      );
+      
+      if (!currentTile) {
+        // Invalid target, go back to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+        return;
+      }
+      
+      // If it's a field for harvesting
+      if (currentTile.type === 'field' && currentTile.planted && currentTile.harvestable) {
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          state: 'harvesting',
+          timer: 0
+        });
+        addLogMessage("O agricultor está colhendo a plantação.", "👨‍🌾");
+      }
+      // If it's a field for planting (watered and empty)
+      else if (currentTile.type === 'field' && currentTile.fieldState === 'watered' && !currentTile.planted) {
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          state: 'gettingSeed',
+          timer: 0
+        });
+        addLogMessage("O agricultor está buscando sementes.", "👨‍🌾");
+      }
+      // If it's a field for preparing
+      else if (currentTile.type === 'field' && currentTile.fieldType === 'plantio' && (!currentTile.fieldState || currentTile.fieldState === 'normal')) {
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          state: 'preparing',
+          timer: 0
+        });
+        addLogMessage("O agricultor está preparando o campo.", "👨‍🌾");
+      }
+      else {
+        // Target is not valid anymore, go back to idle
+        updateAgent('farmer', {
+          x: newX,
+          y: newY,
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        x: newX,
+        y: newY,
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle preparing state - prepare the field
+  else if (farmer.state === 'preparing' && farmer.target) {
+    const newTimer = farmer.timer + 1;
+    
+    // Preparing takes 5 seconds (50 ticks)
+    if (newTimer >= 50) {
+      const currentTile = gridTiles.find(
+        tile => tile.x === farmer.x && tile.y === farmer.y && 
+                tile.type === 'field' && tile.fieldType === 'plantio'
+      );
+      
+      if (currentTile) {
+        // Update field to prepared state
+        updateTile({
+          ...currentTile,
+          fieldState: 'prepared'
+        });
+        
+        // After preparing, go get water
+        const wellTile = getWaterWellTile();
+        if (wellTile) {
+          updateAgent('farmer', {
+            state: 'gettingWater',
+            target: wellTile,
+            path: calculatePath(farmer.x, farmer.y, wellTile.x, wellTile.y),
+            timer: 0
+          });
+          addLogMessage("O agricultor preparou o campo e está indo buscar água.", "👨‍🌾");
+        } else {
+          // No water well, go back to idle
+          updateAgent('farmer', {
+            state: 'idle',
+            target: null,
+            timer: 0,
+            path: []
+          });
+          addLogMessage("Não há poço de água para o agricultor usar.", "⚠️");
+        }
+      } else {
+        // Field is no longer valid, go back to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle getting water - move to water well
+  else if (farmer.state === 'gettingWater' && farmer.target) {
+    // Move towards the water well more slowly (move only every 15 ticks)
+    const shouldMove = farmer.timer % 15 === 0;
+    let newX = farmer.x;
+    let newY = farmer.y;
+    
+    if (shouldMove) {
+      if (farmer.x < farmer.target.x) newX += 1;
+      else if (farmer.x > farmer.target.x) newX -= 1;
+      
+      if (farmer.y < farmer.target.y) newY += 1;
+      else if (farmer.y > farmer.target.y) newY -= 1;
+    }
+    
+    // Increment the timer for movement cooldown
+    const newTimer = farmer.timer + 1;
+    
+    // Check if arrived at water well
+    const arrived = newX === farmer.target.x && newY === farmer.target.y;
+    
+    if (arrived) {
+      // If just arrived, start the collecting timer
+      if (farmer.timer < 30) {  // 3 seconds (30 ticks)
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          timer: newTimer
+        });
+        return;
+      }
+      
+      // After collecting water, find a prepared field to water
+      const fieldToWater = gridTiles.find(
+        tile => tile.type === 'field' && 
+                tile.fieldType === 'plantio' && 
+                tile.fieldState === 'prepared'
+      );
+      
+      if (fieldToWater) {
+        updateAgent('farmer', {
+          state: 'watering',
+          target: fieldToWater,
+          path: calculatePath(farmer.target.x, farmer.target.y, fieldToWater.x, fieldToWater.y),
+          timer: 0
+        });
+        addLogMessage("O agricultor coletou água e está indo regar o campo.", "💧");
+      } else {
+        // No field to water, go back to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        x: newX,
+        y: newY,
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle watering - move to field and water it
+  else if (farmer.state === 'watering' && farmer.target) {
+    // Move towards the field more slowly (move only every 15 ticks)
+    const shouldMove = farmer.timer % 15 === 0;
+    let newX = farmer.x;
+    let newY = farmer.y;
+    
+    if (shouldMove) {
+      if (farmer.x < farmer.target.x) newX += 1;
+      else if (farmer.x > farmer.target.x) newX -= 1;
+      
+      if (farmer.y < farmer.target.y) newY += 1;
+      else if (farmer.y > farmer.target.y) newY -= 1;
+    }
+    
+    // Increment the timer for movement cooldown
+    const newTimer = farmer.timer + 1;
+    
+    // Check if arrived at field
+    const arrived = newX === farmer.target.x && newY === farmer.target.y;
+    
+    if (arrived) {
+      // If just arrived, start the watering timer
+      if (farmer.timer < 40) {  // 4 seconds (40 ticks)
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          timer: newTimer
+        });
+        return;
+      }
+      
+      // After watering, update the field state
+      const currentTile = gridTiles.find(
+        tile => tile.x === farmer.target!.x && tile.y === farmer.target!.y && 
+                tile.type === 'field' && tile.fieldType === 'plantio'
+      );
+      
+      if (currentTile) {
+        // Update field to watered state with a timer
+        // Water stays for 2 minutes (1200 ticks)
+        updateTile({
+          ...currentTile,
+          fieldState: 'watered',
+          waterTimer: 1200
+        });
+        
+        // After watering, go back to idle to check for next tasks
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+        addLogMessage("O agricultor regou o campo. Agora está pronto para plantio.", "💧");
+      } else {
+        // Field is no longer valid, go back to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        x: newX,
+        y: newY,
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle getting seed - go to storage to get seeds
+  else if (farmer.state === 'gettingSeed') {
+    // First check if we have seeds to plant
+    let seedToPlant: SeedType | null = null;
+    
+    for (const [seed, count] of Object.entries(resources.seeds)) {
+      if (count > 0) {
+        seedToPlant = seed as SeedType;
+        break;
+      }
+    }
+    
+    if (!seedToPlant) {
+      // No seeds available, go back to idle
+      updateAgent('farmer', {
+        state: 'idle',
+        target: null,
+        timer: 0,
+        path: []
+      });
+      addLogMessage("O agricultor não tem sementes para plantar.", "⚠️");
+      return;
+    }
+    
+    // If we just entered this state, go to storage to get seed
+    if (farmer.timer === 0) {
+      const storageTile = getStorageTile();
+      if (storageTile) {
+        updateAgent('farmer', {
+          state: 'gettingSeed',
+          target: storageTile,
+          path: calculatePath(farmer.x, farmer.y, storageTile.x, storageTile.y),
+          timer: 1
+        });
+        addLogMessage("O agricultor está indo buscar sementes no armazém.", "👨‍🌾");
+      } else {
+        // No storage, go back to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+        addLogMessage("Não há armazém para o agricultor pegar sementes.", "⚠️");
+      }
+      return;
+    }
+    
+    // Move towards the storage more slowly (move only every 15 ticks)
+    const shouldMove = farmer.timer % 15 === 0;
+    let newX = farmer.x;
+    let newY = farmer.y;
+    
+    if (shouldMove && farmer.target) {
+      if (farmer.x < farmer.target.x) newX += 1;
+      else if (farmer.x > farmer.target.x) newX -= 1;
+      
+      if (farmer.y < farmer.target.y) newY += 1;
+      else if (farmer.y > farmer.target.y) newY -= 1;
+    }
+    
+    // Increment the timer for movement cooldown
+    const newTimer = farmer.timer + 1;
+    
+    // Check if arrived at storage
+    const arrived = farmer.target && newX === farmer.target.x && newY === farmer.target.y;
+    
+    if (arrived) {
+      // If just arrived, start the getting seed timer
+      if (farmer.timer < 30) {  // 3 seconds (30 ticks)
+        updateAgent('farmer', {
+          x: newX,
+          y: newY,
+          timer: newTimer
+        });
+        return;
+      }
+      
+      // After getting seed, find a watered field to plant
+      const fieldToPlant = findWateredFieldForPlanting();
+      
+      if (fieldToPlant) {
+        updateAgent('farmer', {
+          state: 'planting',
+          target: fieldToPlant,
+          path: calculatePath(newX, newY, fieldToPlant.x, fieldToPlant.y),
+          timer: 0
+        });
+        addLogMessage(`O agricultor pegou sementes ${seedMap[seedToPlant].emoji} e está indo plantar.`, "🌱");
+      } else {
+        // No field to plant, go back to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        x: newX,
+        y: newY,
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle planting - move to field and plant seed
+  else if (farmer.state === 'planting' && farmer.target) {
+    // Check if we have seeds to plant
+    let seedToPlant: SeedType | null = null;
+    
+    for (const [seed, count] of Object.entries(resources.seeds)) {
+      if (count > 0) {
+        seedToPlant = seed as SeedType;
+        break;
+      }
+    }
+    
+    if (!seedToPlant) {
+      // No seeds available, go back to idle
+      updateAgent('farmer', {
+        state: 'idle',
+        target: null,
+        timer: 0,
+        path: []
+      });
+      addLogMessage("O agricultor não tem sementes para plantar.", "⚠️");
+      return;
+    }
+    
+    // Move towards the field more slowly (move only every 15 ticks)
+    const shouldMove = farmer.timer % 15 === 0;
+    let newX = farmer.x;
+    let newY = farmer.y;
+    
+    if (shouldMove) {
+      if (farmer.x < farmer.target.x) newX += 1;
+      else if (farmer.x > farmer.target.x) newX -= 1;
+      
+      if (farmer.y < farmer.target.y) newY += 1;
+      else if (farmer.y > farmer.target.y) newY -= 1;
+    }
+    
+    // Increment the timer for movement cooldown
+    const newTimer = farmer.timer + 1;
+    
+    // Check if arrived at field
+    const arrived = newX === farmer.target.x && newY === farmer.target.y;
+    
+    if (arrived) {
+      // If just arrived, start the planting timer
+      if (farmer.timer < 40) {  // 4 seconds (40 ticks)
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          timer: newTimer
+        });
+        return;
+      }
+      
+      // After planting, update the field
+      const currentTile = gridTiles.find(
+        tile => tile.x === farmer.target!.x && tile.y === farmer.target!.y && 
+                tile.type === 'field' && tile.fieldType === 'plantio' &&
+                tile.fieldState === 'watered'
+      );
+      
+      if (currentTile && seedToPlant) {
+        // Update seed inventory
+        const updatedSeeds = { ...resources.seeds };
+        updatedSeeds[seedToPlant] -= 1;
+        
+        updateResources({
+          seeds: updatedSeeds
+        });
+        
+        // Update field with planted seed
+        updateTile({
+          ...currentTile,
+          planted: seedToPlant,
+          growthStage: 0,
+          harvestable: false
+        });
+        
+        // After planting, go back to idle to check for next tasks
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+        addLogMessage(`O agricultor plantou sementes de ${seedToPlant} ${seedMap[seedToPlant].emoji}.`, "🌱");
+      } else {
+        // Field is no longer valid, go back to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        x: newX,
+        y: newY,
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle harvesting - harvest the crop
+  else if (farmer.state === 'harvesting' && farmer.target) {
+    const newTimer = farmer.timer + 1;
+    
+    // Harvesting takes 5 seconds (50 ticks)
+    if (newTimer >= 50) {
+      const currentTile = gridTiles.find(
+        tile => tile.x === farmer.x && tile.y === farmer.y && 
+                tile.type === 'field' && tile.planted && tile.harvestable
+      );
+      
+      if (currentTile && currentTile.planted) {
+        const seedType = currentTile.planted;
+        
+        // Add crop to resources
+        const updatedCrops = { ...resources.crops };
+        updatedCrops[seedType] = (updatedCrops[seedType] || 0) + 1;
+        
+        // Clear the tile for replanting
+        updateTile({
+          ...currentTile,
+          planted: undefined,
+          growthStage: undefined,
+          harvestable: false,
+          fieldState: 'normal' // Reset field state after harvest
+        });
+        
+        // Now head to storage to deposit the crop
+        const storageTile = getStorageTile();
+        if (storageTile) {
+          updateAgent('farmer', {
+            state: 'storing',
+            target: storageTile,
+            path: calculatePath(farmer.x, farmer.y, storageTile.x, storageTile.y),
+            timer: 0
+          });
+          
+          addLogMessage(`O agricultor colheu ${seedType} ${seedMap[seedType].emoji} e está indo para o armazém.`, "🌾");
+        } else {
+          // If no storage, just update resources directly
+          updateResources({
+            crops: updatedCrops
+          });
+          
+          // Return to idle state
+          updateAgent('farmer', {
+            state: 'idle',
+            target: null,
+            timer: 0,
+            path: []
+          });
+          
+          addLogMessage(`O agricultor colheu ${seedType} ${seedMap[seedType].emoji}.`, "🌾");
+        }
+      } else {
+        // Crop is gone, return to idle
+        updateAgent('farmer', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle storing - store the crop
+  else if (farmer.state === 'storing' && farmer.target) {
+    // Move towards the storage more slowly (move only every 15 ticks)
+    const shouldMove = farmer.timer % 15 === 0;
+    let newX = farmer.x;
+    let newY = farmer.y;
+    
+    if (shouldMove) {
+      if (farmer.x < farmer.target.x) newX += 1;
+      else if (farmer.x > farmer.target.x) newX -= 1;
+      
+      if (farmer.y < farmer.target.y) newY += 1;
+      else if (farmer.y > farmer.target.y) newY -= 1;
+    }
+    
+    // Increment the timer for movement cooldown
+    const newTimer = farmer.timer + 1;
+    
+    // Check if arrived at storage
+    const arrived = newX === farmer.target.x && newY === farmer.target.y;
+    
+    if (arrived) {
+      // If just arrived, start the storing timer
+      if (farmer.timer < 20) {  // 2 seconds (20 ticks)
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          timer: newTimer
+        });
+        return;
+      }
+      
+      // Find home to return to
+      const house = getHouseForAgent('farmer');
+      if (house) {
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          state: 'returning',
+          target: house,
+          path: calculatePath(farmer.target.x, farmer.target.y, house.x, house.y),
+          timer: 0
+        });
+        
+        addLogMessage("O agricultor guardou a colheita e está retornando para casa.", "👨‍🌾");
+      } else {
+        // No house, go back to idle
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('farmer', {
+        x: newX,
+        y: newY,
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle returning state - move back to house
+  else if (farmer.state === 'returning' && farmer.target) {
+    // Move towards home more slowly (move only every 15 ticks)
+    const shouldMove = farmer.timer % 15 === 0;
+    let newX = farmer.x;
+    let newY = farmer.y;
+    
+    if (shouldMove) {
+      if (farmer.x < farmer.target.x) newX += 1;
+      else if (farmer.x > farmer.target.x) newX -= 1;
+      
+      if (farmer.y < farmer.target.y) newY += 1;
+      else if (farmer.y > farmer.target.y) newY -= 1;
+    }
+    
+    // Increment the timer for movement cooldown
+    const newTimer = farmer.timer + 1;
+    
+    // Check if arrived at house
+    const arrived = newX === farmer.target.x && newY === farmer.target.y;
+    
+    if (arrived) {
+      // Rest in the house
+      updateAgent('farmer', {
+        x: farmer.target.x,
+        y: farmer.target.y,
+        state: 'resting',
+        target: null,
+        timer: 0
+      });
+      
+      addLogMessage("O agricultor chegou em casa e está descansando.", "👨‍🌾");
+    } else {
+      updateAgent('farmer', {
+        x: newX,
+        y: newY,
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle resting state - rest in house for a while
+  else if (farmer.state === 'resting') {
+    const newTimer = farmer.timer + 1;
+    
+    // Rest for 5 seconds (50 ticks)
+    if (newTimer >= 50) {
+      updateAgent('farmer', {
+        state: 'idle',
+        timer: 0
+      });
+      
+      addLogMessage("O agricultor terminou de descansar e voltou ao trabalho.", "👨‍🌾");
+    } else {
+      updateAgent('farmer', {
+        timer: newTimer
+      });
+    }
+  }
 }

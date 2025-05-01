@@ -154,7 +154,7 @@ type GameAction =
   | { type: 'UPDATE_RESOURCES'; payload: Partial<GameState['resources']> }
   | { type: 'UPDATE_TILE'; payload: { tile: GridTile } }
   | { type: 'SET_SELECTED'; payload: SelectionType }
-  | { type: 'UPDATE_AGENT'; payload: { agentType: 'lumber' | 'miner'; agent: Partial<Agent> } }
+  | { type: 'UPDATE_AGENT'; payload: { agentType: 'lumber' | 'miner' | 'farmer'; agent: Partial<Agent> } }
   | { type: 'ADD_LOG_MESSAGE'; payload: { text: string; icon: string } }
   | { type: 'SET_TUTORIAL_VISIBLE'; payload: boolean }
   | { type: 'SET_SOUND_ENABLED'; payload: boolean }
@@ -256,7 +256,7 @@ interface GameStateContextValue extends GameState {
   updateResources: (resources: Partial<GameState['resources']>) => void;
   updateTile: (tile: GridTile) => void;
   setSelected: (selected: SelectionType) => void;
-  updateAgent: (agentType: 'lumber' | 'miner', agent: Partial<Agent>) => void;
+  updateAgent: (agentType: 'lumber' | 'miner' | 'farmer', agent: Partial<Agent>) => void;
   addLogMessage: (text: string, icon: string) => void;
   setTutorialVisible: (visible: boolean) => void;
   setSoundEnabled: (enabled: boolean) => void;
@@ -281,7 +281,7 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_SELECTED', payload: selected });
   };
   
-  const updateAgent = (agentType: 'lumber' | 'miner', agent: Partial<Agent>) => {
+  const updateAgent = (agentType: 'lumber' | 'miner' | 'farmer', agent: Partial<Agent>) => {
     dispatch({ type: 'UPDATE_AGENT', payload: { agentType, agent } });
   };
   
