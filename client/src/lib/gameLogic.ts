@@ -504,8 +504,8 @@ function updateLumberjack() {
   else if (lumber.state === 'working' && lumber.target) {
     const newTimer = lumber.timer + 1;
     
-    // Working takes 50 ticks
-    if (newTimer >= 50) {
+    // Working takes 15 seconds (150 ticks at 10 ticks/second)
+    if (newTimer >= 150) {
       // Verify the agent is on the same tile as the target
       // And the tree is still there on the current tile
       const exactMatch = lumber.x === lumber.target.x && lumber.y === lumber.target.y;
@@ -604,7 +604,17 @@ function updateLumberjack() {
     const arrived = newX === lumber.target.x && newY === lumber.target.y;
     
     if (arrived) {
-      // Store the wood (add to resources)
+      // If just arrived, start the storing timer
+      if (lumber.timer < 50) {
+        updateAgent('lumber', {
+          x: lumber.target.x,
+          y: lumber.target.y,
+          timer: newTimer
+        });
+        return;
+      }
+      
+      // After 5 seconds (50 ticks), store the wood
       const woodAmount = 1; // Basic wood amount, could be variable
       updateResources({
         wood: resources.wood + woodAmount
@@ -799,8 +809,8 @@ function updateMiner() {
   else if (miner.state === 'working' && miner.target) {
     const newTimer = miner.timer + 1;
     
-    // Working takes 70 ticks
-    if (newTimer >= 70) {
+    // Working takes 15 seconds (150 ticks at 10 ticks/second)
+    if (newTimer >= 150) {
       // Verify the agent is on the same tile as the target
       // And the rock is still there on the current tile
       const exactMatch = miner.x === miner.target.x && miner.y === miner.target.y;
@@ -898,7 +908,17 @@ function updateMiner() {
     const arrived = newX === miner.target.x && newY === miner.target.y;
     
     if (arrived) {
-      // Store the stone (add to resources)
+      // If just arrived, start the storing timer
+      if (miner.timer < 50) {
+        updateAgent('miner', {
+          x: miner.target.x,
+          y: miner.target.y,
+          timer: newTimer
+        });
+        return;
+      }
+      
+      // After 5 seconds (50 ticks), store the stone
       const stoneAmount = 2; // Basic stone amount
       updateResources({
         stone: resources.stone + stoneAmount

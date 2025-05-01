@@ -15,6 +15,10 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
   let animationClass = '';
   let showProgressBar = false;
   
+  // Determine if the agent should be visible based on state
+  // Hide agent emoji when they're inside buildings (waiting, resting, or storing)
+  const isInBuilding = state === 'waiting' || state === 'resting' || state === 'storing';
+  
   switch (state) {
     case 'idle':
       animationClass = 'animate-wiggle';
@@ -62,9 +66,11 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
       data-x={x}
       data-y={y}
     >
-      <div className={`text-2xl ${animationClass}`}>
-        {type === 'lumber' ? '🧑🏼‍🦰' : '👴🏼'}
-      </div>
+      {!isInBuilding && (
+        <div className={`text-2xl ${animationClass}`}>
+          {type === 'lumber' ? '🧑🏼‍🦰' : '👴🏼'}
+        </div>
+      )}
       {showProgressBar && (
         <div 
           className="mt-1 w-4/5 h-1.5 bg-gray-200 rounded-full overflow-hidden"
