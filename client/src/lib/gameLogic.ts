@@ -67,6 +67,11 @@ export function handleTileClick(tile: GridTile) {
       stone: resources.stone - structure.cost.stone
     });
     
+    // Create an NPC if this is a house
+    if (selected.key === 'lumberjackHouse' || selected.key === 'minerHouse' || selected.key === 'farmerHouse') {
+      createNewAgent(selected.key, tile);
+    }
+    
     addLogMessage(`${structure.emoji} ${structure.name} construído com sucesso!`, "🏗️");
     setSelected(null);
     
@@ -402,7 +407,8 @@ function updateAgents() {
 }
 
 // Get the house tile for an agent
-function getHouseForAgent(agentType: 'lumber' | 'miner' | 'farmer') {
+// Get all houses for a specific agent type
+function getAllHousesForAgent(agentType: 'lumber' | 'miner' | 'farmer'): GridTile[] {
   const { gridTiles } = getState();
   let structureType: string;
   
@@ -414,7 +420,15 @@ function getHouseForAgent(agentType: 'lumber' | 'miner' | 'farmer') {
     structureType = 'farmerHouse';
   }
   
-  return gridTiles.find(tile => tile.structure === structureType);
+  return gridTiles.filter(tile => tile.structure === structureType);
+}
+
+// Get a single house for an agent (typically used for returning home)
+function getHouseForAgent(agentType: 'lumber' | 'miner' | 'farmer') {
+  const houses = getAllHousesForAgent(agentType);
+  
+  // Return the first house found, or undefined if none
+  return houses.length > 0 ? houses[0] : undefined;
 }
 
 // Get the water well tile
