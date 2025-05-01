@@ -2,7 +2,7 @@ export type ResourceType = 'tree' | 'bigTree' | 'rock';
 export type StructureType = 'lumberjackHouse' | 'minerHouse' | 'storage';
 export type FieldType = 'plantio' | 'agua' | 'pasto';
 export type SeedType = 'wheat' | 'corn' | 'carrot' | 'potato' | 'tomato';
-export type AgentState = 'idle' | 'moving' | 'working';
+export type AgentState = 'idle' | 'moving' | 'working' | 'returning' | 'storing' | 'resting' | 'waiting';
 export type SelectionType = { type: 'structure' | 'field' | 'seed', key: string } | null;
 export type ActivePanelType = 'structures' | 'fields' | 'seeds' | 'storage' | 'status' | 'options' | null;
 

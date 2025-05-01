@@ -62,19 +62,19 @@ const lumberjackHouse = initialGridTiles.find(t => t.structure === 'lumberjackHo
 const minerHouse = initialGridTiles.find(t => t.structure === 'minerHouse');
 
 const initialAgentLumber: Agent = {
-  x: lumberjackHouse ? lumberjackHouse.x * 50 : 0,
-  y: lumberjackHouse ? lumberjackHouse.y * 50 : 0,
-  state: 'idle',
-  timer: 0,
+  x: lumberjackHouse ? lumberjackHouse.x : 0,
+  y: lumberjackHouse ? lumberjackHouse.y : 0,
+  state: 'waiting', // Starts in "waiting" state to leave house after 10 seconds
+  timer: 0, // This will count up to 100 (10 seconds) before leaving
   target: null,
   path: []
 };
 
 const initialAgentMiner: Agent = {
-  x: minerHouse ? minerHouse.x * 50 : 0,
-  y: minerHouse ? minerHouse.y * 50 : 0,
-  state: 'idle',
-  timer: 0,
+  x: minerHouse ? minerHouse.x : 0,
+  y: minerHouse ? minerHouse.y : 0,
+  state: 'waiting', // Starts in "waiting" state to leave house after 10 seconds
+  timer: 0, // This will count up to 100 (10 seconds) before leaving
   target: null,
   path: []
 };

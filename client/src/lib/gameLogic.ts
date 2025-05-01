@@ -303,54 +303,120 @@ function updateAgents() {
   updateMiner();
 }
 
+// Get the house tile for an agent
+function getHouseForAgent(agentType: 'lumber' | 'miner') {
+  const { gridTiles } = getState();
+  const structureType = agentType === 'lumber' ? 'lumberjackHouse' : 'minerHouse';
+  return gridTiles.find(tile => tile.structure === structureType);
+}
+
+// Get the storage tile
+function getStorageTile() {
+  const { gridTiles } = getState();
+  return gridTiles.find(tile => tile.structure === 'storage');
+}
+
+// Find nearest resource of a type
+function findNearestResource(x: number, y: number, resourceType: string[]) {
+  const { gridTiles } = getState();
+  
+  // Filter tiles with the specified resource type
+  const resourceTiles = gridTiles.filter(tile => 
+    tile.resource && resourceType.includes(tile.resource)
+  );
+  
+  if (resourceTiles.length === 0) return null;
+  
+  // Calculate distances
+  const tilesWithDistance = resourceTiles.map(tile => {
+    const distance = Math.sqrt(Math.pow(tile.x - x, 2) + Math.pow(tile.y - y, 2));
+    return { tile, distance };
+  });
+  
+  // Sort by distance
+  tilesWithDistance.sort((a, b) => a.distance - b.distance);
+  
+  // Return the nearest
+  return tilesWithDistance[0].tile;
+}
+
+// Calculate simple path between two points
+function calculatePath(startX: number, startY: number, endX: number, endY: number) {
+  // Simple direct path for now
+  return [{ x: endX, y: endY }];
+}
+
 // Update lumberjack agent
 function updateLumberjack() {
   const { agents, gridTiles, updateAgent, updateResources, resources, addLogMessage } = getState();
   const lumber = agents.lumber;
   
-  // If idle, find a tree to cut
-  if (lumber.state === 'idle') {
-    const trees = gridTiles.filter(tile => 
-      tile.resource === 'tree' || tile.resource === 'bigTree'
-    );
+  // Handle waiting state (initial state in house)
+  if (lumber.state === 'waiting') {
+    const newTimer = lumber.timer + 1;
     
-    if (trees.length > 0) {
-      // Pick a random tree
-      const targetTree = trees[Math.floor(Math.random() * trees.length)];
-      
-      // Move to tree
+    // Wait for 10 seconds (100 ticks) before leaving house
+    if (newTimer >= 100) {
+      updateAgent('lumber', {
+        state: 'idle',
+        timer: 0
+      });
+      addLogMessage("O lenhador saiu de casa para trabalhar.", "🧑🏼‍🦰");
+    } else {
+      updateAgent('lumber', {
+        timer: newTimer
+      });
+    }
+    return;
+  }
+  
+  // Handle idle state - find a tree to cut
+  if (lumber.state === 'idle') {
+    const nearestTree = findNearestResource(lumber.x, lumber.y, ['tree', 'bigTree']);
+    
+    if (nearestTree) {
+      // Set target as the tree
       updateAgent('lumber', {
         state: 'moving',
-        target: targetTree,
-        // Simple "path" - just the target coordinates
-        path: [{ x: targetTree.x, y: targetTree.y }]
+        target: nearestTree,
+        path: calculatePath(lumber.x, lumber.y, nearestTree.x, nearestTree.y)
       });
       
       addLogMessage("O lenhador está indo cortar uma árvore.", "🧑🏼‍🦰");
+    } else {
+      // No trees available, return to house to rest
+      const house = getHouseForAgent('lumber');
+      if (house) {
+        updateAgent('lumber', {
+          state: 'returning',
+          target: house,
+          path: calculatePath(lumber.x, lumber.y, house.x, house.y)
+        });
+        addLogMessage("Sem árvores para cortar. O lenhador está voltando para casa.", "🧑🏼‍🦰");
+      }
     }
   }
-  // If moving, update position
+  
+  // Handle moving state - move towards target
   else if (lumber.state === 'moving' && lumber.target) {
-    const targetX = lumber.target.x * 50;
-    const targetY = lumber.target.y * 50;
-    
-    // Simple movement: move directly towards target
+    // Move towards the target
     let newX = lumber.x;
     let newY = lumber.y;
     
-    if (lumber.x < targetX) newX += 5;
-    else if (lumber.x > targetX) newX -= 5;
+    if (lumber.x < lumber.target.x) newX += 1;
+    else if (lumber.x > lumber.target.x) newX -= 1;
     
-    if (lumber.y < targetY) newY += 5;
-    else if (lumber.y > targetY) newY -= 5;
+    if (lumber.y < lumber.target.y) newY += 1;
+    else if (lumber.y > lumber.target.y) newY -= 1;
     
     // Check if arrived at target
-    const arrived = Math.abs(newX - targetX) < 5 && Math.abs(newY - targetY) < 5;
+    const arrived = newX === lumber.target.x && newY === lumber.target.y;
     
     if (arrived) {
+      // Start working on collecting the resource
       updateAgent('lumber', {
-        x: targetX,
-        y: targetY,
+        x: lumber.target.x,
+        y: lumber.target.y,
         state: 'working',
         timer: 0
       });
@@ -363,43 +429,174 @@ function updateLumberjack() {
       });
     }
   }
-  // If working, update progress
+  
+  // Handle working state - cut the tree
   else if (lumber.state === 'working' && lumber.target) {
     const newTimer = lumber.timer + 1;
     
     // Working takes 50 ticks
     if (newTimer >= 50) {
-      // Remove the tree and add wood
-      const targetTile = gridTiles.find(
-        tile => tile.x === lumber.target?.x && tile.y === lumber.target?.y
+      // Verify the tree is still there on the current tile
+      const currentTile = gridTiles.find(
+        tile => tile.x === lumber.x && tile.y === lumber.y && 
+                (tile.resource === 'tree' || tile.resource === 'bigTree')
       );
       
-      if (targetTile && (targetTile.resource === 'tree' || targetTile.resource === 'bigTree')) {
+      if (currentTile) {
         const { updateTile } = getState();
         
         // Clear the resource
         updateTile({
-          ...targetTile,
+          ...currentTile,
           resource: undefined
         });
         
-        // Add wood based on tree type
-        const woodAmount = targetTile.resource === 'bigTree' ? 3 : 1;
+        // Calculate wood amount
+        const woodAmount = currentTile.resource === 'bigTree' ? 3 : 1;
         
-        updateResources({
-          wood: resources.wood + woodAmount
+        // Now head to storage to deposit wood
+        const storageTile = getStorageTile();
+        if (storageTile) {
+          updateAgent('lumber', {
+            state: 'storing',
+            target: storageTile,
+            path: calculatePath(lumber.x, lumber.y, storageTile.x, storageTile.y),
+            timer: 0
+          });
+          
+          addLogMessage(`O lenhador coletou ${woodAmount} madeiras e está indo para o armazém.`, "🪵");
+        } else {
+          // If no storage, just update resources directly
+          updateResources({
+            wood: resources.wood + woodAmount
+          });
+          
+          // Return to idle state
+          updateAgent('lumber', {
+            state: 'idle',
+            target: null,
+            timer: 0,
+            path: []
+          });
+          
+          addLogMessage(`O lenhador coletou ${woodAmount} madeiras.`, "🪵");
+        }
+      } else {
+        // Tree is gone, return to idle
+        updateAgent('lumber', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('lumber', {
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle storing state - move to storage
+  else if (lumber.state === 'storing' && lumber.target) {
+    // Move towards the storage
+    let newX = lumber.x;
+    let newY = lumber.y;
+    
+    if (lumber.x < lumber.target.x) newX += 1;
+    else if (lumber.x > lumber.target.x) newX -= 1;
+    
+    if (lumber.y < lumber.target.y) newY += 1;
+    else if (lumber.y > lumber.target.y) newY -= 1;
+    
+    // Check if arrived at storage
+    const arrived = newX === lumber.target.x && newY === lumber.target.y;
+    
+    if (arrived) {
+      // Store the wood (add to resources)
+      const woodAmount = 1; // Basic wood amount, could be variable
+      updateResources({
+        wood: resources.wood + woodAmount
+      });
+      
+      // Find home to return to
+      const house = getHouseForAgent('lumber');
+      if (house) {
+        updateAgent('lumber', {
+          x: lumber.target.x,
+          y: lumber.target.y,
+          state: 'returning',
+          target: house,
+          path: calculatePath(lumber.target.x, lumber.target.y, house.x, house.y),
+          timer: 0
         });
         
-        addLogMessage(`O lenhador coletou ${woodAmount} madeiras.`, "🪵");
+        addLogMessage("O lenhador guardou a madeira e está retornando para casa.", "🧑🏼‍🦰");
+      } else {
+        // No house, go back to idle
+        updateAgent('lumber', {
+          x: lumber.target.x,
+          y: lumber.target.y,
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
       }
+    } else {
+      updateAgent('lumber', {
+        x: newX,
+        y: newY
+      });
+    }
+  }
+  
+  // Handle returning state - move back to house
+  else if (lumber.state === 'returning' && lumber.target) {
+    // Move towards home
+    let newX = lumber.x;
+    let newY = lumber.y;
+    
+    if (lumber.x < lumber.target.x) newX += 1;
+    else if (lumber.x > lumber.target.x) newX -= 1;
+    
+    if (lumber.y < lumber.target.y) newY += 1;
+    else if (lumber.y > lumber.target.y) newY -= 1;
+    
+    // Check if arrived at house
+    const arrived = newX === lumber.target.x && newY === lumber.target.y;
+    
+    if (arrived) {
+      // Rest in the house
+      updateAgent('lumber', {
+        x: lumber.target.x,
+        y: lumber.target.y,
+        state: 'resting',
+        target: null,
+        timer: 0
+      });
       
-      // Return to idle state
+      addLogMessage("O lenhador chegou em casa e está descansando.", "🧑🏼‍🦰");
+    } else {
+      updateAgent('lumber', {
+        x: newX,
+        y: newY
+      });
+    }
+  }
+  
+  // Handle resting state - rest in house for a while
+  else if (lumber.state === 'resting') {
+    const newTimer = lumber.timer + 1;
+    
+    // Rest for 30 ticks
+    if (newTimer >= 30) {
       updateAgent('lumber', {
         state: 'idle',
-        target: null,
-        timer: 0,
-        path: []
+        timer: 0
       });
+      
+      addLogMessage("O lenhador terminou de descansar e voltou ao trabalho.", "🧑🏼‍🦰");
     } else {
       updateAgent('lumber', {
         timer: newTimer
@@ -413,47 +610,72 @@ function updateMiner() {
   const { agents, gridTiles, updateAgent, updateResources, resources, addLogMessage } = getState();
   const miner = agents.miner;
   
-  // If idle, find a rock to mine
-  if (miner.state === 'idle') {
-    const rocks = gridTiles.filter(tile => tile.resource === 'rock');
+  // Handle waiting state (initial state in house)
+  if (miner.state === 'waiting') {
+    const newTimer = miner.timer + 1;
     
-    if (rocks.length > 0) {
-      // Pick a random rock
-      const targetRock = rocks[Math.floor(Math.random() * rocks.length)];
-      
-      // Move to rock
+    // Wait for 10 seconds (100 ticks) before leaving house
+    if (newTimer >= 100) {
+      updateAgent('miner', {
+        state: 'idle',
+        timer: 0
+      });
+      addLogMessage("O minerador saiu de casa para trabalhar.", "👴🏼");
+    } else {
+      updateAgent('miner', {
+        timer: newTimer
+      });
+    }
+    return;
+  }
+  
+  // Handle idle state - find a rock to mine
+  if (miner.state === 'idle') {
+    const nearestRock = findNearestResource(miner.x, miner.y, ['rock']);
+    
+    if (nearestRock) {
+      // Set target as the rock
       updateAgent('miner', {
         state: 'moving',
-        target: targetRock,
-        // Simple "path" - just the target coordinates
-        path: [{ x: targetRock.x, y: targetRock.y }]
+        target: nearestRock,
+        path: calculatePath(miner.x, miner.y, nearestRock.x, nearestRock.y)
       });
       
       addLogMessage("O minerador está indo minerar uma pedra.", "👴🏼");
+    } else {
+      // No rocks available, return to house to rest
+      const house = getHouseForAgent('miner');
+      if (house) {
+        updateAgent('miner', {
+          state: 'returning',
+          target: house,
+          path: calculatePath(miner.x, miner.y, house.x, house.y)
+        });
+        addLogMessage("Sem pedras para minerar. O minerador está voltando para casa.", "👴🏼");
+      }
     }
   }
-  // If moving, update position
+  
+  // Handle moving state - move towards target
   else if (miner.state === 'moving' && miner.target) {
-    const targetX = miner.target.x * 50;
-    const targetY = miner.target.y * 50;
-    
-    // Simple movement: move directly towards target
+    // Move towards the target
     let newX = miner.x;
     let newY = miner.y;
     
-    if (miner.x < targetX) newX += 5;
-    else if (miner.x > targetX) newX -= 5;
+    if (miner.x < miner.target.x) newX += 1;
+    else if (miner.x > miner.target.x) newX -= 1;
     
-    if (miner.y < targetY) newY += 5;
-    else if (miner.y > targetY) newY -= 5;
+    if (miner.y < miner.target.y) newY += 1;
+    else if (miner.y > miner.target.y) newY -= 1;
     
     // Check if arrived at target
-    const arrived = Math.abs(newX - targetX) < 5 && Math.abs(newY - targetY) < 5;
+    const arrived = newX === miner.target.x && newY === miner.target.y;
     
     if (arrived) {
+      // Start working on collecting the resource
       updateAgent('miner', {
-        x: targetX,
-        y: targetY,
+        x: miner.target.x,
+        y: miner.target.y,
         state: 'working',
         timer: 0
       });
@@ -466,41 +688,173 @@ function updateMiner() {
       });
     }
   }
-  // If working, update progress
+  
+  // Handle working state - mine the rock
   else if (miner.state === 'working' && miner.target) {
     const newTimer = miner.timer + 1;
     
-    // Working takes 70 ticks (mining is slower than woodcutting)
+    // Working takes 70 ticks
     if (newTimer >= 70) {
-      // Remove the rock and add stone
-      const targetTile = gridTiles.find(
-        tile => tile.x === miner.target?.x && tile.y === miner.target?.y
+      // Verify the rock is still there on the current tile
+      const currentTile = gridTiles.find(
+        tile => tile.x === miner.x && tile.y === miner.y && tile.resource === 'rock'
       );
       
-      if (targetTile && targetTile.resource === 'rock') {
+      if (currentTile) {
         const { updateTile } = getState();
         
         // Clear the resource
         updateTile({
-          ...targetTile,
+          ...currentTile,
           resource: undefined
         });
         
-        // Add stone
-        updateResources({
-          stone: resources.stone + 2
+        // Calculate stone amount
+        const stoneAmount = 2;
+        
+        // Now head to storage to deposit stone
+        const storageTile = getStorageTile();
+        if (storageTile) {
+          updateAgent('miner', {
+            state: 'storing',
+            target: storageTile,
+            path: calculatePath(miner.x, miner.y, storageTile.x, storageTile.y),
+            timer: 0
+          });
+          
+          addLogMessage(`O minerador coletou ${stoneAmount} pedras e está indo para o armazém.`, "🪨");
+        } else {
+          // If no storage, just update resources directly
+          updateResources({
+            stone: resources.stone + stoneAmount
+          });
+          
+          // Return to idle state
+          updateAgent('miner', {
+            state: 'idle',
+            target: null,
+            timer: 0,
+            path: []
+          });
+          
+          addLogMessage(`O minerador coletou ${stoneAmount} pedras.`, "🪨");
+        }
+      } else {
+        // Rock is gone, return to idle
+        updateAgent('miner', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+      }
+    } else {
+      updateAgent('miner', {
+        timer: newTimer
+      });
+    }
+  }
+  
+  // Handle storing state - move to storage
+  else if (miner.state === 'storing' && miner.target) {
+    // Move towards the storage
+    let newX = miner.x;
+    let newY = miner.y;
+    
+    if (miner.x < miner.target.x) newX += 1;
+    else if (miner.x > miner.target.x) newX -= 1;
+    
+    if (miner.y < miner.target.y) newY += 1;
+    else if (miner.y > miner.target.y) newY -= 1;
+    
+    // Check if arrived at storage
+    const arrived = newX === miner.target.x && newY === miner.target.y;
+    
+    if (arrived) {
+      // Store the stone (add to resources)
+      const stoneAmount = 2; // Basic stone amount
+      updateResources({
+        stone: resources.stone + stoneAmount
+      });
+      
+      // Find home to return to
+      const house = getHouseForAgent('miner');
+      if (house) {
+        updateAgent('miner', {
+          x: miner.target.x,
+          y: miner.target.y,
+          state: 'returning',
+          target: house,
+          path: calculatePath(miner.target.x, miner.target.y, house.x, house.y),
+          timer: 0
         });
         
-        addLogMessage("O minerador coletou 2 pedras.", "🪨");
+        addLogMessage("O minerador guardou as pedras e está retornando para casa.", "👴🏼");
+      } else {
+        // No house, go back to idle
+        updateAgent('miner', {
+          x: miner.target.x,
+          y: miner.target.y,
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
       }
+    } else {
+      updateAgent('miner', {
+        x: newX,
+        y: newY
+      });
+    }
+  }
+  
+  // Handle returning state - move back to house
+  else if (miner.state === 'returning' && miner.target) {
+    // Move towards home
+    let newX = miner.x;
+    let newY = miner.y;
+    
+    if (miner.x < miner.target.x) newX += 1;
+    else if (miner.x > miner.target.x) newX -= 1;
+    
+    if (miner.y < miner.target.y) newY += 1;
+    else if (miner.y > miner.target.y) newY -= 1;
+    
+    // Check if arrived at house
+    const arrived = newX === miner.target.x && newY === miner.target.y;
+    
+    if (arrived) {
+      // Rest in the house
+      updateAgent('miner', {
+        x: miner.target.x,
+        y: miner.target.y,
+        state: 'resting',
+        target: null,
+        timer: 0
+      });
       
-      // Return to idle state
+      addLogMessage("O minerador chegou em casa e está descansando.", "👴🏼");
+    } else {
+      updateAgent('miner', {
+        x: newX,
+        y: newY
+      });
+    }
+  }
+  
+  // Handle resting state - rest in house for a while
+  else if (miner.state === 'resting') {
+    const newTimer = miner.timer + 1;
+    
+    // Rest for 30 ticks
+    if (newTimer >= 30) {
       updateAgent('miner', {
         state: 'idle',
-        target: null,
-        timer: 0,
-        path: []
+        timer: 0
       });
+      
+      addLogMessage("O minerador terminou de descansar e voltou ao trabalho.", "👴🏼");
     } else {
       updateAgent('miner', {
         timer: newTimer
