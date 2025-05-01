@@ -699,30 +699,17 @@ function updateLumberjack() {
         wood: resources.wood + woodAmount
       });
       
-      // Find home to return to
-      const house = getHouseForAgent('lumber');
-      if (house) {
-        updateAgent('lumber', {
-          x: lumber.target.x,
-          y: lumber.target.y,
-          state: 'returning',
-          target: house,
-          path: calculatePath(lumber.target.x, lumber.target.y, house.x, house.y),
-          timer: 0
-        });
-        
-        addLogMessage("O lenhador guardou a madeira e está retornando para casa.", "🧑🏼‍🦰");
-      } else {
-        // No house, go back to idle
-        updateAgent('lumber', {
-          x: lumber.target.x,
-          y: lumber.target.y,
-          state: 'idle',
-          target: null,
-          timer: 0,
-          path: []
-        });
-      }
+      // After storing, look for more work rather than returning home
+      updateAgent('lumber', {
+        x: lumber.target.x,
+        y: lumber.target.y,
+        state: 'idle',
+        target: null,
+        timer: 0,
+        path: []
+      });
+      
+      addLogMessage("O lenhador guardou a madeira e está procurando mais árvores.", "🧑🏼‍🦰");
     } else {
       updateAgent('lumber', {
         x: newX,
@@ -1003,30 +990,17 @@ function updateMiner() {
         stone: resources.stone + stoneAmount
       });
       
-      // Find home to return to
-      const house = getHouseForAgent('miner');
-      if (house) {
-        updateAgent('miner', {
-          x: miner.target.x,
-          y: miner.target.y,
-          state: 'returning',
-          target: house,
-          path: calculatePath(miner.target.x, miner.target.y, house.x, house.y),
-          timer: 0
-        });
-        
-        addLogMessage("O minerador guardou as pedras e está retornando para casa.", "👴🏼");
-      } else {
-        // No house, go back to idle
-        updateAgent('miner', {
-          x: miner.target.x,
-          y: miner.target.y,
-          state: 'idle',
-          target: null,
-          timer: 0,
-          path: []
-        });
-      }
+      // After storing, look for more work rather than returning home
+      updateAgent('miner', {
+        x: miner.target.x,
+        y: miner.target.y,
+        state: 'idle',
+        target: null,
+        timer: 0,
+        path: []
+      });
+      
+      addLogMessage("O minerador guardou as pedras e está procurando mais rochas.", "👴🏼");
     } else {
       updateAgent('miner', {
         x: newX,
@@ -1794,30 +1768,17 @@ function updateFarmer() {
         return;
       }
       
-      // Find home to return to
-      const house = getHouseForAgent('farmer');
-      if (house) {
-        updateAgent('farmer', {
-          x: farmer.target.x,
-          y: farmer.target.y,
-          state: 'returning',
-          target: house,
-          path: calculatePath(farmer.target.x, farmer.target.y, house.x, house.y),
-          timer: 0
-        });
-        
-        addLogMessage("O agricultor guardou a colheita e está retornando para casa.", "👨‍🌾");
-      } else {
-        // No house, go back to idle
-        updateAgent('farmer', {
-          x: farmer.target.x,
-          y: farmer.target.y,
-          state: 'idle',
-          target: null,
-          timer: 0,
-          path: []
-        });
-      }
+      // After storing, look for more work rather than returning home
+      updateAgent('farmer', {
+        x: farmer.target.x,
+        y: farmer.target.y,
+        state: 'idle',
+        target: null,
+        timer: 0,
+        path: []
+      });
+      
+      addLogMessage("O agricultor guardou a colheita e está procurando mais campos para trabalhar.", "👨‍🌾");
     } else {
       updateAgent('farmer', {
         x: newX,
