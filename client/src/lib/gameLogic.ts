@@ -1175,21 +1175,36 @@ function updateMiner() {
 
 // Additional function for harvesting crops
 export function harvestCrop(tile: GridTile) {
+  // Validate the tile has a harvestable crop
   if (tile.type !== 'field' || !tile.planted || !tile.harvestable) {
     return;
   }
   
   const { resources, seedMap, updateResources, updateTile, addLogMessage } = getState();
   
-  // Add to crops
-  const updatedCrops = { ...resources.crops };
-  updatedCrops[tile.planted] += 1;
+  // Generate a random amount of crops (2-5)
+  const cropAmount = Math.floor(Math.random() * 4) + 2; // 2 to 5
   
+  // Add the crops to the player's inventory
+  const updatedCrops = { ...resources.crops };
+  updatedCrops[tile.planted] += cropAmount;
+  
+  // Also give a chance to get bonus seeds (40% chance)
+  const seedChance = Math.random();
+  const seedAmount = seedChance < 0.4 ? Math.floor(Math.random() * 2) + 1 : 0; // 1-2 seeds if lucky
+  
+  let updatedSeeds = { ...resources.seeds };
+  if (seedAmount > 0) {
+    updatedSeeds[tile.planted] += seedAmount;
+  }
+  
+  // Update resources
   updateResources({
-    crops: updatedCrops
+    crops: updatedCrops,
+    seeds: seedAmount > 0 ? updatedSeeds : undefined
   });
   
-  // Reset field
+  // Reset field to normal state
   updateTile({
     ...tile,
     planted: undefined,
@@ -1198,7 +1213,12 @@ export function harvestCrop(tile: GridTile) {
     fieldState: 'normal' // Reset field state after harvest
   });
   
-  addLogMessage(`Colheu 1 ${seedMap[tile.planted].emoji} com sucesso!`, "✂️");
+  // Log appropriate messages
+  addLogMessage(`Colheu ${cropAmount} ${seedMap[tile.planted].emoji} com sucesso!`, "✂️");
+  
+  if (seedAmount > 0) {
+    addLogMessage(`Você também conseguiu ${seedAmount} sementes extra!`, "🌱");
+  }
 }
 
 // Update farmer agent
@@ -1560,14 +1580,26 @@ function updateFarmer() {
   
   // Handle getting seed - go to storage to get seeds
   else if (farmer.state === 'gettingSeed') {
-    // First check if we have seeds to plant
+    // Select the best seed to plant based on:
+    // 1. Growth time (faster is better)
+    // 2. Value (higher is better)
+    // 3. Quantity available (more is better)
     let seedToPlant: SeedType | null = null;
     
-    for (const [seed, count] of Object.entries(resources.seeds)) {
-      if (count > 0) {
-        seedToPlant = seed as SeedType;
-        break;
-      }
+    const availableSeeds = Object.entries(resources.seeds)
+      .filter(([_, count]) => count > 0)
+      .map(([seedType, count]) => ({
+        type: seedType as SeedType,
+        count,
+        growthTime: seedMap[seedType as SeedType].growthTime,
+        value: seedMap[seedType as SeedType].cost * 2, // Selling price
+        // Calculate a score: higher value, faster growth, more quantity = better
+        score: (seedMap[seedType as SeedType].cost * 2) / seedMap[seedType as SeedType].growthTime + (count > 5 ? 2 : 0)
+      }))
+      .sort((a, b) => b.score - a.score); // Sort by score descending
+    
+    if (availableSeeds.length > 0) {
+      seedToPlant = availableSeeds[0].type;
     }
     
     if (!seedToPlant) {
@@ -1667,14 +1699,23 @@ function updateFarmer() {
   
   // Handle planting - move to field and plant seed
   else if (farmer.state === 'planting' && farmer.target) {
-    // Check if we have seeds to plant
+    // Select the best seed to plant using the same algorithm
     let seedToPlant: SeedType | null = null;
     
-    for (const [seed, count] of Object.entries(resources.seeds)) {
-      if (count > 0) {
-        seedToPlant = seed as SeedType;
-        break;
-      }
+    const availableSeeds = Object.entries(resources.seeds)
+      .filter(([_, count]) => count > 0)
+      .map(([seedType, count]) => ({
+        type: seedType as SeedType,
+        count,
+        growthTime: seedMap[seedType as SeedType].growthTime,
+        value: seedMap[seedType as SeedType].cost * 2, // Selling price
+        // Calculate a score: higher value, faster growth, more quantity = better
+        score: (seedMap[seedType as SeedType].cost * 2) / seedMap[seedType as SeedType].growthTime + (count > 5 ? 2 : 0)
+      }))
+      .sort((a, b) => b.score - a.score); // Sort by score descending
+    
+    if (availableSeeds.length > 0) {
+      seedToPlant = availableSeeds[0].type;
     }
     
     if (!seedToPlant) {
@@ -1812,9 +1853,25 @@ function updateFarmer() {
           const harvestAmount = Math.floor(Math.random() * 4) + 2; // Random number between 2-5
           updatedCrops[seedType] = (updatedCrops[seedType] || 0) + harvestAmount;
           
+          // Also give a chance to get bonus seeds (40% chance)
+          const seedChance = Math.random();
+          const seedAmount = seedChance < 0.4 ? Math.floor(Math.random() * 2) + 1 : 0; // 1-2 seeds if lucky
+          
+          let updatedSeeds = { ...resources.seeds };
+          if (seedAmount > 0) {
+            updatedSeeds[seedType] = (updatedSeeds[seedType] || 0) + seedAmount;
+          }
+          
+          // Update resources with harvested crop and possibly bonus seeds
           updateResources({
-            crops: updatedCrops
+            crops: updatedCrops,
+            seeds: seedAmount > 0 ? updatedSeeds : undefined
           });
+          
+          // If bonus seeds were generated, show a message
+          if (seedAmount > 0) {
+            addLogMessage(`O agricultor encontrou ${seedAmount} sementes extras de ${seedType}!`, "🌱");
+          }
           
           // Return to idle state
           updateAgent('farmer', {
@@ -1885,10 +1942,25 @@ function updateFarmer() {
       const harvestAmount = Math.floor(Math.random() * 4) + 2; // Random number between 2-5
       updatedCrops[storedCrop] = (updatedCrops[storedCrop] || 0) + harvestAmount;
       
-      // Update resources with stored crop
+      // Also give a chance to get bonus seeds (40% chance)
+      const seedChance = Math.random();
+      const seedAmount = seedChance < 0.4 ? Math.floor(Math.random() * 2) + 1 : 0; // 1-2 seeds if lucky
+      
+      let updatedSeeds = { ...resources.seeds };
+      if (seedAmount > 0) {
+        updatedSeeds[storedCrop] = (updatedSeeds[storedCrop] || 0) + seedAmount;
+      }
+      
+      // Update resources with stored crop and possibly bonus seeds
       updateResources({
-        crops: updatedCrops
+        crops: updatedCrops,
+        seeds: seedAmount > 0 ? updatedSeeds : undefined
       });
+      
+      // If bonus seeds were generated, show a message
+      if (seedAmount > 0) {
+        addLogMessage(`O agricultor encontrou ${seedAmount} sementes extras de ${storedCrop}!`, "🌱");
+      }
       
       // After storing, check if there are seeds and fields available for planting
       // If yes, continue working; if no, return home
