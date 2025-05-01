@@ -97,84 +97,85 @@ const Tile: React.FC<{
   onClick: (tile: GridTile) => void;
   seedMap: Record<SeedType, { emoji: string, cost: number, growthTime: number }>;
 }> = ({ tile, onClick, seedMap }) => {
-  // Determine tile background and content
-  // Always use grass as the base tile color
-  let bgColor = "bg-[color:var(--resource-grass)]";
-  let content = null;
+  // Get content emoji based on tile type
+  const getContentEmoji = () => {
+    // Resources
+    if (tile.resource) {
+      switch (tile.resource) {
+        case 'tree': return '🌲';
+        case 'bigTree': return '🌳';
+        case 'rock': return '🪨';
+      }
+    }
+    
+    // Structures
+    if (tile.structure) {
+      switch (tile.structure) {
+        case 'lumberjackHouse': return '🏡';
+        case 'minerHouse': return '🏚';
+        case 'storage': return '🏦';
+        case 'farmerHouse': return '🏘️';
+        case 'waterWell': return '⛲';
+      }
+    }
+    
+    // Fields with planted crops
+    if (tile.type === 'field' && tile.fieldType === 'plantio' && tile.planted) {
+      if (tile.harvestable) {
+        // Fully grown and ready to harvest
+        return seedMap[tile.planted]?.emoji || '🌾';
+      } else if (tile.growthStage && tile.growthStage > 75) {
+        // Almost ready
+        return '🌾';
+      } else if (tile.growthStage && tile.growthStage > 35) {
+        // Growing
+        return '🌿';
+      } else {
+        // Just planted
+        return '🌱';
+      }
+    }
+    
+    // Other field types
+    if (tile.type === 'field') {
+      switch (tile.fieldType) {
+        case 'agua': return null; // Just use background color
+        case 'pasto': return null; // Just use background color
+      }
+    }
+    
+    return null;
+  };
   
-  if (tile.type === 'field') {
-    switch (tile.fieldType) {
-      case 'plantio':
-        // Use default grass background for all field states
-        bgColor = "bg-[color:var(--resource-grass)]";
-        
-        // Set the field state emoji underneath the content
-        let fieldStateEmoji = '';
-        if (tile.fieldState === 'prepared') {
-          fieldStateEmoji = '🟧'; // Prepared planting soil
-        } else if (tile.fieldState === 'watered') {
-          fieldStateEmoji = '🟫'; // Watered planting soil
-        }
-        
-        // Set the appropriate emoji based on growth stage
-        if (tile.planted) {
-          // Handle different growth stages
-          if (tile.harvestable) {
-            // Fully grown and ready to harvest - show actual crop emoji
-            content = seedMap[tile.planted]?.emoji || '🌾';
-          } else if (tile.growthStage && tile.growthStage > 75) {
-            // Almost ready - show mature plant
-            content = '🌾';
-          } else if (tile.growthStage && tile.growthStage > 35) {
-            // Growing - show medium growth
-            content = '🌿';
-          } else {
-            // Just planted - show seedling
-            content = '🌱';
-          }
-        }
-        break;
-      case 'agua':
-        bgColor = "bg-[color:var(--resource-water)]";
-        break;
-      case 'pasto':
-        bgColor = "bg-[color:var(--resource-pasture)]";
-        break;
+  // Get background color based on tile type
+  const getBackgroundColor = () => {
+    if (tile.type === 'field') {
+      switch (tile.fieldType) {
+        case 'plantio': return "bg-[color:var(--resource-grass)]";
+        case 'agua': return "bg-[color:var(--resource-water)]";
+        case 'pasto': return "bg-[color:var(--resource-pasture)]";
+      }
     }
-  } else if (tile.resource) {
-    switch (tile.resource) {
-      case 'tree':
-        content = '🌲';
-        break;
-      case 'bigTree':
-        content = '🌳';
-        break;
-      case 'rock':
-        content = '🪨';
-        break;
+    
+    return "bg-[color:var(--resource-grass)]"; // Default
+  };
+  
+  // Get field state emoji for soil
+  const getFieldStateEmoji = () => {
+    if (tile.type === 'field' && tile.fieldType === 'plantio') {
+      if (tile.fieldState === 'prepared') {
+        return '🟧'; // Prepared planting soil
+      } else if (tile.fieldState === 'watered') {
+        return '🟫'; // Watered planting soil
+      }
     }
-  } else if (tile.structure) {
-    switch (tile.structure) {
-      case 'lumberjackHouse':
-        content = '🏡';
-        break;
-      case 'minerHouse':
-        content = '🏚';
-        break;
-      case 'storage':
-        content = '🏦';
-        break;
-      case 'farmerHouse':
-        content = '🏘️';
-        break;
-      case 'waterWell':
-        content = '⛲';
-        break;
-    }
-  }
-
-  // Show construction emoji if it exists on the tile
-  // This is set when fields are first placed and during preparation
+    
+    return null;
+  };
+  
+  const contentEmoji = getContentEmoji();
+  const bgColor = getBackgroundColor();
+  const fieldStateEmoji = getFieldStateEmoji();
   const showConstruction = tile.constructionEmoji !== undefined;
   
   return (
@@ -185,7 +186,7 @@ const Tile: React.FC<{
       onClick={() => onClick(tile)}
     >
       {/* Field state emoji (shown as background) */}
-      {tile.type === 'field' && tile.fieldType === 'plantio' && fieldStateEmoji && (
+      {fieldStateEmoji && (
         <div className="absolute inset-0 flex items-center justify-center text-4xl pointer-events-none">
           {fieldStateEmoji}
         </div>
@@ -196,8 +197,8 @@ const Tile: React.FC<{
         <div className="text-2xl pointer-events-none animate-pulse-custom z-10">{tile.constructionEmoji}</div>
       )}
       
-      {!showConstruction && content && (
-        <div className="text-2xl pointer-events-none z-10">{content}</div>
+      {!showConstruction && contentEmoji && (
+        <div className="text-2xl pointer-events-none z-10">{contentEmoji}</div>
       )}
     </div>
   );
