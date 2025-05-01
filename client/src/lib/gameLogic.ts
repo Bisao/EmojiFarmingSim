@@ -1,17 +1,20 @@
 import { GridTile, SeedType } from "./gameTypes";
-import { gameStateStore } from "./gameState";
+import { useGameStateContext } from "./gameState";
+
+// Create a state instance to be used by game logic functions
+let gameStateInstance: ReturnType<typeof useGameStateContext> | null = null;
+
+// Function to set the game state instance from a component
+export function setGameStateInstance(instance: ReturnType<typeof useGameStateContext>) {
+  gameStateInstance = instance;
+}
 
 // Get access to game state and its methods
 const getState = () => {
-  const state = gameStateStore.getState();
-  return {
-    ...state,
-    updateResources: state.updateResources,
-    updateTile: state.updateTile,
-    setSelected: state.setSelected,
-    updateAgent: state.updateAgent,
-    addLogMessage: state.addLogMessage
-  };
+  if (!gameStateInstance) {
+    throw new Error("Game state instance not set. Call setGameStateInstance first.");
+  }
+  return gameStateInstance;
 };
 
 // Handle tile click

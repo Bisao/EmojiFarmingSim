@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useGameState } from "@/hooks/use-game-state";
 import { handleTileClick } from "@/lib/gameLogic";
-import { GridTile } from "@/lib/gameTypes";
+import { GridTile, SeedType } from "@/lib/gameTypes";
 
 interface AgentProps {
   type: 'lumber' | 'miner';
@@ -31,7 +31,8 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
 const Tile: React.FC<{ 
   tile: GridTile; 
   onClick: (tile: GridTile) => void;
-}> = ({ tile, onClick }) => {
+  seedMap: Record<SeedType, { emoji: string, cost: number, growthTime: number }>;
+}> = ({ tile, onClick, seedMap }) => {
   // Determine tile background and content
   let bgColor = "bg-[color:var(--resource-grass)]";
   let content = null;
@@ -111,7 +112,8 @@ const GameGrid: React.FC = () => {
             <Tile 
               key={`${tile.x}-${tile.y}`} 
               tile={tile} 
-              onClick={handleTileClicked} 
+              onClick={handleTileClicked}
+              seedMap={seedMap}
             />
           ))}
           
