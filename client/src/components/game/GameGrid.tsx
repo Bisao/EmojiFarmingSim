@@ -262,7 +262,7 @@ const GameGrid: React.FC = () => {
   };
 
   return (
-    <div className="relative bg-card rounded-xl shadow-md p-3 overflow-auto flex-1 max-h-[calc(100vh-200px)]">
+    <div className="relative bg-green-100 dark:bg-green-900 rounded-xl shadow-md p-3 overflow-auto flex-1 max-h-[calc(100vh-200px)]">
       <div className="flex flex-col items-center justify-center h-full">
         <div id="game-grid" className="relative" ref={gridRef}>
           {gridTiles.map((tile, index) => (

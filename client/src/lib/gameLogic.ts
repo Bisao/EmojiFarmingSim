@@ -244,45 +244,46 @@ export function sellResource(resource: 'wood' | 'stone') {
     stone: 8
   };
   
-  // Check if player has the resource
-  if (resources[resource] <= 0) {
-    addLogMessage(`Você não tem ${resource === 'wood' ? 'madeira' : 'pedra'} para vender.`, "❌");
+  // Check if player has at least 10 of the resource
+  if (resources[resource] < 10) {
+    addLogMessage(`Você precisa de pelo menos 10 ${resource === 'wood' ? 'madeiras' : 'pedras'} para vender.`, "❌");
     return;
   }
   
-  // Sell one unit
+  // Sell batch of 10 units
+  const batchPrice = prices[resource] * 10;
   updateResources({
-    coins: resources.coins + prices[resource],
-    [resource]: resources[resource] - 1
+    coins: resources.coins + batchPrice,
+    [resource]: resources[resource] - 10
   });
   
   const emoji = resource === 'wood' ? '🪵' : '🪨';
-  addLogMessage(`Vendeu 1 ${emoji} por ${prices[resource]} moedas.`, "💰");
+  addLogMessage(`Vendeu 10 ${emoji} por ${batchPrice} moedas.`, "💰");
 }
 
 // Sell crop
 export function sellCrop(crop: string) {
   const { resources, seedMap, updateResources, addLogMessage } = getState();
   
-  // Check if player has the crop
-  if (resources.crops[crop as SeedType] <= 0) {
-    addLogMessage(`Você não tem colheitas de ${seedMap[crop as SeedType].emoji} para vender.`, "❌");
+  // Check if player has at least 10 of the crop
+  if (resources.crops[crop as SeedType] < 10) {
+    addLogMessage(`Você precisa de pelo menos 10 ${seedMap[crop as SeedType].emoji} para vender.`, "❌");
     return;
   }
   
-  // Calculate price (2x the seed cost)
-  const price = seedMap[crop as SeedType].cost * 2;
+  // Calculate price (2x the seed cost) for 10 units
+  const batchPrice = seedMap[crop as SeedType].cost * 2 * 10;
   
-  // Sell one unit
+  // Sell 10 units
   const updatedCrops = { ...resources.crops };
-  updatedCrops[crop as SeedType] -= 1;
+  updatedCrops[crop as SeedType] -= 10;
   
   updateResources({
-    coins: resources.coins + price,
+    coins: resources.coins + batchPrice,
     crops: updatedCrops
   });
   
-  addLogMessage(`Vendeu 1 ${seedMap[crop as SeedType].emoji} por ${price} moedas.`, "💰");
+  addLogMessage(`Vendeu 10 ${seedMap[crop as SeedType].emoji} por ${batchPrice} moedas.`, "💰");
 }
 
 // Helper to get emoji for resource tile
@@ -361,8 +362,13 @@ function updateGrowth() {
   const { gridTiles, seedMap, updateTile } = getState();
   
   gridTiles.forEach(tile => {
-    // Handle water timer for fields
-    if (tile.type === 'field' && tile.fieldType === 'plantio' && tile.fieldState === 'watered' && tile.waterTimer) {
+    // Skip tiles that are not fields
+    if (tile.type !== 'field' || tile.fieldType !== 'plantio') {
+      return;
+    }
+    
+    // Handle water timer for watered fields
+    if (tile.fieldState === 'watered' && tile.waterTimer) {
       const newWaterTimer = tile.waterTimer - 1;
       
       if (newWaterTimer <= 0) {
@@ -384,35 +390,49 @@ function updateGrowth() {
       }
     }
     
-    // Handle plant growth
-    if (tile.type === 'field' && tile.fieldType === 'plantio' && tile.planted && tile.growthStage !== undefined && tile.growthStage < 100) {
-      // The total growth cycle is 55 seconds as specified:
-      // Seedling (🌱) to medium growth (🌿): 0-35% happens in 35 seconds (350 ticks) - 0.1% per tick
-      // Medium growth (🌿) to mature growth: 35-100% happens in 20 seconds (200 ticks) - 0.325% per tick
+    // Handle plant growth for fields with plants
+    if (tile.planted && tile.growthStage !== undefined && tile.growthStage < 100) {
+      // Define growth stages and their timings
+      // Stage 1: Seedling (🌱) - 0-35% - 35 seconds
+      // Stage 2: Medium (🌿) - 35-100% - 20 seconds
+      // Total growth time: 55 seconds
       
       let growthIncrement;
+      let growthMessage = '';
+      let previousStage = '';
+      let currentStage = '';
       
+      // Determine current growth stage for messaging
       if (tile.growthStage < 35) {
-        // First stage: slower growth (seedling - 🌱)
-        growthIncrement = 0.1; // reaches 35% in 350 ticks (35 seconds)
+        previousStage = 'seedling';
+        growthIncrement = 0.1; // 0.1% per tick, reaches 35% in 350 ticks (35 seconds)
       } else {
-        // Second stage: faster growth (🌿 to harvest emoji)
-        growthIncrement = 0.325; // reaches 100% from 35% in 200 ticks (20 seconds)
+        previousStage = 'growing';
+        growthIncrement = 0.325; // 0.325% per tick, reaches 100% from 35% in 200 ticks (20 seconds)
       }
       
       const newGrowthStage = Math.min(100, tile.growthStage + growthIncrement);
       
-      // Update with appropriate emoji based on growth stage
+      // Determine if we're crossing a growth threshold
+      if (tile.growthStage < 35 && newGrowthStage >= 35) {
+        currentStage = 'growing';
+        growthMessage = `${seedMap[tile.planted].emoji} A planta está crescendo bem!`;
+      } else if (newGrowthStage >= 100 && tile.growthStage < 100) {
+        currentStage = 'harvestable';
+        growthMessage = `${seedMap[tile.planted].emoji} Colheita de ${tile.planted} está pronta!`;
+      }
+      
+      // Update the tile with new growth stage
       updateTile({
         ...tile,
         growthStage: newGrowthStage,
         harvestable: newGrowthStage >= 100
       });
       
-      // If fully grown, log it
-      if (newGrowthStage >= 100 && tile.growthStage < 100) {
+      // Log growth stage transition if applicable
+      if (growthMessage) {
         const { addLogMessage } = getState();
-        addLogMessage(`${seedMap[tile.planted].emoji} Colheita de ${tile.planted} está pronta!`, "🌾");
+        addLogMessage(growthMessage, "🌾");
       }
     }
   });
