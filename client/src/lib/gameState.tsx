@@ -144,11 +144,11 @@ const initialState: GameState = {
   },
   selected: null,
   structureMap: {
-    lumberjackHouse: { name: 'Casa do Lenhador', cost: { wood: 50, stone: 20, coins: 200 }, emoji: '🏡' },
-    minerHouse: { name: 'Casa do Minerador', cost: { wood: 60, stone: 30, coins: 250 }, emoji: '🏚' },
-    storage: { name: 'Armazém', cost: { wood: 100, stone: 50, coins: 500 }, emoji: '🏦' },
-    farmerHouse: { name: 'Casa do Fazendeiro', cost: { wood: 70, stone: 25, coins: 300 }, emoji: '🏘️' },
-    waterWell: { name: 'Poço de Água', cost: { wood: 40, stone: 80, coins: 150 }, emoji: '⛲' }
+    lumberjackHouse: { name: 'Casa do Lenhador', cost: { wood: 1, stone: 1, coins: 200 }, emoji: '🏡' },
+    minerHouse: { name: 'Casa do Minerador', cost: { wood: 1, stone: 1, coins: 250 }, emoji: '🏚' },
+    storage: { name: 'Armazém', cost: { wood: 1, stone: 1, coins: 500 }, emoji: '🏦' },
+    farmerHouse: { name: 'Casa do Fazendeiro', cost: { wood: 1, stone: 1, coins: 300 }, emoji: '🏘️' },
+    waterWell: { name: 'Poço de Água', cost: { wood: 1, stone: 1, coins: 150 }, emoji: '⛲' }
   },
   fieldMap: {
     plantio: { name: 'Campo de Plantio', cost: { coins: 100 }, color: 'var(--resource-soil)', emoji: '🌱' },
