@@ -100,7 +100,7 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
           className="mt-1 w-4/5 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
           id={`${type}-progress`}
         >
-          <div className="h-full bg-accent dark:bg-accent-foreground progress-bar"></div>
+          <div className="h-full bg-gradient-to-r from-purple-400 to-pink-400 dark:from-purple-600 dark:to-pink-500 progress-bar"></div>
         </div>
       )}
       {/* Removed status message below the NPC */}
@@ -234,7 +234,7 @@ const Tile: React.FC<{
       {tile.growthStage !== undefined && tile.growthStage < 100 && (
         <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-primary dark:bg-primary-foreground" 
+            className="h-full bg-gradient-to-r from-blue-400 to-green-400 dark:from-blue-600 dark:to-green-500 progress-bar" 
             style={{ width: `${tile.growthStage}%` }}
           ></div>
         </div>
@@ -244,7 +244,7 @@ const Tile: React.FC<{
       {showProgress && (
         <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-accent dark:bg-accent-foreground" 
+            className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 dark:from-yellow-600 dark:to-orange-500 progress-bar" 
             style={{ width: progressWidth }}
           ></div>
         </div>

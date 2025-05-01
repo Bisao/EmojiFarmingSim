@@ -129,9 +129,8 @@
   }
   
   @keyframes progress-animation {
-    0% { width: 0%; background-color: theme('colors.accent.DEFAULT'); }
-    50% { background-color: theme('colors.primary.DEFAULT'); }
-    100% { width: 100%; background-color: theme('colors.accent.DEFAULT'); }
+    0% { width: 0%; }
+    100% { width: 100%; }
   }
   
   .dark .progress-bar {
@@ -139,9 +138,8 @@
   }
   
   @keyframes progress-animation-dark {
-    0% { width: 0%; background-color: hsl(var(--accent)); }
-    50% { background-color: hsl(var(--primary)); }
-    100% { width: 100%; background-color: hsl(var(--accent)); }
+    0% { width: 0%; }
+    100% { width: 100%; }
   }
   
   .agent-move {
