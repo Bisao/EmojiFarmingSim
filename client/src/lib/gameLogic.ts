@@ -1237,7 +1237,7 @@ function updateFarmer() {
         target: house,
         path: calculatePath(farmer.x, farmer.y, house.x, house.y)
       });
-      addLogMessage("Sem tarefas agrícolas. O agricultor está voltando para casa.", "👨‍🌾");
+      // No tasks message removed - only show messages when working or storing
     }
   }
   
@@ -1555,7 +1555,7 @@ function updateFarmer() {
           path: calculatePath(farmer.x, farmer.y, storageTile.x, storageTile.y),
           timer: 1
         });
-        addLogMessage("O agricultor está indo buscar sementes no armazém.", "👨‍🌾");
+        // Going to work message removed - only show messages when working or storing
       } else {
         // No storage, go back to idle
         updateAgent('farmer', {
@@ -1885,7 +1885,7 @@ function updateFarmer() {
         timer: 0
       });
       
-      addLogMessage("O agricultor chegou em casa e está descansando.", "👨‍🌾");
+      // Resting message removed - only show messages when working or storing
     } else {
       updateAgent('farmer', {
         x: newX,
@@ -1906,7 +1906,7 @@ function updateFarmer() {
         timer: 0
       });
       
-      addLogMessage("O agricultor terminou de descansar e voltou ao trabalho.", "👨‍🌾");
+      // Done resting message removed - only show messages when working or storing
     } else {
       updateAgent('farmer', {
         timer: newTimer
