@@ -41,8 +41,8 @@
     /* Resource colors */
     --resource-grass: 100 65% 72%;
     --resource-soil: 34 49% 69%;
-    --resource-soil-prepared: 30 45% 60%; /* Light brown for prepared soil */
-    --resource-soil-watered: 26 40% 45%;  /* Darker brown for watered soil */
+    --resource-soil-prepared: 30 55% 55%; /* Light brown for prepared soil - more visible */
+    --resource-soil-watered: 26 60% 38%;  /* Darker brown for watered soil - more visible */
     --resource-water: 200 77% 74%;
     --resource-pasture: 60 100% 90%;
     --resource-construction: 40 40% 80%;  /* Light color for construction */
@@ -129,8 +129,19 @@
   }
   
   @keyframes progress-animation {
-    0% { width: 0%; }
-    100% { width: 100%; }
+    0% { width: 0%; background-color: theme('colors.accent.DEFAULT'); }
+    50% { background-color: theme('colors.primary.DEFAULT'); }
+    100% { width: 100%; background-color: theme('colors.accent.DEFAULT'); }
+  }
+  
+  .dark .progress-bar {
+    animation: progress-animation-dark 3s linear infinite;
+  }
+  
+  @keyframes progress-animation-dark {
+    0% { width: 0%; background-color: hsl(var(--accent)); }
+    50% { background-color: hsl(var(--primary)); }
+    100% { width: 100%; background-color: hsl(var(--accent)); }
   }
   
   .agent-move {
