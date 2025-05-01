@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import React, { createContext, useReducer, useContext, ReactNode, useRef, useEffect } from 'react';
 import { 
   GameState, 
   LogMessage, 
@@ -8,6 +8,25 @@ import {
   Agent,
   ActivePanelType
 } from './gameTypes';
+
+// Message filter tracking
+const DEBOUNCE_TIME = 5000; // 5 seconds
+const lastMessagesByType: Record<string, { text: string, timestamp: number }> = {};
+
+// Filter log message to avoid too many repeated messages
+function shouldLogMessage(text: string, category: string): boolean {
+  const now = Date.now();
+  const key = `${category}:${text}`;
+  const lastMessage = lastMessagesByType[key];
+  
+  // If this exact message in this category hasn't been seen or is older than debounce time
+  if (!lastMessage || (now - lastMessage.timestamp > DEBOUNCE_TIME)) {
+    lastMessagesByType[key] = { text, timestamp: now };
+    return true;
+  }
+  
+  return false;
+}
 
 // Define initial state
 const initialGridTiles: GridTile[] = [];
@@ -286,7 +305,11 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   };
   
   const addLogMessage = (text: string, icon: string) => {
-    dispatch({ type: 'ADD_LOG_MESSAGE', payload: { text, icon } });
+    // Only log the message if it's not duplicated within the debounce time
+    // Use the icon as a category for message filtering
+    if (shouldLogMessage(text, icon)) {
+      dispatch({ type: 'ADD_LOG_MESSAGE', payload: { text, icon } });
+    }
   };
   
   const setTutorialVisible = (visible: boolean) => {
