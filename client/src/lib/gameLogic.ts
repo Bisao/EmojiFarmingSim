@@ -17,6 +17,12 @@ const getState = () => {
   return gameStateInstance;
 };
 
+// Helper function to determine if we should show NPC messages
+// Only show messages when agents are working or storing resources
+function shouldShowNpcMessage(agentState: string): boolean {
+  return agentState === 'working' || agentState === 'storing';
+}
+
 // Handle tile click
 export function handleTileClick(tile: GridTile) {
   const { selected, setSelected, resources, structureMap, fieldMap, seedMap, addLogMessage, updateResources, updateTile } = getState();
@@ -563,7 +569,7 @@ function updateLumberjack() {
         state: 'idle',
         timer: 0
       });
-      addLogMessage("O lenhador saiu de casa para trabalhar.", "🧑🏼‍🦰");
+      // Only show important messages - state changes aren't important enough
     } else {
       updateAgent('lumber', {
         timer: newTimer
@@ -584,7 +590,7 @@ function updateLumberjack() {
         path: calculatePath(lumber.x, lumber.y, nearestTree.x, nearestTree.y)
       });
       
-      addLogMessage("O lenhador está indo cortar uma árvore.", "🧑🏼‍🦰");
+      // Going to work message removed - only show messages when working or storing
     } else {
       // No trees available, return to house to rest
       const house = getHouseForAgent('lumber');
@@ -594,7 +600,7 @@ function updateLumberjack() {
           target: house,
           path: calculatePath(lumber.x, lumber.y, house.x, house.y)
         });
-        addLogMessage("Sem árvores para cortar. O lenhador está voltando para casa.", "🧑🏼‍🦰");
+        // No trees message removed - only show messages when working or storing
       }
     }
   }
@@ -810,7 +816,7 @@ function updateLumberjack() {
         timer: 0
       });
       
-      addLogMessage("O lenhador chegou em casa e está descansando.", "🧑🏼‍🦰");
+      // Resting message removed - only show messages when working or storing
     } else {
       updateAgent('lumber', {
         x: newX,
