@@ -621,11 +621,11 @@ function updateLumberjack() {
       if (currentTile) {
         const { updateTile } = getState();
         
-        // Clear the resource and set respawn timer (45 seconds = 450 ticks at 10 ticks/second)
+        // Clear the resource and set a random respawn timer between 2-4 minutes
         updateTile({
           ...currentTile,
           resource: undefined,
-          respawnTimer: 450
+          respawnTimer: getRandomRespawnTime()
         });
         
         // Calculate wood amount
@@ -912,7 +912,7 @@ function updateMiner() {
       if (currentTile) {
         const { updateTile } = getState();
         
-        // Clear the resource and set respawn timer (45 seconds = 450 ticks at 10 ticks/second)
+        // Clear the resource and set a random respawn timer between 2-4 minutes
         updateTile({
           ...currentTile,
           resource: undefined,
