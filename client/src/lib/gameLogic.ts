@@ -384,9 +384,23 @@ function updateGrowth() {
     
     // Handle plant growth
     if (tile.type === 'field' && tile.fieldType === 'plantio' && tile.planted && tile.growthStage !== undefined && tile.growthStage < 100) {
-      // Increase growth by a small amount each tick
-      const newGrowthStage = Math.min(100, tile.growthStage + 1);
+      // The total growth cycle is 25 seconds (250 ticks)
+      // Seedling to medium growth: 0-35% happens in 15 seconds (150 ticks) - ~0.23% per tick
+      // Medium to mature growth: 35-100% happens in 10 seconds (100 ticks) - ~0.65% per tick
       
+      let growthIncrement;
+      
+      if (tile.growthStage < 35) {
+        // First stage: slower growth (seedling)
+        growthIncrement = 0.23; // reaches 35% in 150 ticks (15 seconds)
+      } else {
+        // Second stage: faster growth (maturing)
+        growthIncrement = 0.65; // reaches 100% from 35% in 100 ticks (10 seconds)
+      }
+      
+      const newGrowthStage = Math.min(100, tile.growthStage + growthIncrement);
+      
+      // Update with appropriate emoji based on growth stage
       updateTile({
         ...tile,
         growthStage: newGrowthStage,

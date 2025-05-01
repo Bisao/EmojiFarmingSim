@@ -97,8 +97,37 @@ const Tile: React.FC<{
   if (tile.type === 'field') {
     switch (tile.fieldType) {
       case 'plantio':
-        bgColor = "bg-[color:var(--resource-soil)]";
-        content = tile.planted ? seedMap[tile.planted]?.emoji || '🌱' : '';
+        // Choose the right background color based on field state
+        if (tile.fieldState === 'prepared') {
+          bgColor = "bg-[color:var(--resource-soil-prepared)]";
+        } else if (tile.fieldState === 'watered') {
+          bgColor = "bg-[color:var(--resource-soil-watered)]";
+        } else {
+          bgColor = "bg-[color:var(--resource-soil)]";
+        }
+        
+        // Set the appropriate emoji based on growth stage
+        if (tile.planted) {
+          // Handle different growth stages
+          if (tile.harvestable) {
+            // Fully grown and ready to harvest - show actual crop emoji
+            content = seedMap[tile.planted]?.emoji || '🌾';
+          } else if (tile.growthStage && tile.growthStage > 75) {
+            // Almost ready - show mature plant
+            content = '🌾';
+          } else if (tile.growthStage && tile.growthStage > 35) {
+            // Growing - show medium growth
+            content = '🌿';
+          } else {
+            // Just planted - show seedling
+            content = '🌱';
+          }
+        } else if (tile.fieldState === 'prepared' || tile.fieldState === 'watered') {
+          // Field is being prepared or watered but not planted yet
+          content = '';  // Empty prepared/watered field
+        } else {
+          content = '';  // Empty normal field
+        }
         break;
       case 'agua':
         bgColor = "bg-[color:var(--resource-water)]";
@@ -139,6 +168,19 @@ const Tile: React.FC<{
     }
   }
 
+  // Add construction emoji for tiles being prepared
+  let showConstruction = false;
+  
+  // Show construction emoji when a field is being prepared
+  if (tile.type === 'field' && tile.fieldType === 'plantio' && 
+      (tile.fieldState === 'prepared' || tile.fieldState === 'watered') && !tile.planted) {
+    showConstruction = true;
+  }
+  
+  // Show progress for farmers preparing/watering fields
+  const showFarmerProgress = tile.type === 'field' && !tile.planted && 
+                            (tile.fieldState === 'prepared' || tile.fieldState === 'watered');
+  
   return (
     <div
       className={`tile-transition relative w-[var(--tile-size)] h-[var(--tile-size)] ${bgColor} border border-green-200 rounded-lg cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95`}
@@ -146,12 +188,30 @@ const Tile: React.FC<{
       data-y={tile.y}
       onClick={() => onClick(tile)}
     >
-      {content && <div className="text-2xl pointer-events-none">{content}</div>}
+      {showConstruction && (
+        <div className="text-2xl pointer-events-none animate-pulse-custom">🚧</div>
+      )}
+      
+      {!showConstruction && content && (
+        <div className="text-2xl pointer-events-none">{content}</div>
+      )}
+      
+      {/* Progress bar for growth */}
       {tile.growthStage !== undefined && tile.growthStage < 100 && (
         <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 rounded-full overflow-hidden">
           <div 
             className="h-full bg-primary" 
             style={{ width: `${tile.growthStage}%` }}
+          ></div>
+        </div>
+      )}
+      
+      {/* Progress bar for field preparation */}
+      {showFarmerProgress && (
+        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-accent" 
+            style={{ width: "100%" }}
           ></div>
         </div>
       )}

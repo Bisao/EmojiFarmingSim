@@ -41,8 +41,11 @@
     /* Resource colors */
     --resource-grass: 100 65% 72%;
     --resource-soil: 34 49% 69%;
+    --resource-soil-prepared: 30 45% 60%; /* Light brown for prepared soil */
+    --resource-soil-watered: 26 40% 45%;  /* Darker brown for watered soil */
     --resource-water: 200 77% 74%;
     --resource-pasture: 60 100% 90%;
+    --resource-construction: 40 40% 80%;  /* Light color for construction */
     
     /* Game grid variables */
     --grid-cols: 8;
@@ -94,8 +97,11 @@
     /* Resource colors - slightly dimmed for dark mode */
     --resource-grass: 100 50% 55%;
     --resource-soil: 34 40% 50%;
+    --resource-soil-prepared: 30 35% 45%; /* Dark mode prepared soil */
+    --resource-soil-watered: 26 30% 35%;  /* Dark mode watered soil */
     --resource-water: 200 65% 55%;
     --resource-pasture: 60 55% 75%;
+    --resource-construction: 40 30% 60%;  /* Dark mode construction */
   }
 
   * {
