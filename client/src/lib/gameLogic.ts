@@ -1,4 +1,4 @@
-import { GridTile, SeedType } from "./gameTypes";
+import { GridTile, SeedType, ResourceType } from "./gameTypes";
 import { useGameStateContext } from "./gameState";
 
 // Create a state instance to be used by game logic functions
@@ -270,7 +270,64 @@ function getTileEmoji(tile: GridTile): string {
 // Game tick - to be called by a timer for game logic updates
 export function gameTick() {
   updateGrowth();
+  updateResourceRespawn();
   updateAgents();
+}
+
+// Update resource respawn timers
+function updateResourceRespawn() {
+  const { gridTiles, updateTile, addLogMessage } = getState();
+  
+  gridTiles.forEach(tile => {
+    // Check for tiles with respawn timers
+    if (tile.respawnTimer !== undefined && tile.respawnTimer > 0) {
+      const newTimer = tile.respawnTimer - 1;
+      
+      // If timer reaches 0, respawn the resource
+      if (newTimer <= 0) {
+        const originalResource = getOriginalResourceType(tile.x, tile.y);
+        if (originalResource) {
+          updateTile({
+            ...tile,
+            resource: originalResource,
+            respawnTimer: undefined
+          });
+          
+          const resourceEmoji = originalResource === 'tree' ? '🌲' : 
+                               originalResource === 'bigTree' ? '🌳' : '🪨';
+          
+          addLogMessage(`${resourceEmoji} Um recurso reapareceu no mapa!`, "✨");
+        } else {
+          // Clear the timer if no original resource
+          updateTile({
+            ...tile,
+            respawnTimer: undefined
+          });
+        }
+      } else {
+        // Update the timer
+        updateTile({
+          ...tile,
+          respawnTimer: newTimer
+        });
+      }
+    }
+  });
+}
+
+// Determine what resource originally was on a tile
+// This is a placeholder - in a real game, you'd have this information 
+// stored or would use a noise function to generate consistent resources
+function getOriginalResourceType(x: number, y: number): ResourceType | undefined {
+  // Simple pseudo-random determination based on coordinates
+  const hash = (x * 31 + y * 17) % 100;
+  
+  if (hash < 10) return undefined; // Some tiles remain empty
+  if (hash < 40) return 'tree';
+  if (hash < 50) return 'bigTree';
+  if (hash < 75) return 'rock';
+  
+  return undefined;
 }
 
 // Update plant growth
@@ -399,15 +456,21 @@ function updateLumberjack() {
   
   // Handle moving state - move towards target
   else if (lumber.state === 'moving' && lumber.target) {
-    // Move towards the target
+    // Move towards the target more slowly (move only every 5 ticks)
+    const shouldMove = lumber.timer % 5 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
-    if (lumber.x < lumber.target.x) newX += 1;
-    else if (lumber.x > lumber.target.x) newX -= 1;
+    if (shouldMove) {
+      if (lumber.x < lumber.target.x) newX += 1;
+      else if (lumber.x > lumber.target.x) newX -= 1;
+      
+      if (lumber.y < lumber.target.y) newY += 1;
+      else if (lumber.y > lumber.target.y) newY -= 1;
+    }
     
-    if (lumber.y < lumber.target.y) newY += 1;
-    else if (lumber.y > lumber.target.y) newY -= 1;
+    // Increment the timer for movement cooldown
+    const newTimer = lumber.timer + 1;
     
     // Check if arrived at target
     const arrived = newX === lumber.target.x && newY === lumber.target.y;
@@ -425,7 +488,8 @@ function updateLumberjack() {
     } else {
       updateAgent('lumber', {
         x: newX,
-        y: newY
+        y: newY,
+        timer: newTimer
       });
     }
   }
@@ -445,10 +509,11 @@ function updateLumberjack() {
       if (currentTile) {
         const { updateTile } = getState();
         
-        // Clear the resource
+        // Clear the resource and set respawn timer (45 seconds = 450 ticks at 10 ticks/second)
         updateTile({
           ...currentTile,
-          resource: undefined
+          resource: undefined,
+          respawnTimer: 450
         });
         
         // Calculate wood amount
@@ -499,15 +564,21 @@ function updateLumberjack() {
   
   // Handle storing state - move to storage
   else if (lumber.state === 'storing' && lumber.target) {
-    // Move towards the storage
+    // Move towards the storage more slowly
+    const shouldMove = lumber.timer % 5 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
-    if (lumber.x < lumber.target.x) newX += 1;
-    else if (lumber.x > lumber.target.x) newX -= 1;
+    if (shouldMove) {
+      if (lumber.x < lumber.target.x) newX += 1;
+      else if (lumber.x > lumber.target.x) newX -= 1;
+      
+      if (lumber.y < lumber.target.y) newY += 1;
+      else if (lumber.y > lumber.target.y) newY -= 1;
+    }
     
-    if (lumber.y < lumber.target.y) newY += 1;
-    else if (lumber.y > lumber.target.y) newY -= 1;
+    // Increment the timer for movement cooldown
+    const newTimer = lumber.timer + 1;
     
     // Check if arrived at storage
     const arrived = newX === lumber.target.x && newY === lumber.target.y;
@@ -658,15 +729,21 @@ function updateMiner() {
   
   // Handle moving state - move towards target
   else if (miner.state === 'moving' && miner.target) {
-    // Move towards the target
+    // Move towards the target more slowly (move only every 5 ticks)
+    const shouldMove = miner.timer % 5 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
-    if (miner.x < miner.target.x) newX += 1;
-    else if (miner.x > miner.target.x) newX -= 1;
+    if (shouldMove) {
+      if (miner.x < miner.target.x) newX += 1;
+      else if (miner.x > miner.target.x) newX -= 1;
+      
+      if (miner.y < miner.target.y) newY += 1;
+      else if (miner.y > miner.target.y) newY -= 1;
+    }
     
-    if (miner.y < miner.target.y) newY += 1;
-    else if (miner.y > miner.target.y) newY -= 1;
+    // Increment the timer for movement cooldown
+    const newTimer = miner.timer + 1;
     
     // Check if arrived at target
     const arrived = newX === miner.target.x && newY === miner.target.y;
@@ -684,7 +761,8 @@ function updateMiner() {
     } else {
       updateAgent('miner', {
         x: newX,
-        y: newY
+        y: newY,
+        timer: newTimer
       });
     }
   }
@@ -703,10 +781,11 @@ function updateMiner() {
       if (currentTile) {
         const { updateTile } = getState();
         
-        // Clear the resource
+        // Clear the resource and set respawn timer (45 seconds = 450 ticks at 10 ticks/second)
         updateTile({
           ...currentTile,
-          resource: undefined
+          resource: undefined,
+          respawnTimer: 450
         });
         
         // Calculate stone amount

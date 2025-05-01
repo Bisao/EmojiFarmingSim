@@ -41,6 +41,7 @@ export interface GridTile {
   planted?: SeedType;
   growthStage?: number; // 0-100
   harvestable?: boolean;
+  respawnTimer?: number; // Timer for resource respawn
 }
 
 export interface Agent {
