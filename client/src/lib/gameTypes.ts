@@ -54,6 +54,7 @@ export interface Agent {
   timer: number;
   target: GridTile | null;
   path: {x: number, y: number}[];
+  carryingCrop?: SeedType;  // Track the crop type that the farmer is carrying
 }
 
 export interface Resources {

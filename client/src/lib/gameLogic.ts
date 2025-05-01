@@ -1746,10 +1746,6 @@ function updateFarmer() {
       if (currentTile && currentTile.planted) {
         const seedType = currentTile.planted;
         
-        // Add crop to resources
-        const updatedCrops = { ...resources.crops };
-        updatedCrops[seedType] = (updatedCrops[seedType] || 0) + 1;
-        
         // Clear the tile for replanting
         updateTile({
           ...currentTile,
@@ -1766,12 +1762,16 @@ function updateFarmer() {
             state: 'storing',
             target: storageTile,
             path: calculatePath(farmer.x, farmer.y, storageTile.x, storageTile.y),
-            timer: 0
+            timer: 0,
+            carryingCrop: seedType  // Track what crop the farmer is carrying
           });
           
           addLogMessage(`O agricultor colheu ${seedType} ${seedMap[seedType].emoji} e está indo para o armazém.`, "🌾");
         } else {
           // If no storage, just update resources directly
+          const updatedCrops = { ...resources.crops };
+          updatedCrops[seedType] = (updatedCrops[seedType] || 0) + 1;
+          
           updateResources({
             crops: updatedCrops
           });
@@ -1781,7 +1781,8 @@ function updateFarmer() {
             state: 'idle',
             target: null,
             timer: 0,
-            path: []
+            path: [],
+            carryingCrop: undefined
           });
           
           addLogMessage(`O agricultor colheu ${seedType} ${seedMap[seedType].emoji}.`, "🌾");
@@ -1834,6 +1835,18 @@ function updateFarmer() {
         return;
       }
       
+      // Get the crop the farmer is carrying
+      const updatedCrops = { ...resources.crops };
+      
+      // Store the actual crop the farmer is carrying
+      const storedCrop = farmer.carryingCrop || 'wheat'; // Default to wheat if somehow undefined
+      updatedCrops[storedCrop] = (updatedCrops[storedCrop] || 0) + 1;
+      
+      // Update resources with stored crop
+      updateResources({
+        crops: updatedCrops
+      });
+      
       // After storing, look for more work rather than returning home
       updateAgent('farmer', {
         x: farmer.target.x,
@@ -1841,10 +1854,11 @@ function updateFarmer() {
         state: 'idle',
         target: null,
         timer: 0,
-        path: []
+        path: [],
+        carryingCrop: undefined // No longer carrying anything
       });
       
-      addLogMessage("O agricultor guardou a colheita e está procurando mais campos para trabalhar.", "👨‍🌾");
+      addLogMessage(`O agricultor guardou ${storedCrop} ${seedMap[storedCrop]?.emoji || '🌾'} no armazém.`, "👨‍🌾");
     } else {
       updateAgent('farmer', {
         x: newX,
