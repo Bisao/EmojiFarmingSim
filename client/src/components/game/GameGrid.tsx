@@ -43,8 +43,12 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
   return (
     <div 
       id={`agent-${type}`}
-      className="agent-move agent z-10" 
-      style={{ transform: `translate(${x * 50}px, ${y * 50}px)` }}
+      className="agent-move agent z-10 absolute" 
+      style={{ 
+        left: `${x * 50 + 25}px`, 
+        top: `${y * 50 + 25}px`,
+        transform: 'translate(-50%, -50%)'  // Center the agent precisely
+      }}
       data-state={state}
     >
       <div className={`text-2xl ${animationClass}`}>
