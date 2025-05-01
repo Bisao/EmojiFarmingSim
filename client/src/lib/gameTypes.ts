@@ -1,8 +1,9 @@
 export type ResourceType = 'tree' | 'bigTree' | 'rock';
-export type StructureType = 'lumberjackHouse' | 'minerHouse' | 'storage';
+export type StructureType = 'lumberjackHouse' | 'minerHouse' | 'storage' | 'farmerHouse' | 'waterWell';
 export type FieldType = 'plantio' | 'agua' | 'pasto';
 export type SeedType = 'wheat' | 'corn' | 'carrot' | 'potato' | 'tomato';
-export type AgentState = 'idle' | 'moving' | 'working' | 'returning' | 'storing' | 'resting' | 'waiting';
+export type FieldState = 'normal' | 'prepared' | 'watered';
+export type AgentState = 'idle' | 'moving' | 'working' | 'returning' | 'storing' | 'resting' | 'waiting' | 'preparing' | 'watering' | 'planting' | 'harvesting' | 'gettingWater' | 'gettingSeed';
 export type SelectionType = { type: 'structure' | 'field' | 'seed', key: string } | null;
 export type ActivePanelType = 'structures' | 'fields' | 'seeds' | 'storage' | 'status' | 'options' | null;
 
@@ -38,6 +39,8 @@ export interface GridTile {
   structure?: StructureType;
   type?: 'field';
   fieldType?: FieldType;
+  fieldState?: FieldState;
+  waterTimer?: number; // Timer for watered state (2 minutes)
   planted?: SeedType;
   growthStage?: number; // 0-100
   harvestable?: boolean;
@@ -73,6 +76,7 @@ export interface GameState {
   agents: {
     lumber: Agent;
     miner: Agent;
+    farmer: Agent;
   };
   selected: SelectionType;
   structureMap: Record<string, Structure>;

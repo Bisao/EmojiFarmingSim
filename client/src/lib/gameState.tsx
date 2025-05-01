@@ -57,9 +57,30 @@ if (storagePos !== lumberjackPos && storagePos !== minerPos) {
   };
 }
 
+// Place farmer house randomly
+const farmerPos = Math.floor(Math.random() * initialGridTiles.length);
+if (farmerPos !== lumberjackPos && farmerPos !== minerPos && farmerPos !== storagePos) {
+  initialGridTiles[farmerPos] = {
+    ...initialGridTiles[farmerPos],
+    resource: undefined,
+    structure: 'farmerHouse'
+  };
+}
+
+// Place water well randomly
+const wellPos = Math.floor(Math.random() * initialGridTiles.length);
+if (wellPos !== lumberjackPos && wellPos !== minerPos && wellPos !== storagePos && wellPos !== farmerPos) {
+  initialGridTiles[wellPos] = {
+    ...initialGridTiles[wellPos],
+    resource: undefined,
+    structure: 'waterWell'
+  };
+}
+
 // Initialize agent positions
 const lumberjackHouse = initialGridTiles.find(t => t.structure === 'lumberjackHouse');
 const minerHouse = initialGridTiles.find(t => t.structure === 'minerHouse');
+const farmerHouse = initialGridTiles.find(t => t.structure === 'farmerHouse');
 
 const initialAgentLumber: Agent = {
   x: lumberjackHouse ? lumberjackHouse.x : 0,
@@ -79,6 +100,15 @@ const initialAgentMiner: Agent = {
   path: []
 };
 
+const initialAgentFarmer: Agent = {
+  x: farmerHouse ? farmerHouse.x : 0,
+  y: farmerHouse ? farmerHouse.y : 0,
+  state: 'waiting', // Starts in "waiting" state to leave house after 10 seconds
+  timer: 0, // This will count up to 100 (10 seconds) before leaving
+  target: null,
+  path: []
+};
+
 const initialState: GameState = {
   resources: {
     coins: 1000,
@@ -90,13 +120,16 @@ const initialState: GameState = {
   gridTiles: initialGridTiles,
   agents: {
     lumber: initialAgentLumber,
-    miner: initialAgentMiner
+    miner: initialAgentMiner,
+    farmer: initialAgentFarmer
   },
   selected: null,
   structureMap: {
     lumberjackHouse: { name: 'Casa do Lenhador', cost: { wood: 50, stone: 20, coins: 200 }, emoji: '🏡' },
     minerHouse: { name: 'Casa do Minerador', cost: { wood: 60, stone: 30, coins: 250 }, emoji: '🏚' },
-    storage: { name: 'Armazém', cost: { wood: 100, stone: 50, coins: 500 }, emoji: '🏦' }
+    storage: { name: 'Armazém', cost: { wood: 100, stone: 50, coins: 500 }, emoji: '🏦' },
+    farmerHouse: { name: 'Casa do Fazendeiro', cost: { wood: 70, stone: 25, coins: 300 }, emoji: '🏘️' },
+    waterWell: { name: 'Poço de Água', cost: { wood: 40, stone: 80, coins: 150 }, emoji: '⛲' }
   },
   fieldMap: {
     plantio: { name: 'Campo de Plantio', cost: { coins: 100 }, color: 'var(--resource-soil)', emoji: '🌱' },
