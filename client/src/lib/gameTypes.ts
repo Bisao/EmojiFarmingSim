@@ -45,6 +45,7 @@ export interface GridTile {
   growthStage?: number; // 0-100
   harvestable?: boolean;
   respawnTimer?: number; // Timer for resource respawn
+  constructionEmoji?: string; // Emoji to show during construction (🚧)
 }
 
 export interface Agent {

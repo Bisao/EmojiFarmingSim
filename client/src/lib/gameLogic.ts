@@ -100,11 +100,13 @@ export function handleTileClick(tile: GridTile) {
       return;
     }
     
-    // Place field
+    // Place field with construction emoji 🚧 as specified
     updateTile({
       ...tile,
       type: 'field',
-      fieldType: selected.key as any
+      fieldType: selected.key as any,
+      fieldState: 'normal',
+      constructionEmoji: '🚧' // Add construction emoji when field is first placed
     });
     
     // Deduct coins
@@ -384,18 +386,18 @@ function updateGrowth() {
     
     // Handle plant growth
     if (tile.type === 'field' && tile.fieldType === 'plantio' && tile.planted && tile.growthStage !== undefined && tile.growthStage < 100) {
-      // The total growth cycle is 25 seconds (250 ticks)
-      // Seedling to medium growth: 0-35% happens in 15 seconds (150 ticks) - ~0.23% per tick
-      // Medium to mature growth: 35-100% happens in 10 seconds (100 ticks) - ~0.65% per tick
+      // The total growth cycle is 55 seconds as specified:
+      // Seedling (🌱) to medium growth (🌿): 0-35% happens in 35 seconds (350 ticks) - 0.1% per tick
+      // Medium growth (🌿) to mature growth: 35-100% happens in 20 seconds (200 ticks) - 0.325% per tick
       
       let growthIncrement;
       
       if (tile.growthStage < 35) {
-        // First stage: slower growth (seedling)
-        growthIncrement = 0.23; // reaches 35% in 150 ticks (15 seconds)
+        // First stage: slower growth (seedling - 🌱)
+        growthIncrement = 0.1; // reaches 35% in 350 ticks (35 seconds)
       } else {
-        // Second stage: faster growth (maturing)
-        growthIncrement = 0.65; // reaches 100% from 35% in 100 ticks (10 seconds)
+        // Second stage: faster growth (🌿 to harvest emoji)
+        growthIncrement = 0.325; // reaches 100% from 35% in 200 ticks (20 seconds)
       }
       
       const newGrowthStage = Math.min(100, tile.growthStage + growthIncrement);
@@ -1347,18 +1349,19 @@ function updateFarmer() {
   else if (farmer.state === 'preparing' && farmer.target) {
     const newTimer = farmer.timer + 1;
     
-    // Preparing takes 5 seconds (50 ticks)
-    if (newTimer >= 50) {
+    // Preparing takes 10 seconds (100 ticks) as specified
+    if (newTimer >= 100) {
       const currentTile = gridTiles.find(
         tile => tile.x === farmer.x && tile.y === farmer.y && 
                 tile.type === 'field' && tile.fieldType === 'plantio'
       );
       
       if (currentTile) {
-        // Update field to prepared state
+        // Update field to prepared state - change to light brown color
         updateTile({
           ...currentTile,
-          fieldState: 'prepared'
+          fieldState: 'prepared',
+          constructionEmoji: undefined // Remove construction emoji after preparation
         });
         
         // After preparing, go get water
@@ -1485,7 +1488,7 @@ function updateFarmer() {
     
     if (arrived) {
       // If just arrived, start the watering timer
-      if (farmer.timer < 40) {  // 4 seconds (40 ticks)
+      if (farmer.timer < 100) {  // 10 seconds (100 ticks) as specified
         updateAgent('farmer', {
           x: farmer.target.x,
           y: farmer.target.y,
@@ -1854,7 +1857,10 @@ function updateFarmer() {
       
       // Store the actual crop the farmer is carrying
       const storedCrop = farmer.carryingCrop || 'wheat'; // Default to wheat if somehow undefined
-      updatedCrops[storedCrop] = (updatedCrops[storedCrop] || 0) + 1;
+      
+      // Generate a random harvest amount between 2-5 crops as specified
+      const harvestAmount = Math.floor(Math.random() * 4) + 2; // Random number between 2-5
+      updatedCrops[storedCrop] = (updatedCrops[storedCrop] || 0) + harvestAmount;
       
       // Update resources with stored crop
       updateResources({
