@@ -79,9 +79,7 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
           <div className="h-full bg-accent w-0 progress-bar"></div>
         </div>
       )}
-      <div className="text-xs font-bold opacity-70 mt-1">
-        {state.charAt(0).toUpperCase() + state.slice(1)}
-      </div>
+      {/* Removed status message below the NPC */}
     </div>
   );
 };
@@ -92,6 +90,7 @@ const Tile: React.FC<{
   seedMap: Record<SeedType, { emoji: string, cost: number, growthTime: number }>;
 }> = ({ tile, onClick, seedMap }) => {
   // Determine tile background and content
+  // Always use grass as the base tile color
   let bgColor = "bg-[color:var(--resource-grass)]";
   let content = null;
   

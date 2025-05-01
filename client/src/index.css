@@ -39,7 +39,7 @@
     --ring: 24 5% 64%;
     
     /* Resource colors */
-    --resource-grass: 102 53% 62%;
+    --resource-grass: 100 65% 72%;
     --resource-soil: 34 49% 69%;
     --resource-water: 200 77% 74%;
     --resource-pasture: 60 100% 90%;
@@ -92,7 +92,7 @@
     --ring: 222 14% 35%;
     
     /* Resource colors - slightly dimmed for dark mode */
-    --resource-grass: 102 40% 45%;
+    --resource-grass: 100 50% 55%;
     --resource-soil: 34 40% 50%;
     --resource-water: 200 65% 55%;
     --resource-pasture: 60 55% 75%;
