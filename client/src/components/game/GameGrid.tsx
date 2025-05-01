@@ -13,7 +13,6 @@ interface AgentProps {
 const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
   // Determine animation class based on state
   let animationClass = '';
-  let showProgressBar = false;
   
   // Determine if the agent should be visible based on state
   // Hide agent emoji when they're inside buildings (waiting, resting, or storing)
@@ -28,37 +27,30 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
       break;
     case 'working':
       animationClass = 'animate-bounce-slow';
-      showProgressBar = true;
       break;
     case 'preparing':
       animationClass = 'animate-bounce-slow';
-      showProgressBar = true;
       break;
     case 'watering':
       animationClass = 'animate-bounce-slow';
-      showProgressBar = true;
       break;
     case 'harvesting':
       animationClass = 'animate-bounce-slow';
-      showProgressBar = true;
       break;
     case 'planting':
       animationClass = 'animate-bounce-slow';
-      showProgressBar = true;
       break;
     case 'gettingWater':
       animationClass = 'animate-bounce-slow';
       break;
     case 'gettingSeed':
       animationClass = 'animate-bounce-slow';
-      showProgressBar = true;
       break;
     case 'returning':
       animationClass = 'animate-bounce-slow';
       break;
     case 'storing':
       animationClass = 'animate-wiggle';
-      showProgressBar = true;
       break;
     case 'resting':
       animationClass = 'animate-pulse-custom';
@@ -93,14 +85,6 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
       {!isInBuilding && (
         <div className={`text-2xl ${animationClass}`}>
           {type === 'lumber' ? '🧑🏼‍🦰' : type === 'miner' ? '👴🏼' : '👨‍🌾'}
-        </div>
-      )}
-      {showProgressBar && (
-        <div 
-          className="mt-1 w-4/5 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
-          id={`${type}-progress`}
-        >
-          <div className="h-full bg-gradient-to-r from-purple-400 to-pink-400 dark:from-purple-600 dark:to-pink-500 progress-bar"></div>
         </div>
       )}
       {/* Removed status message below the NPC */}
@@ -196,25 +180,6 @@ const Tile: React.FC<{
   // This is set when fields are first placed and during preparation
   const showConstruction = tile.constructionEmoji !== undefined;
   
-  // Show progress bars for different field stages
-  let showProgress = false;
-  let progressWidth = "100%";
-  
-  // Progress bars for preparing, watering, planting, and harvesting
-  if (tile.type === 'field' && tile.fieldType === 'plantio') {
-    // Show progress for fields without construction emoji (being worked on)
-    if (!tile.planted && !showConstruction) {
-      showProgress = true;
-    }
-    
-    // We also need to show progress for harvesting
-    if (tile.planted && tile.harvestable) {
-      showProgress = true;
-    }
-    
-    // Growing progress is already handled separately in the growth stage progress bar
-  }
-  
   return (
     <div
       className={`tile-transition relative w-[var(--tile-size)] h-[var(--tile-size)] ${bgColor} border border-green-200 rounded-lg cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95`}
@@ -230,25 +195,7 @@ const Tile: React.FC<{
         <div className="text-2xl pointer-events-none">{content}</div>
       )}
       
-      {/* Progress bar for growth */}
-      {tile.growthStage !== undefined && tile.growthStage < 100 && (
-        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-blue-400 to-green-400 dark:from-blue-600 dark:to-green-500 progress-bar" 
-            style={{ width: `${tile.growthStage}%` }}
-          ></div>
-        </div>
-      )}
-      
-      {/* Progress bar for field preparation */}
-      {showProgress && (
-        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 dark:from-yellow-600 dark:to-orange-500 progress-bar" 
-            style={{ width: progressWidth }}
-          ></div>
-        </div>
-      )}
+      {/* Progress bars removed */}
     </div>
   );
 };

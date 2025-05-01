@@ -123,24 +123,7 @@
     @apply transition-all duration-200 ease-in-out;
   }
   
-  .progress-bar {
-    @apply transition-[width] duration-100 ease-linear;
-    animation: progress-animation 3s linear infinite;
-  }
-  
-  @keyframes progress-animation {
-    0% { width: 0%; }
-    100% { width: 100%; }
-  }
-  
-  .dark .progress-bar {
-    animation: progress-animation-dark 3s linear infinite;
-  }
-  
-  @keyframes progress-animation-dark {
-    0% { width: 0%; }
-    100% { width: 100%; }
-  }
+  /* Progress bars removed */
   
   .agent-move {
     @apply transition-all duration-1000 ease-in-out;
