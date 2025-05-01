@@ -46,7 +46,7 @@ const RightSidebar: React.FC = () => {
         <h3 className="font-display text-lg font-bold text-primary-dark border-b border-muted pb-1">
           Campos
         </h3>
-        <div className="space-y-1" id="fields-panel">
+        <div className="space-y-2" id="fields-panel">
           {/* Tab navigation */}
           <div className="flex border-b mb-2">
             <button 
@@ -58,26 +58,24 @@ const RightSidebar: React.FC = () => {
           </div>
           
           {/* Fields tab */}
-          <div className="max-h-48 overflow-y-auto pr-1">
+          <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
             {Object.entries(fieldMap).map(([key, field]) => (
-              <button 
-                key={key}
-                className={`flex items-center gap-2 p-2 rounded-lg transition-colors w-full ${
-                  selected?.type === "field" && selected.key === key
-                    ? "bg-primary text-white"
-                    : "bg-muted hover:bg-primary hover:text-white"
-                }`}
-                onClick={() => handleFieldSelect(key)}
-              >
-                <span className={`w-6 h-6 rounded-md`} style={{ backgroundColor: field.color }}></span>
-                <div className="flex-1 text-left">
-                  <div>{field.name}</div>
-                  <div className="text-xs flex items-center">
-                    <span>{field.cost.coins}</span>
-                    <span className="text-xs">🪙</span>
-                  </div>
+              <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{field.emoji}</span>
+                  <span className="text-sm font-medium">{field.name}</span>
                 </div>
-              </button>
+                <button 
+                  className={`px-2 py-1 text-xs rounded-lg transition-colors ${
+                    selected?.type === "field" && selected.key === key
+                      ? "bg-primary text-white"
+                      : "bg-accent text-primary-dark hover:bg-accent-dark"
+                  }`}
+                  onClick={() => handleFieldSelect(key)}
+                >
+                  <span>{field.cost.coins}🪙</span>
+                </button>
+              </div>
             ))}
           </div>
         </div>
@@ -88,7 +86,7 @@ const RightSidebar: React.FC = () => {
         <h3 className="font-display text-lg font-bold text-primary-dark border-b border-muted pb-1">
           Sementes
         </h3>
-        <div className="space-y-1" id="seeds-shop-panel">
+        <div className="space-y-2" id="seeds-shop-panel">
           {/* Tab navigation */}
           <div className="flex border-b mb-2">
             <button 
@@ -100,23 +98,21 @@ const RightSidebar: React.FC = () => {
           </div>
           
           {/* Seeds shop tab */}
-          <div className="max-h-48 overflow-y-auto pr-1">
+          <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
             {Object.entries(seedMap).map(([key, seed]) => (
               <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">{seed.emoji}</span>
                   <span className="text-sm font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500">{seed.cost}🪙</span>
-                  <button 
-                    className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center hover:bg-primary-dark transition-colors"
-                    onClick={() => handleBuySeed(key)}
-                    aria-label={`Buy ${key} seeds`}
-                  >
-                    +
-                  </button>
-                </div>
+                <button 
+                  className="px-2 py-1 text-xs rounded-lg bg-accent text-primary-dark hover:bg-accent-dark transition-colors flex items-center gap-1"
+                  onClick={() => handleBuySeed(key)}
+                  aria-label={`Buy ${key} seeds`}
+                >
+                  <span>{seed.cost}🪙</span>
+                  <span>+</span>
+                </button>
               </div>
             ))}
           </div>
@@ -128,7 +124,7 @@ const RightSidebar: React.FC = () => {
         <h3 className="font-display text-lg font-bold text-primary-dark border-b border-muted pb-1">
           Armazém
         </h3>
-        <div className="space-y-1" id="storage-panel">
+        <div className="space-y-2" id="storage-panel">
           {/* Tab navigation */}
           <div className="flex border-b mb-2">
             <button 
@@ -165,19 +161,18 @@ const RightSidebar: React.FC = () => {
           
           {/* Resources tab */}
           {storageTab === 'resources' && (
-            <div className="max-h-48 overflow-y-auto pr-1">
+            <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
               <div className="flex items-center justify-between p-2 bg-muted rounded-lg">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">🪵</span>
                   <span className="text-sm font-medium">{resources.wood}</span>
                 </div>
                 <button 
-                  className="flex items-center gap-1 text-xs bg-accent text-primary-dark px-2 py-1 rounded-lg hover:bg-accent-dark transition-colors"
+                  className="px-2 py-1 text-xs rounded-lg bg-accent text-primary-dark hover:bg-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleSellResource('wood')}
-                  disabled={resources.wood === 0}
+                  disabled={resources.wood < 10}
                 >
                   <span>5🪙</span>
-                  <span>🛒</span>
                 </button>
               </div>
               <div className="flex items-center justify-between p-2 bg-muted rounded-lg">
@@ -186,12 +181,11 @@ const RightSidebar: React.FC = () => {
                   <span className="text-sm font-medium">{resources.stone}</span>
                 </div>
                 <button 
-                  className="flex items-center gap-1 text-xs bg-accent text-primary-dark px-2 py-1 rounded-lg hover:bg-accent-dark transition-colors"
+                  className="px-2 py-1 text-xs rounded-lg bg-accent text-primary-dark hover:bg-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleSellResource('stone')}
-                  disabled={resources.stone === 0}
+                  disabled={resources.stone < 10}
                 >
                   <span>8🪙</span>
-                  <span>🛒</span>
                 </button>
               </div>
             </div>
@@ -199,7 +193,7 @@ const RightSidebar: React.FC = () => {
           
           {/* Crops tab */}
           {storageTab === 'crops' && (
-            <div className="max-h-48 overflow-y-auto pr-1">
+            <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
               {Object.entries(resources.crops).map(([key, amount]) => (
                 <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
                   <div className="flex items-center gap-2">
@@ -207,12 +201,11 @@ const RightSidebar: React.FC = () => {
                     <span className="text-sm font-medium">{amount}</span>
                   </div>
                   <button 
-                    className="flex items-center gap-1 text-xs bg-accent text-primary-dark px-2 py-1 rounded-lg hover:bg-accent-dark transition-colors"
+                    className="px-2 py-1 text-xs rounded-lg bg-accent text-primary-dark hover:bg-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => handleSellCrop(key)}
-                    disabled={amount === 0}
+                    disabled={amount < 10}
                   >
                     <span>{seedMap[key as SeedType]?.cost * 2 || 10}🪙</span>
-                    <span>🛒</span>
                   </button>
                 </div>
               ))}
@@ -221,14 +214,16 @@ const RightSidebar: React.FC = () => {
           
           {/* Seeds tab */}
           {storageTab === 'seeds' && (
-            <div className="max-h-48 overflow-y-auto pr-1">
+            <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
               {Object.entries(resources.seeds).map(([key, amount]) => (
                 <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{seedMap[key as SeedType]?.emoji || '🌱'}</span>
-                    <span className="text-sm font-medium">{amount}</span>
+                    <span className="text-sm font-medium">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}: {amount}
+                    </span>
                   </div>
-                  <div className="text-xs text-gray-500 px-2">
+                  <div className="px-2 py-1 text-xs rounded-lg bg-secondary text-secondary-foreground">
                     {amount > 0 ? 'Disponível' : 'Esgotado'}
                   </div>
                 </div>
