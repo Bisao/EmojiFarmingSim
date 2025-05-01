@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useGameState } from "@/hooks/use-game-state";
 import { buyField, buySeed, sellResource, sellCrop } from "@/lib/gameLogic";
+import { SeedType } from "@/lib/gameTypes";
 
 const RightSidebar: React.FC = () => {
   const { 
@@ -12,7 +13,7 @@ const RightSidebar: React.FC = () => {
     addLogMessage 
   } = useGameState();
   
-  const [activeTab, setActiveTab] = useState<'resources' | 'crops'>('resources');
+  const [activeTab, setActiveTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
 
   const handleFieldSelect = (key: string) => {
     if (selected?.type === "field" && selected.key === key) {
@@ -120,6 +121,16 @@ const RightSidebar: React.FC = () => {
             >
               Colheitas
             </button>
+            <button 
+              className={`px-2 py-1 font-medium text-sm border-b-2 ${
+                activeTab === 'seeds' 
+                  ? 'border-primary text-primary' 
+                  : 'border-transparent text-gray-500 hover:text-primary'
+              } transition-colors`}
+              onClick={() => setActiveTab('seeds')}
+            >
+              Sementes
+            </button>
           </div>
           
           {/* Resources tab */}
@@ -162,7 +173,7 @@ const RightSidebar: React.FC = () => {
               {Object.entries(resources.crops).map(([key, amount]) => (
                 <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">{seedMap[key]?.emoji || '🌱'}</span>
+                    <span className="text-xl">{seedMap[key as SeedType]?.emoji || '🌱'}</span>
                     <span className="text-sm font-medium">{amount}</span>
                   </div>
                   <button 
@@ -170,9 +181,26 @@ const RightSidebar: React.FC = () => {
                     onClick={() => handleSellCrop(key)}
                     disabled={amount === 0}
                   >
-                    <span>{seedMap[key]?.cost * 2 || 10}🪙</span>
+                    <span>{seedMap[key as SeedType]?.cost * 2 || 10}🪙</span>
                     <span>🛒</span>
                   </button>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Seeds tab */}
+          {activeTab === 'seeds' && (
+            <div>
+              {Object.entries(resources.seeds).map(([key, amount]) => (
+                <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{seedMap[key as SeedType]?.emoji || '🌱'}</span>
+                    <span className="text-sm font-medium">{amount}</span>
+                  </div>
+                  <div className="text-xs text-gray-500 px-2">
+                    {amount > 0 ? 'Disponível' : 'Esgotado'}
+                  </div>
                 </div>
               ))}
             </div>
