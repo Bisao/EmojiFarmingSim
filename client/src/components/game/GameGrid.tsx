@@ -172,9 +172,19 @@ const Tile: React.FC<{
   // This is set when fields are first placed and during preparation
   const showConstruction = tile.constructionEmoji !== undefined;
   
-  // Show progress for farmers preparing/watering fields
-  const showFarmerProgress = tile.type === 'field' && !tile.planted && 
-                            (tile.fieldState === 'prepared' || tile.fieldState === 'watered');
+  // Show progress bars for different field stages
+  let showProgress = false;
+  let progressWidth = "100%";
+  
+  // Progress bars for field preparation and growth
+  if (tile.type === 'field' && tile.fieldType === 'plantio') {
+    // Show progress for farmers preparing/watering fields
+    if (!tile.planted && !showConstruction) {
+      showProgress = true;
+    }
+    
+    // Show growing progress - this is already handled separately in the growth stage progress bar
+  }
   
   return (
     <div
@@ -202,11 +212,11 @@ const Tile: React.FC<{
       )}
       
       {/* Progress bar for field preparation */}
-      {showFarmerProgress && (
+      {showProgress && (
         <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 rounded-full overflow-hidden">
           <div 
             className="h-full bg-accent" 
-            style={{ width: "100%" }}
+            style={{ width: progressWidth }}
           ></div>
         </div>
       )}

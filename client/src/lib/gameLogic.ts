@@ -1607,7 +1607,7 @@ function updateFarmer() {
     
     if (arrived) {
       // If just arrived, start the getting seed timer
-      if (farmer.timer < 30) {  // 3 seconds (30 ticks)
+      if (farmer.timer < 50) {  // 5 seconds (50 ticks) as specified
         updateAgent('farmer', {
           x: newX,
           y: newY,
@@ -1753,8 +1753,8 @@ function updateFarmer() {
   else if (farmer.state === 'harvesting' && farmer.target) {
     const newTimer = farmer.timer + 1;
     
-    // Harvesting takes 5 seconds (50 ticks)
-    if (newTimer >= 50) {
+    // Harvesting takes 10 seconds (100 ticks) as specified
+    if (newTimer >= 100) {
       const currentTile = gridTiles.find(
         tile => tile.x === farmer.x && tile.y === farmer.y && 
                 tile.type === 'field' && tile.planted && tile.harvestable
@@ -1870,16 +1870,50 @@ function updateFarmer() {
         crops: updatedCrops
       });
       
-      // After storing, look for more work rather than returning home
-      updateAgent('farmer', {
-        x: farmer.target.x,
-        y: farmer.target.y,
-        state: 'idle',
-        target: null,
-        timer: 0,
-        path: [],
-        carryingCrop: undefined // No longer carrying anything
-      });
+      // After storing, check if there are seeds and fields available for planting
+      // If yes, continue working; if no, return home
+      const hasSeeds = Object.values(resources.seeds).some(count => count > 0);
+      const hasFieldForPlanting = findWateredFieldForPlanting();
+      const hasFieldToWater = findFieldForFarmer();
+      
+      if (hasSeeds && (hasFieldForPlanting || hasFieldToWater)) {
+        // Continue working - stay in idle state to pick up next task
+        updateAgent('farmer', {
+          x: farmer.target.x,
+          y: farmer.target.y,
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: [],
+          carryingCrop: undefined // No longer carrying anything
+        });
+      } else {
+        // No more work to do, return home
+        const house = getHouseForAgent('farmer');
+        if (house) {
+          updateAgent('farmer', {
+            x: farmer.target.x,
+            y: farmer.target.y,
+            state: 'returning',
+            target: house,
+            path: calculatePath(farmer.target.x, farmer.target.y, house.x, house.y),
+            timer: 0,
+            carryingCrop: undefined
+          });
+          addLogMessage("Não há mais trabalho para fazer. O agricultor está retornando para casa.", "👨‍🌾");
+        } else {
+          // No house to return to, just stay idle
+          updateAgent('farmer', {
+            x: farmer.target.x,
+            y: farmer.target.y,
+            state: 'idle',
+            target: null,
+            timer: 0,
+            path: [],
+            carryingCrop: undefined
+          });
+        }
+      }
       
       addLogMessage(`O agricultor guardou ${storedCrop} ${seedMap[storedCrop]?.emoji || '🌾'} no armazém.`, "👨‍🌾");
     } else {
