@@ -385,11 +385,7 @@ function updateAgents() {
   updateMiner();
   updateFarmer();
   
-  // Log agent positions for debugging
-  const { agents } = getState();
-  console.log(`Lumber: x=${agents.lumber.x}, y=${agents.lumber.y}, state=${agents.lumber.state}`);
-  console.log(`Miner: x=${agents.miner.x}, y=${agents.miner.y}, state=${agents.miner.state}`);
-  console.log(`Farmer: x=${agents.farmer.x}, y=${agents.farmer.y}, state=${agents.farmer.state}`);
+  // We no longer log the agent positions and states in the console
 }
 
 // Get the house tile for an agent
