@@ -11,18 +11,55 @@ interface AgentProps {
 }
 
 const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
+  // Determine animation class based on state
+  let animationClass = '';
+  let showProgressBar = false;
+  
+  switch (state) {
+    case 'idle':
+      animationClass = 'animate-wiggle';
+      break;
+    case 'moving':
+      animationClass = 'animate-bounce-slow';
+      break;
+    case 'working':
+      animationClass = 'animate-bounce-slow';
+      showProgressBar = true;
+      break;
+    case 'returning':
+      animationClass = 'animate-bounce-slow';
+      break;
+    case 'storing':
+      animationClass = 'animate-wiggle';
+      break;
+    case 'resting':
+      animationClass = 'animate-pulse-custom';
+      break;
+    case 'waiting':
+      animationClass = 'animate-pulse-custom';
+      break;
+  }
+  
   return (
     <div 
       id={`agent-${type}`}
       className="agent-move agent z-10" 
-      style={{ transform: `translate(${x}px, ${y}px)` }}
+      style={{ transform: `translate(${x * 50}px, ${y * 50}px)` }}
+      data-state={state}
     >
-      <div className="text-xl">{type === 'lumber' ? '🧑🏼‍🦰' : '👴🏼'}</div>
-      <div 
-        className={`mt-1 w-4/5 h-1.5 bg-gray-200 rounded-full overflow-hidden ${state === 'working' ? 'block' : 'hidden'}`}
-        id={`${type}-progress`}
-      >
-        <div className="h-full bg-accent w-0 progress-bar"></div>
+      <div className={`text-2xl ${animationClass}`}>
+        {type === 'lumber' ? '🧑🏼‍🦰' : '👴🏼'}
+      </div>
+      {showProgressBar && (
+        <div 
+          className="mt-1 w-4/5 h-1.5 bg-gray-200 rounded-full overflow-hidden"
+          id={`${type}-progress`}
+        >
+          <div className="h-full bg-accent w-0 progress-bar"></div>
+        </div>
+      )}
+      <div className="text-xs font-bold opacity-70 mt-1">
+        {state.charAt(0).toUpperCase() + state.slice(1)}
       </div>
     </div>
   );
