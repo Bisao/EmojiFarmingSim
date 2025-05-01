@@ -617,22 +617,29 @@ function updateLumberjack() {
     } else {
       updateAgent('lumber', {
         x: newX,
-        y: newY
+        y: newY,
+        timer: newTimer
       });
     }
   }
   
   // Handle returning state - move back to house
   else if (lumber.state === 'returning' && lumber.target) {
-    // Move towards home
+    // Move towards home more slowly
+    const shouldMove = lumber.timer % 5 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
-    if (lumber.x < lumber.target.x) newX += 1;
-    else if (lumber.x > lumber.target.x) newX -= 1;
+    if (shouldMove) {
+      if (lumber.x < lumber.target.x) newX += 1;
+      else if (lumber.x > lumber.target.x) newX -= 1;
+      
+      if (lumber.y < lumber.target.y) newY += 1;
+      else if (lumber.y > lumber.target.y) newY -= 1;
+    }
     
-    if (lumber.y < lumber.target.y) newY += 1;
-    else if (lumber.y > lumber.target.y) newY -= 1;
+    // Increment the timer for movement cooldown
+    const newTimer = lumber.timer + 1;
     
     // Check if arrived at house
     const arrived = newX === lumber.target.x && newY === lumber.target.y;
@@ -651,7 +658,8 @@ function updateLumberjack() {
     } else {
       updateAgent('lumber', {
         x: newX,
-        y: newY
+        y: newY,
+        timer: newTimer
       });
     }
   }
@@ -836,15 +844,21 @@ function updateMiner() {
   
   // Handle storing state - move to storage
   else if (miner.state === 'storing' && miner.target) {
-    // Move towards the storage
+    // Move towards the storage more slowly
+    const shouldMove = miner.timer % 5 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
-    if (miner.x < miner.target.x) newX += 1;
-    else if (miner.x > miner.target.x) newX -= 1;
+    if (shouldMove) {
+      if (miner.x < miner.target.x) newX += 1;
+      else if (miner.x > miner.target.x) newX -= 1;
+      
+      if (miner.y < miner.target.y) newY += 1;
+      else if (miner.y > miner.target.y) newY -= 1;
+    }
     
-    if (miner.y < miner.target.y) newY += 1;
-    else if (miner.y > miner.target.y) newY -= 1;
+    // Increment the timer for movement cooldown
+    const newTimer = miner.timer + 1;
     
     // Check if arrived at storage
     const arrived = newX === miner.target.x && newY === miner.target.y;
@@ -883,22 +897,29 @@ function updateMiner() {
     } else {
       updateAgent('miner', {
         x: newX,
-        y: newY
+        y: newY,
+        timer: newTimer
       });
     }
   }
   
   // Handle returning state - move back to house
   else if (miner.state === 'returning' && miner.target) {
-    // Move towards home
+    // Move towards home more slowly
+    const shouldMove = miner.timer % 5 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
-    if (miner.x < miner.target.x) newX += 1;
-    else if (miner.x > miner.target.x) newX -= 1;
+    if (shouldMove) {
+      if (miner.x < miner.target.x) newX += 1;
+      else if (miner.x > miner.target.x) newX -= 1;
+      
+      if (miner.y < miner.target.y) newY += 1;
+      else if (miner.y > miner.target.y) newY -= 1;
+    }
     
-    if (miner.y < miner.target.y) newY += 1;
-    else if (miner.y > miner.target.y) newY -= 1;
+    // Increment the timer for movement cooldown
+    const newTimer = miner.timer + 1;
     
     // Check if arrived at house
     const arrived = newX === miner.target.x && newY === miner.target.y;
@@ -917,7 +938,8 @@ function updateMiner() {
     } else {
       updateAgent('miner', {
         x: newX,
-        y: newY
+        y: newY,
+        timer: newTimer
       });
     }
   }
