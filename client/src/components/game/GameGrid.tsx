@@ -1,0 +1,137 @@
+import React, { useEffect, useRef } from "react";
+import { useGameState } from "@/hooks/use-game-state";
+import { handleTileClick } from "@/lib/gameLogic";
+import { GridTile } from "@/lib/gameTypes";
+
+interface AgentProps {
+  type: 'lumber' | 'miner';
+  x: number;
+  y: number;
+  state: string;
+}
+
+const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
+  return (
+    <div 
+      id={`agent-${type}`}
+      className="agent-move agent z-10" 
+      style={{ transform: `translate(${x}px, ${y}px)` }}
+    >
+      <div className="text-xl">{type === 'lumber' ? '🧑🏼‍🦰' : '👴🏼'}</div>
+      <div 
+        className={`mt-1 w-4/5 h-1.5 bg-gray-200 rounded-full overflow-hidden ${state === 'working' ? 'block' : 'hidden'}`}
+        id={`${type}-progress`}
+      >
+        <div className="h-full bg-accent w-0 progress-bar"></div>
+      </div>
+    </div>
+  );
+};
+
+const Tile: React.FC<{ 
+  tile: GridTile; 
+  onClick: (tile: GridTile) => void;
+}> = ({ tile, onClick }) => {
+  // Determine tile background and content
+  let bgColor = "bg-[color:var(--resource-grass)]";
+  let content = null;
+  
+  if (tile.type === 'field') {
+    switch (tile.fieldType) {
+      case 'plantio':
+        bgColor = "bg-[color:var(--resource-soil)]";
+        content = tile.planted ? seedMap[tile.planted]?.emoji || '🌱' : '';
+        break;
+      case 'agua':
+        bgColor = "bg-[color:var(--resource-water)]";
+        break;
+      case 'pasto':
+        bgColor = "bg-[color:var(--resource-pasture)]";
+        break;
+    }
+  } else if (tile.resource) {
+    switch (tile.resource) {
+      case 'tree':
+        content = '🌲';
+        break;
+      case 'bigTree':
+        content = '🌳';
+        break;
+      case 'rock':
+        content = '🪨';
+        break;
+    }
+  } else if (tile.structure) {
+    switch (tile.structure) {
+      case 'lumberjackHouse':
+        content = '🏡';
+        break;
+      case 'minerHouse':
+        content = '🏚';
+        break;
+      case 'storage':
+        content = '🏦';
+        break;
+    }
+  }
+
+  return (
+    <div
+      className={`tile-transition relative w-[var(--tile-size)] h-[var(--tile-size)] ${bgColor} border border-green-200 rounded-lg cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95`}
+      data-x={tile.x}
+      data-y={tile.y}
+      onClick={() => onClick(tile)}
+    >
+      {content && <div className="text-2xl pointer-events-none">{content}</div>}
+      {tile.growthStage !== undefined && tile.growthStage < 100 && (
+        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-primary" 
+            style={{ width: `${tile.growthStage}%` }}
+          ></div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const GameGrid: React.FC = () => {
+  const { gridTiles, agents, seedMap } = useGameState();
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  const handleTileClicked = (tile: GridTile) => {
+    handleTileClick(tile);
+  };
+
+  return (
+    <div className="relative bg-card rounded-xl shadow-md p-3 overflow-auto flex-1 max-h-[calc(100vh-200px)]">
+      <div className="flex flex-col items-center justify-center h-full">
+        <div id="game-grid" className="relative" ref={gridRef}>
+          {gridTiles.map((tile, index) => (
+            <Tile 
+              key={`${tile.x}-${tile.y}`} 
+              tile={tile} 
+              onClick={handleTileClicked} 
+            />
+          ))}
+          
+          <Agent 
+            type="lumber" 
+            x={agents.lumber.x} 
+            y={agents.lumber.y} 
+            state={agents.lumber.state}
+          />
+          
+          <Agent 
+            type="miner" 
+            x={agents.miner.x} 
+            y={agents.miner.y} 
+            state={agents.miner.state}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GameGrid;

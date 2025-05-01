@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Colors */
+    --background: 84 21% 95%;
+    --foreground: 20 12% 18%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 20 12% 18%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 12% 18%;
+    
+    --primary: 102 35% 42%;
+    --primary-foreground: 0 0% 100%;
+    
+    --primary-dark: 102 39% 26%;
+    --primary-light: 102 35% 52%;
+    
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 20 12% 18%;
+    
+    --muted: 84 21% 95%;
+    --muted-foreground: 240 4% 46%;
+    
+    --accent: 40 89% 61%;
+    --accent-foreground: 102 39% 26%;
+    
+    --accent-dark: 40 68% 51%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 20 6% 90%;
+    --input: 20 6% 90%;
+    --ring: 24 5% 64%;
+    
+    /* Resource colors */
+    --resource-grass: 102 53% 62%;
+    --resource-soil: 34 49% 69%;
+    --resource-water: 200 77% 74%;
+    --resource-pasture: 60 100% 90%;
+    
+    /* Game grid variables */
+    --grid-cols: 8;
+    --grid-rows: 7;
+    --tile-size: 50px;
+    --tile-gap: 0.3rem;
+    
+    --radius: 0.75rem;
+    
+    /* Font Families */
+    --font-sans: 'Inter', sans-serif;
+    --font-display: 'Nunito', sans-serif;
+  }
+ 
+  .dark {
+    --background: 222 14% 15%;
+    --foreground: 0 0% 95%;
+    
+    --card: 222 16% 20%;
+    --card-foreground: 0 0% 95%;
+    
+    --popover: 222 16% 20%;
+    --popover-foreground: 0 0% 95%;
+    
+    --primary: 102 35% 42%;
+    --primary-foreground: 0 0% 100%;
+    
+    --primary-dark: 102 40% 32%;
+    --primary-light: 102 35% 52%;
+    
+    --secondary: 222 14% 25%;
+    --secondary-foreground: 0 0% 95%;
+    
+    --muted: 222 14% 18%;
+    --muted-foreground: 240 5% 65%;
+    
+    --accent: 40 89% 61%;
+    --accent-foreground: 102 39% 26%;
+    
+    --accent-dark: 40 68% 51%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 222 14% 30%;
+    --input: 222 14% 30%;
+    --ring: 222 14% 35%;
+    
+    /* Resource colors - slightly dimmed for dark mode */
+    --resource-grass: 102 40% 45%;
+    --resource-soil: 34 40% 50%;
+    --resource-water: 200 65% 55%;
+    --resource-pasture: 60 55% 75%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+@layer components {
+  /* Custom transitions for game elements */
+  .tile-transition {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .progress-bar {
+    @apply transition-[width] duration-100 ease-linear;
+  }
+  
+  .agent-move {
+    @apply transition-transform duration-300 ease-out;
+  }
+  
+  /* Game grid sizing */
+  #game-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), var(--tile-size));
+    grid-template-rows: repeat(var(--grid-rows), var(--tile-size));
+    gap: var(--tile-gap);
+  }
+  
+  .agent {
+    position: absolute;
+    width: var(--tile-size);
+    height: var(--tile-size);
+    @apply flex flex-col items-center justify-center pointer-events-none z-10;
+  }
+  
+  /* Animations */
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+  }
+  
+  .animate-bounce-slow {
+    animation: bounce 1s ease-in-out infinite;
+  }
+  
+  .animate-pulse-custom {
+    animation: pulse 2s ease-in-out infinite;
+  }
+}
+
+/* Media query for mobile devices */
+@media (max-width: 640px) {
+  :root {
+    --tile-size: 40px;
+  }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-opacity-5 bg-black rounded-sm;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-opacity-15 bg-black rounded-sm;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-opacity-25 bg-black;
+}
