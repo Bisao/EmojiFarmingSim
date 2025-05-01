@@ -605,7 +605,7 @@ function updateLumberjack() {
     
     if (arrived) {
       // If just arrived, start the storing timer
-      if (lumber.timer < 50) {
+      if (lumber.timer < 20) {  // 2 seconds (20 ticks at 10 ticks/second)
         updateAgent('lumber', {
           x: lumber.target.x,
           y: lumber.target.y,
@@ -614,7 +614,7 @@ function updateLumberjack() {
         return;
       }
       
-      // After 5 seconds (50 ticks), store the wood
+      // After 2 seconds (20 ticks), store the wood
       const woodAmount = 1; // Basic wood amount, could be variable
       updateResources({
         wood: resources.wood + woodAmount
@@ -698,8 +698,8 @@ function updateLumberjack() {
   else if (lumber.state === 'resting') {
     const newTimer = lumber.timer + 1;
     
-    // Rest for 30 ticks
-    if (newTimer >= 30) {
+    // Rest for 5 seconds (50 ticks at 10 ticks/second)
+    if (newTimer >= 50) {
       updateAgent('lumber', {
         state: 'idle',
         timer: 0
@@ -909,7 +909,7 @@ function updateMiner() {
     
     if (arrived) {
       // If just arrived, start the storing timer
-      if (miner.timer < 50) {
+      if (miner.timer < 20) {  // 2 seconds (20 ticks at 10 ticks/second)
         updateAgent('miner', {
           x: miner.target.x,
           y: miner.target.y,
@@ -918,7 +918,7 @@ function updateMiner() {
         return;
       }
       
-      // After 5 seconds (50 ticks), store the stone
+      // After 2 seconds (20 ticks), store the stone
       const stoneAmount = 2; // Basic stone amount
       updateResources({
         stone: resources.stone + stoneAmount
@@ -1002,8 +1002,8 @@ function updateMiner() {
   else if (miner.state === 'resting') {
     const newTimer = miner.timer + 1;
     
-    // Rest for 30 ticks
-    if (newTimer >= 30) {
+    // Rest for 5 seconds (50 ticks at 10 ticks/second)
+    if (newTimer >= 50) {
       updateAgent('miner', {
         state: 'idle',
         timer: 0
