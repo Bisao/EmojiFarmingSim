@@ -125,6 +125,12 @@
   
   .progress-bar {
     @apply transition-[width] duration-100 ease-linear;
+    animation: progress-animation 3s linear infinite;
+  }
+  
+  @keyframes progress-animation {
+    0% { width: 0%; }
+    100% { width: 100%; }
   }
   
   .agent-move {

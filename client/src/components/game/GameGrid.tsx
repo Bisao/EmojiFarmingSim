@@ -30,11 +30,35 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
       animationClass = 'animate-bounce-slow';
       showProgressBar = true;
       break;
+    case 'preparing':
+      animationClass = 'animate-bounce-slow';
+      showProgressBar = true;
+      break;
+    case 'watering':
+      animationClass = 'animate-bounce-slow';
+      showProgressBar = true;
+      break;
+    case 'harvesting':
+      animationClass = 'animate-bounce-slow';
+      showProgressBar = true;
+      break;
+    case 'planting':
+      animationClass = 'animate-bounce-slow';
+      showProgressBar = true;
+      break;
+    case 'gettingWater':
+      animationClass = 'animate-bounce-slow';
+      break;
+    case 'gettingSeed':
+      animationClass = 'animate-bounce-slow';
+      showProgressBar = true;
+      break;
     case 'returning':
       animationClass = 'animate-bounce-slow';
       break;
     case 'storing':
       animationClass = 'animate-wiggle';
+      showProgressBar = true;
       break;
     case 'resting':
       animationClass = 'animate-pulse-custom';
@@ -73,10 +97,10 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
       )}
       {showProgressBar && (
         <div 
-          className="mt-1 w-4/5 h-1.5 bg-gray-200 rounded-full overflow-hidden"
+          className="mt-1 w-4/5 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
           id={`${type}-progress`}
         >
-          <div className="h-full bg-accent w-0 progress-bar"></div>
+          <div className="h-full bg-accent dark:bg-accent-foreground progress-bar"></div>
         </div>
       )}
       {/* Removed status message below the NPC */}
@@ -176,14 +200,19 @@ const Tile: React.FC<{
   let showProgress = false;
   let progressWidth = "100%";
   
-  // Progress bars for field preparation and growth
+  // Progress bars for preparing, watering, planting, and harvesting
   if (tile.type === 'field' && tile.fieldType === 'plantio') {
-    // Show progress for farmers preparing/watering fields
+    // Show progress for fields without construction emoji (being worked on)
     if (!tile.planted && !showConstruction) {
       showProgress = true;
     }
     
-    // Show growing progress - this is already handled separately in the growth stage progress bar
+    // We also need to show progress for harvesting
+    if (tile.planted && tile.harvestable) {
+      showProgress = true;
+    }
+    
+    // Growing progress is already handled separately in the growth stage progress bar
   }
   
   return (
@@ -203,9 +232,9 @@ const Tile: React.FC<{
       
       {/* Progress bar for growth */}
       {tile.growthStage !== undefined && tile.growthStage < 100 && (
-        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 rounded-full overflow-hidden">
+        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-primary" 
+            className="h-full bg-primary dark:bg-primary-foreground" 
             style={{ width: `${tile.growthStage}%` }}
           ></div>
         </div>
@@ -213,9 +242,9 @@ const Tile: React.FC<{
       
       {/* Progress bar for field preparation */}
       {showProgress && (
-        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 rounded-full overflow-hidden">
+        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4/5 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-accent" 
+            className="h-full bg-accent dark:bg-accent-foreground" 
             style={{ width: progressWidth }}
           ></div>
         </div>
