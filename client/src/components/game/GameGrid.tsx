@@ -105,13 +105,15 @@ const Tile: React.FC<{
   if (tile.type === 'field') {
     switch (tile.fieldType) {
       case 'plantio':
-        // Choose the right background color based on field state
+        // Use default grass background for all field states
+        bgColor = "bg-[color:var(--resource-grass)]";
+        
+        // Set the field state emoji underneath the content
+        let fieldStateEmoji = '';
         if (tile.fieldState === 'prepared') {
-          bgColor = "bg-[color:var(--resource-soil-prepared)]";
+          fieldStateEmoji = '🟧'; // Prepared planting soil
         } else if (tile.fieldState === 'watered') {
-          bgColor = "bg-[color:var(--resource-soil-watered)]";
-        } else {
-          bgColor = "bg-[color:var(--resource-soil)]";
+          fieldStateEmoji = '🟫'; // Watered planting soil
         }
         
         // Set the appropriate emoji based on growth stage
@@ -130,11 +132,6 @@ const Tile: React.FC<{
             // Just planted - show seedling
             content = '🌱';
           }
-        } else if (tile.fieldState === 'prepared' || tile.fieldState === 'watered') {
-          // Field is being prepared or watered but not planted yet
-          content = '';  // Empty prepared/watered field
-        } else {
-          content = '';  // Empty normal field
         }
         break;
       case 'agua':
@@ -187,15 +184,21 @@ const Tile: React.FC<{
       data-y={tile.y}
       onClick={() => onClick(tile)}
     >
+      {/* Field state emoji (shown as background) */}
+      {tile.type === 'field' && tile.fieldType === 'plantio' && fieldStateEmoji && (
+        <div className="absolute inset-0 flex items-center justify-center text-4xl pointer-events-none">
+          {fieldStateEmoji}
+        </div>
+      )}
+    
+      {/* Construction emoji or content emoji (shown above field state) */}
       {showConstruction && (
-        <div className="text-2xl pointer-events-none animate-pulse-custom">{tile.constructionEmoji}</div>
+        <div className="text-2xl pointer-events-none animate-pulse-custom z-10">{tile.constructionEmoji}</div>
       )}
       
       {!showConstruction && content && (
-        <div className="text-2xl pointer-events-none">{content}</div>
+        <div className="text-2xl pointer-events-none z-10">{content}</div>
       )}
-      
-      {/* Progress bars removed */}
     </div>
   );
 };
