@@ -356,8 +356,14 @@ function updateGrowth() {
 
 // Update agent actions
 function updateAgents() {
+  // Update agent positions and state
   updateLumberjack();
   updateMiner();
+  
+  // Log agent positions for debugging
+  const { agents } = getState();
+  console.log(`Lumber: x=${agents.lumber.x}, y=${agents.lumber.y}, state=${agents.lumber.state}`);
+  console.log(`Miner: x=${agents.miner.x}, y=${agents.miner.y}, state=${agents.miner.state}`);
 }
 
 // Get the house tile for an agent
@@ -500,7 +506,21 @@ function updateLumberjack() {
     
     // Working takes 50 ticks
     if (newTimer >= 50) {
-      // Verify the tree is still there on the current tile
+      // Verify the agent is on the same tile as the target
+      // And the tree is still there on the current tile
+      const exactMatch = lumber.x === lumber.target.x && lumber.y === lumber.target.y;
+      if (!exactMatch) {
+        // Agent is not exactly on the target tile, return to idle
+        updateAgent('lumber', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+        addLogMessage("O lenhador precisa estar exatamente no mesmo local que a árvore.", "⚠️");
+        return;
+      }
+      
       const currentTile = gridTiles.find(
         tile => tile.x === lumber.x && tile.y === lumber.y && 
                 (tile.resource === 'tree' || tile.resource === 'bigTree')
@@ -781,7 +801,21 @@ function updateMiner() {
     
     // Working takes 70 ticks
     if (newTimer >= 70) {
-      // Verify the rock is still there on the current tile
+      // Verify the agent is on the same tile as the target
+      // And the rock is still there on the current tile
+      const exactMatch = miner.x === miner.target.x && miner.y === miner.target.y;
+      if (!exactMatch) {
+        // Agent is not exactly on the target tile, return to idle
+        updateAgent('miner', {
+          state: 'idle',
+          target: null,
+          timer: 0,
+          path: []
+        });
+        addLogMessage("O minerador precisa estar exatamente no mesmo local que a pedra.", "⚠️");
+        return;
+      }
+      
       const currentTile = gridTiles.find(
         tile => tile.x === miner.x && tile.y === miner.y && tile.resource === 'rock'
       );

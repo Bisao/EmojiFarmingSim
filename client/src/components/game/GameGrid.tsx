@@ -40,16 +40,27 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
       break;
   }
   
+  // Calculate the position, accounting for the gap between tiles
+  const gapSize = 4; // This should match the gap in your CSS (--tile-gap)
+  const tileSize = 50; // This should match --tile-size
+  
+  // Position in the grid, accounting for gaps between tiles
+  const posX = x * (tileSize + gapSize);
+  const posY = y * (tileSize + gapSize);
+  
   return (
     <div 
       id={`agent-${type}`}
       className="agent-move agent z-10 absolute" 
       style={{ 
-        left: `${x * 50 + 25}px`, 
-        top: `${y * 50 + 25}px`,
-        transform: 'translate(-50%, -50%)'  // Center the agent precisely
+        left: `${posX}px`, 
+        top: `${posY}px`,
+        width: `${tileSize}px`,
+        height: `${tileSize}px`
       }}
       data-state={state}
+      data-x={x}
+      data-y={y}
     >
       <div className={`text-2xl ${animationClass}`}>
         {type === 'lumber' ? '🧑🏼‍🦰' : '👴🏼'}
