@@ -1072,8 +1072,8 @@ function updateMiner() {
   
   // Handle returning state - move back to house
   else if (miner.state === 'returning' && miner.target) {
-    // Move towards home more slowly (move only every 15 ticks)
-    const shouldMove = miner.timer % 15 === 0;
+    // Move towards home more slowly (move only every 25 ticks)
+    const shouldMove = miner.timer % 25 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
@@ -1237,8 +1237,8 @@ function updateFarmer() {
   
   // Handle moving state - move towards target
   else if (farmer.state === 'moving' && farmer.target) {
-    // Move towards the target more slowly (move only every 15 ticks)
-    const shouldMove = farmer.timer % 15 === 0;
+    // Move towards the target more slowly (move only every 25 ticks)
+    const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
     
@@ -1379,8 +1379,8 @@ function updateFarmer() {
   
   // Handle getting water - move to water well
   else if (farmer.state === 'gettingWater' && farmer.target) {
-    // Move towards the water well more slowly (move only every 15 ticks)
-    const shouldMove = farmer.timer % 15 === 0;
+    // Move towards the water well more slowly (move only every 25 ticks)
+    const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
     
@@ -1445,7 +1445,7 @@ function updateFarmer() {
   // Handle watering - move to field and water it
   else if (farmer.state === 'watering' && farmer.target) {
     // Move towards the field more slowly (move only every 15 ticks)
-    const shouldMove = farmer.timer % 15 === 0;
+    const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
     
@@ -1564,7 +1564,7 @@ function updateFarmer() {
     }
     
     // Move towards the storage more slowly (move only every 15 ticks)
-    const shouldMove = farmer.timer % 15 === 0;
+    const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
     
@@ -1647,7 +1647,7 @@ function updateFarmer() {
     }
     
     // Move towards the field more slowly (move only every 15 ticks)
-    const shouldMove = farmer.timer % 15 === 0;
+    const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
     
@@ -1799,7 +1799,7 @@ function updateFarmer() {
   // Handle storing - store the crop
   else if (farmer.state === 'storing' && farmer.target) {
     // Move towards the storage more slowly (move only every 15 ticks)
-    const shouldMove = farmer.timer % 15 === 0;
+    const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
     
@@ -1851,7 +1851,7 @@ function updateFarmer() {
   // Handle returning state - move back to house
   else if (farmer.state === 'returning' && farmer.target) {
     // Move towards home more slowly (move only every 15 ticks)
-    const shouldMove = farmer.timer % 15 === 0;
+    const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
     
