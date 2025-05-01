@@ -22,27 +22,29 @@ const LeftSidebar: React.FC = () => {
         <h3 className="font-display text-lg font-bold text-primary-dark border-b border-muted pb-1">
           Recursos
         </h3>
-        <div className="grid grid-cols-1 gap-2">
-          <div className="flex justify-between items-center p-2 bg-muted rounded-lg">
-            <span className="flex items-center gap-1">
-              <span className="text-xl">🪙</span>
-              <span>Moedas</span>
-            </span>
-            <span className="font-semibold">{resources.coins}</span>
-          </div>
-          <div className="flex justify-between items-center p-2 bg-muted rounded-lg">
-            <span className="flex items-center gap-1">
-              <span className="text-xl">🪵</span>
-              <span>Madeira</span>
-            </span>
-            <span className="font-semibold">{resources.wood}</span>
-          </div>
-          <div className="flex justify-between items-center p-2 bg-muted rounded-lg">
-            <span className="flex items-center gap-1">
-              <span className="text-xl">🪨</span>
-              <span>Pedra</span>
-            </span>
-            <span className="font-semibold">{resources.stone}</span>
+        <div className="space-y-1">
+          <div className="max-h-48 overflow-y-auto pr-1">
+            <div className="flex items-center justify-between p-2 bg-muted rounded-lg mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🪙</span>
+                <span className="text-sm font-medium">Moedas</span>
+              </div>
+              <span className="text-sm font-semibold">{resources.coins}</span>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-muted rounded-lg mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🪵</span>
+                <span className="text-sm font-medium">Madeira</span>
+              </div>
+              <span className="text-sm font-semibold">{resources.wood}</span>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-muted rounded-lg mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🪨</span>
+                <span className="text-sm font-medium">Pedra</span>
+              </div>
+              <span className="text-sm font-semibold">{resources.stone}</span>
+            </div>
           </div>
         </div>
       </section>
@@ -52,26 +54,32 @@ const LeftSidebar: React.FC = () => {
         <h3 className="font-display text-lg font-bold text-primary-dark border-b border-muted pb-1">
           Estruturas
         </h3>
-        {Object.entries(structureMap).map(([key, structure]) => (
-          <button 
-            key={key}
-            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
-              selected?.type === "structure" && selected.key === key
-                ? "bg-primary text-white"
-                : "hover:bg-primary hover:text-white"
-            }`}
-            onClick={() => handleStructureSelect(key)}
-          >
-            <span className="text-xl">{structure.emoji}</span>
-            <div className="flex-1 text-left">
-              <div>{structure.name}</div>
-              <div className="text-xs flex items-center">
-                <span>{structure.cost.coins}</span>
-                <span className="text-xs">🪙</span>
+        <div className="space-y-1">
+          <div className="max-h-48 overflow-y-auto pr-1">
+            {Object.entries(structureMap).map(([key, structure]) => (
+              <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{structure.emoji}</span>
+                  <span className="text-sm font-medium">{structure.name}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-500">{structure.cost.coins}🪙</span>
+                  <button 
+                    className={`text-white text-xs rounded-full w-6 h-6 flex items-center justify-center transition-colors ${
+                      selected?.type === "structure" && selected.key === key
+                        ? "bg-primary-dark"
+                        : "bg-primary hover:bg-primary-dark"
+                    }`}
+                    onClick={() => handleStructureSelect(key)}
+                    aria-label={`Select ${structure.name}`}
+                  >
+                    {selected?.type === "structure" && selected.key === key ? "✓" : "+"}
+                  </button>
+                </div>
               </div>
-            </div>
-          </button>
-        ))}
+            ))}
+          </div>
+        </div>
       </section>
     </aside>
   );
