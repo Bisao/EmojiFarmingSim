@@ -168,14 +168,9 @@ const Tile: React.FC<{
     }
   }
 
-  // Add construction emoji for tiles being prepared
-  let showConstruction = false;
-  
-  // Show construction emoji when a field is being prepared
-  if (tile.type === 'field' && tile.fieldType === 'plantio' && 
-      (tile.fieldState === 'prepared' || tile.fieldState === 'watered') && !tile.planted) {
-    showConstruction = true;
-  }
+  // Show construction emoji if it exists on the tile
+  // This is set when fields are first placed and during preparation
+  const showConstruction = tile.constructionEmoji !== undefined;
   
   // Show progress for farmers preparing/watering fields
   const showFarmerProgress = tile.type === 'field' && !tile.planted && 
@@ -189,7 +184,7 @@ const Tile: React.FC<{
       onClick={() => onClick(tile)}
     >
       {showConstruction && (
-        <div className="text-2xl pointer-events-none animate-pulse-custom">🚧</div>
+        <div className="text-2xl pointer-events-none animate-pulse-custom">{tile.constructionEmoji}</div>
       )}
       
       {!showConstruction && content && (

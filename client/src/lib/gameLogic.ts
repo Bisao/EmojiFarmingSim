@@ -1787,7 +1787,10 @@ function updateFarmer() {
         } else {
           // If no storage, just update resources directly
           const updatedCrops = { ...resources.crops };
-          updatedCrops[seedType] = (updatedCrops[seedType] || 0) + 1;
+          
+          // Generate a random harvest amount between 2-5 crops as specified
+          const harvestAmount = Math.floor(Math.random() * 4) + 2; // Random number between 2-5
+          updatedCrops[seedType] = (updatedCrops[seedType] || 0) + harvestAmount;
           
           updateResources({
             crops: updatedCrops
