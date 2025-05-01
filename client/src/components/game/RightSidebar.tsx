@@ -14,6 +14,8 @@ const RightSidebar: React.FC = () => {
   } = useGameState();
   
   const [activeTab, setActiveTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
+  const [activeFieldsTab, setActiveFieldsTab] = useState<'fields'>('fields');
+  const [activeSeedsShopTab, setActiveSeedsShopTab] = useState<'seeds'>('seeds');
 
   const handleFieldSelect = (key: string) => {
     if (selected?.type === "field" && selected.key === key) {
@@ -44,26 +46,41 @@ const RightSidebar: React.FC = () => {
         <h3 className="font-display text-lg font-bold text-primary-dark border-b border-muted pb-1">
           Campos
         </h3>
-        {Object.entries(fieldMap).map(([key, field]) => (
-          <button 
-            key={key}
-            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
-              selected?.type === "field" && selected.key === key
-                ? "bg-primary text-white"
-                : "hover:bg-primary hover:text-white"
-            }`}
-            onClick={() => handleFieldSelect(key)}
-          >
-            <span className={`w-6 h-6 rounded-md`} style={{ backgroundColor: field.color }}></span>
-            <div className="flex-1 text-left">
-              <div>{field.name}</div>
-              <div className="text-xs flex items-center">
-                <span>{field.cost.coins}</span>
-                <span className="text-xs">🪙</span>
-              </div>
-            </div>
-          </button>
-        ))}
+        <div className="space-y-1" id="fields-panel">
+          {/* Tab navigation */}
+          <div className="flex border-b mb-2">
+            <button 
+              className={`px-2 py-1 font-medium text-sm border-b-2 border-primary text-primary transition-colors`}
+              onClick={() => setActiveFieldsTab('fields')}
+            >
+              Campos
+            </button>
+          </div>
+          
+          {/* Fields tab */}
+          <div className="max-h-48 overflow-y-auto pr-1">
+            {Object.entries(fieldMap).map(([key, field]) => (
+              <button 
+                key={key}
+                className={`flex items-center gap-2 p-2 rounded-lg transition-colors w-full ${
+                  selected?.type === "field" && selected.key === key
+                    ? "bg-primary text-white"
+                    : "bg-muted hover:bg-primary hover:text-white"
+                }`}
+                onClick={() => handleFieldSelect(key)}
+              >
+                <span className={`w-6 h-6 rounded-md`} style={{ backgroundColor: field.color }}></span>
+                <div className="flex-1 text-left">
+                  <div>{field.name}</div>
+                  <div className="text-xs flex items-center">
+                    <span>{field.cost.coins}</span>
+                    <span className="text-xs">🪙</span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </section>
       
       {/* Seeds panel */}
@@ -71,25 +88,38 @@ const RightSidebar: React.FC = () => {
         <h3 className="font-display text-lg font-bold text-primary-dark border-b border-muted pb-1">
           Sementes
         </h3>
-        <div className="space-y-1">
-          {Object.entries(seedMap).map(([key, seed]) => (
-            <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{seed.emoji}</span>
-                <span className="text-sm font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+        <div className="space-y-1" id="seeds-shop-panel">
+          {/* Tab navigation */}
+          <div className="flex border-b mb-2">
+            <button 
+              className={`px-2 py-1 font-medium text-sm border-b-2 border-primary text-primary transition-colors`}
+              onClick={() => setActiveSeedsShopTab('seeds')}
+            >
+              Comprar
+            </button>
+          </div>
+          
+          {/* Seeds shop tab */}
+          <div className="max-h-48 overflow-y-auto pr-1">
+            {Object.entries(seedMap).map(([key, seed]) => (
+              <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{seed.emoji}</span>
+                  <span className="text-sm font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-500">{seed.cost}🪙</span>
+                  <button 
+                    className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center hover:bg-primary-dark transition-colors"
+                    onClick={() => handleBuySeed(key)}
+                    aria-label={`Buy ${key} seeds`}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-500">{seed.cost}🪙</span>
-                <button 
-                  className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center hover:bg-primary-dark transition-colors"
-                  onClick={() => handleBuySeed(key)}
-                  aria-label={`Buy ${key} seeds`}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
       
@@ -135,7 +165,7 @@ const RightSidebar: React.FC = () => {
           
           {/* Resources tab */}
           {activeTab === 'resources' && (
-            <div>
+            <div className="max-h-48 overflow-y-auto pr-1">
               <div className="flex items-center justify-between p-2 bg-muted rounded-lg">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">🪵</span>
@@ -169,7 +199,7 @@ const RightSidebar: React.FC = () => {
           
           {/* Crops tab */}
           {activeTab === 'crops' && (
-            <div>
+            <div className="max-h-48 overflow-y-auto pr-1">
               {Object.entries(resources.crops).map(([key, amount]) => (
                 <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
                   <div className="flex items-center gap-2">
@@ -191,7 +221,7 @@ const RightSidebar: React.FC = () => {
           
           {/* Seeds tab */}
           {activeTab === 'seeds' && (
-            <div>
+            <div className="max-h-48 overflow-y-auto pr-1">
               {Object.entries(resources.seeds).map(([key, amount]) => (
                 <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
                   <div className="flex items-center gap-2">
