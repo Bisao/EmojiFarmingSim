@@ -837,7 +837,7 @@ function updateLumberjack() {
         timer: 0
       });
       
-      addLogMessage("O lenhador terminou de descansar e voltou ao trabalho.", "🧑🏼‍🦰");
+      // Done resting message removed - only show messages when working or storing
     } else {
       updateAgent('lumber', {
         timer: newTimer
@@ -861,7 +861,7 @@ function updateMiner() {
         state: 'idle',
         timer: 0
       });
-      addLogMessage("O minerador saiu de casa para trabalhar.", "👴🏼");
+      // Only show important messages - state changes aren't important enough
     } else {
       updateAgent('miner', {
         timer: newTimer
@@ -882,7 +882,7 @@ function updateMiner() {
         path: calculatePath(miner.x, miner.y, nearestRock.x, nearestRock.y)
       });
       
-      addLogMessage("O minerador está indo minerar uma pedra.", "👴🏼");
+      // Going to work message removed - only show messages when working or storing
     } else {
       // No rocks available, return to house to rest
       const house = getHouseForAgent('miner');
@@ -892,7 +892,7 @@ function updateMiner() {
           target: house,
           path: calculatePath(miner.x, miner.y, house.x, house.y)
         });
-        addLogMessage("Sem pedras para minerar. O minerador está voltando para casa.", "👴🏼");
+        // No rocks message removed - only show messages when working or storing
       }
     }
   }
@@ -1107,7 +1107,7 @@ function updateMiner() {
         timer: 0
       });
       
-      addLogMessage("O minerador chegou em casa e está descansando.", "👴🏼");
+      // Resting message removed - only show messages when working or storing
     } else {
       updateAgent('miner', {
         x: newX,
@@ -1128,7 +1128,7 @@ function updateMiner() {
         timer: 0
       });
       
-      addLogMessage("O minerador terminou de descansar e voltou ao trabalho.", "👴🏼");
+      // Done resting message removed - only show messages when working or storing
     } else {
       updateAgent('miner', {
         timer: newTimer
@@ -1180,7 +1180,7 @@ function updateFarmer() {
         state: 'idle',
         timer: 0
       });
-      addLogMessage("O agricultor saiu de casa para trabalhar.", "👨‍🌾");
+      // Only show important messages - state changes aren't important enough
     } else {
       updateAgent('farmer', {
         timer: newTimer
@@ -1199,7 +1199,7 @@ function updateFarmer() {
         target: fieldToHarvest,
         path: calculatePath(farmer.x, farmer.y, fieldToHarvest.x, fieldToHarvest.y)
       });
-      addLogMessage("O agricultor está indo colher plantações.", "👨‍🌾");
+      // Going to work message removed - only show messages when working or storing
       return;
     }
     
@@ -1212,7 +1212,7 @@ function updateFarmer() {
           target: fieldToPlant,
           path: calculatePath(farmer.x, farmer.y, fieldToPlant.x, fieldToPlant.y)
         });
-        addLogMessage("O agricultor está indo plantar sementes.", "👨‍🌾");
+        // Going to work message removed - only show messages when working or storing
         return;
       }
     }
@@ -1225,7 +1225,7 @@ function updateFarmer() {
         target: fieldToPrepare,
         path: calculatePath(farmer.x, farmer.y, fieldToPrepare.x, fieldToPrepare.y)
       });
-      addLogMessage("O agricultor está indo preparar um campo.", "👨‍🌾");
+      // Going to work message removed - only show messages when working or storing
       return;
     }
     
