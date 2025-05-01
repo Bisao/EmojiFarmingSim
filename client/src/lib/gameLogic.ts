@@ -462,8 +462,8 @@ function updateLumberjack() {
   
   // Handle moving state - move towards target
   else if (lumber.state === 'moving' && lumber.target) {
-    // Move towards the target more slowly (move only every 5 ticks)
-    const shouldMove = lumber.timer % 5 === 0;
+    // Move towards the target more slowly (move only every 15 ticks)
+    const shouldMove = lumber.timer % 15 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
@@ -584,8 +584,8 @@ function updateLumberjack() {
   
   // Handle storing state - move to storage
   else if (lumber.state === 'storing' && lumber.target) {
-    // Move towards the storage more slowly
-    const shouldMove = lumber.timer % 5 === 0;
+    // Move towards the storage more slowly (move only every 15 ticks)
+    const shouldMove = lumber.timer % 15 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
@@ -655,8 +655,8 @@ function updateLumberjack() {
   
   // Handle returning state - move back to house
   else if (lumber.state === 'returning' && lumber.target) {
-    // Move towards home more slowly
-    const shouldMove = lumber.timer % 5 === 0;
+    // Move towards home more slowly (move only every 15 ticks)
+    const shouldMove = lumber.timer % 15 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
@@ -767,8 +767,8 @@ function updateMiner() {
   
   // Handle moving state - move towards target
   else if (miner.state === 'moving' && miner.target) {
-    // Move towards the target more slowly (move only every 5 ticks)
-    const shouldMove = miner.timer % 5 === 0;
+    // Move towards the target more slowly (move only every 15 ticks)
+    const shouldMove = miner.timer % 15 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
@@ -888,8 +888,8 @@ function updateMiner() {
   
   // Handle storing state - move to storage
   else if (miner.state === 'storing' && miner.target) {
-    // Move towards the storage more slowly
-    const shouldMove = miner.timer % 5 === 0;
+    // Move towards the storage more slowly (move only every 15 ticks)
+    const shouldMove = miner.timer % 15 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
@@ -959,8 +959,8 @@ function updateMiner() {
   
   // Handle returning state - move back to house
   else if (miner.state === 'returning' && miner.target) {
-    // Move towards home more slowly
-    const shouldMove = miner.timer % 5 === 0;
+    // Move towards home more slowly (move only every 15 ticks)
+    const shouldMove = miner.timer % 15 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
