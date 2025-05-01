@@ -466,11 +466,33 @@ function getAllHousesForAgent(agentType: 'lumber' | 'miner' | 'farmer'): GridTil
 }
 
 // Get a single house for an agent (typically used for returning home)
-function getHouseForAgent(agentType: 'lumber' | 'miner' | 'farmer') {
+function getHouseForAgent(agentType: 'lumber' | 'miner' | 'farmer', targetX?: number, targetY?: number) {
   const houses = getAllHousesForAgent(agentType);
   
-  // Return the first house found, or undefined if none
-  return houses.length > 0 ? houses[0] : undefined;
+  // If no houses, return undefined
+  if (houses.length === 0) {
+    return undefined;
+  }
+  
+  // If target coordinates are provided, return the closest house to the target
+  if (targetX !== undefined && targetY !== undefined) {
+    // Calculate distance from each house to the target
+    const housesWithDistance = houses.map(house => {
+      const dx = house.x - targetX;
+      const dy = house.y - targetY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return { house, distance };
+    });
+    
+    // Sort by distance (ascending)
+    housesWithDistance.sort((a, b) => a.distance - b.distance);
+    
+    // Return the closest house
+    return housesWithDistance[0].house;
+  }
+  
+  // If no target provided, return the first house
+  return houses[0];
 }
 
 // Create a new agent when a house is built
@@ -1230,14 +1252,44 @@ function updateFarmer() {
   if (farmer.state === 'waiting') {
     const newTimer = farmer.timer + 1;
     
-    // Wait for 10 seconds (100 ticks) before leaving house
-    if (newTimer >= 100) {
-      updateAgent('farmer', {
-        state: 'idle',
-        timer: 0
-      });
-      // Only show important messages - state changes aren't important enough
+    // Check if there are conditions for the farmer to leave the house
+    // Based on requirements: only leave if there's a planting plot, selected seed, or harvestable resource
+    
+    // Check for harvestable crops (highest priority)
+    const fieldToHarvest = findFieldForHarvesting();
+    
+    // Check for watered fields ready for planting if we have seeds
+    const hasSeeds = Object.values(resources.seeds).some(count => count > 0);
+    const fieldToPlant = hasSeeds ? findWateredFieldForPlanting() : null;
+    
+    // Check for fields that need preparation
+    const fieldToPrepare = findFieldForFarmer();
+    
+    // Only change state to idle if there's actual work to do
+    if (fieldToHarvest || fieldToPlant || fieldToPrepare) {
+      // There's work to do - transition to idle state to handle the work
+      // Check if this farmer is the closest one to the work
+      let isClosestFarmer = true;
+      let targetField = fieldToHarvest || fieldToPlant || fieldToPrepare;
+      
+      if (targetField) {
+        const closestHouse = getHouseForAgent('farmer', targetField.x, targetField.y);
+        isClosestFarmer = closestHouse && (closestHouse.x === farmer.x && closestHouse.y === farmer.y);
+      }
+      
+      if (isClosestFarmer) {
+        updateAgent('farmer', {
+          state: 'idle',
+          timer: 0
+        });
+      } else {
+        // Not the closest farmer, keep waiting
+        updateAgent('farmer', {
+          timer: newTimer
+        });
+      }
     } else {
+      // No work to do - continue waiting in the house
       updateAgent('farmer', {
         timer: newTimer
       });
