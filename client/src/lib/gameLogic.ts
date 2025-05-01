@@ -160,13 +160,17 @@ export function buyStructure(key: string) {
   const structure = structureMap[key];
   
   // Check if player has enough resources
-  if (resources.coins < structure.cost.coins) {
+  if (resources.coins < structure.cost.coins || 
+      resources.wood < structure.cost.wood || 
+      resources.stone < structure.cost.stone) {
     addLogMessage("Moedas insuficientes para comprar esta estrutura.", "❌");
+    addLogMessage(`Necessário: ${structure.cost.wood} madeira, ${structure.cost.stone} pedra, ${structure.cost.coins} moedas.`, "📋");
     return;
   }
   
   setSelected({ type: 'structure', key });
   addLogMessage(`Selecione um local para construir ${structure.name}.`, "🏗️");
+  addLogMessage(`Necessário: ${structure.cost.wood} madeira, ${structure.cost.stone} pedra, ${structure.cost.coins} moedas.`, "📋");
 }
 
 // Buy field
