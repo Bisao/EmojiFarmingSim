@@ -39,7 +39,7 @@
     --ring: 24 5% 64%;
     
     /* Resource colors */
-    --resource-grass: 100 65% 72%;
+    --resource-grass: 101 96% 36%; /* #31B404 - Bright green */
     --resource-soil: 34 49% 69%;
     --resource-soil-prepared: 30 55% 55%; /* Light brown for prepared soil - more visible */
     --resource-soil-watered: 26 60% 38%;  /* Darker brown for watered soil - more visible */
@@ -95,7 +95,7 @@
     --ring: 222 14% 35%;
     
     /* Resource colors - slightly dimmed for dark mode */
-    --resource-grass: 100 50% 55%;
+    --resource-grass: 101 80% 30%; /* Darker version of #31B404 for dark mode */
     --resource-soil: 34 40% 50%;
     --resource-soil-prepared: 30 35% 45%; /* Dark mode prepared soil */
     --resource-soil-watered: 26 30% 35%;  /* Dark mode watered soil */
