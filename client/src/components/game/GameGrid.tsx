@@ -4,7 +4,7 @@ import { handleTileClick } from "@/lib/gameLogic";
 import { GridTile, SeedType } from "@/lib/gameTypes";
 
 interface AgentProps {
-  type: 'lumber' | 'miner';
+  type: 'lumber' | 'miner' | 'farmer';
   x: number;
   y: number;
   state: string;
@@ -68,7 +68,7 @@ const Agent: React.FC<AgentProps> = ({ type, x, y, state }) => {
     >
       {!isInBuilding && (
         <div className={`text-2xl ${animationClass}`}>
-          {type === 'lumber' ? '🧑🏼‍🦰' : '👴🏼'}
+          {type === 'lumber' ? '🧑🏼‍🦰' : type === 'miner' ? '👴🏼' : '👨‍🌾'}
         </div>
       )}
       {showProgressBar && (
@@ -130,6 +130,12 @@ const Tile: React.FC<{
       case 'storage':
         content = '🏦';
         break;
+      case 'farmerHouse':
+        content = '🏘️';
+        break;
+      case 'waterWell':
+        content = '⛲';
+        break;
     }
   }
 
@@ -186,6 +192,13 @@ const GameGrid: React.FC = () => {
             x={agents.miner.x} 
             y={agents.miner.y} 
             state={agents.miner.state}
+          />
+          
+          <Agent 
+            type="farmer" 
+            x={agents.farmer.x} 
+            y={agents.farmer.y} 
+            state={agents.farmer.state}
           />
         </div>
       </div>
