@@ -153,6 +153,12 @@ export function handleTileClick(tile: GridTile) {
   }
 }
 
+// Helper function to get random respawn time between 2-4 minutes
+function getRandomRespawnTime() {
+  // 2-4 minutes (1200-2400 ticks at 10 ticks/second)
+  return Math.floor(Math.random() * (2400 - 1200 + 1)) + 1200;
+}
+
 // Buy structure
 export function buyStructure(key: string) {
   const { structureMap, resources, updateResources, addLogMessage, setSelected } = getState();
@@ -182,11 +188,13 @@ export function buyField(key: string) {
   // Check if player has enough coins
   if (resources.coins < field.cost.coins) {
     addLogMessage("Moedas insuficientes para comprar este campo.", "❌");
+    addLogMessage(`Necessário: ${field.cost.coins} moedas.`, "📋");
     return;
   }
   
   setSelected({ type: 'field', key });
   addLogMessage(`Selecione um local para criar ${field.name}.`, "🌱");
+  addLogMessage(`Necessário: ${field.cost.coins} moedas.`, "📋");
 }
 
 // Buy seeds
@@ -198,6 +206,7 @@ export function buySeed(key: string) {
   // Check if player has enough coins
   if (resources.coins < seed.cost) {
     addLogMessage("Moedas insuficientes para comprar estas sementes.", "❌");
+    addLogMessage(`Necessário: ${seed.cost} moedas.`, "📋");
     return;
   }
   
@@ -907,7 +916,7 @@ function updateMiner() {
         updateTile({
           ...currentTile,
           resource: undefined,
-          respawnTimer: 450
+          respawnTimer: getRandomRespawnTime()
         });
         
         // Calculate stone amount
