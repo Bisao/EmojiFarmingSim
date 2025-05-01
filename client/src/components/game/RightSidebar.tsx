@@ -13,9 +13,9 @@ const RightSidebar: React.FC = () => {
     addLogMessage 
   } = useGameState();
   
-  const [activeTab, setActiveTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
-  const [activeFieldsTab, setActiveFieldsTab] = useState<'fields'>('fields');
-  const [activeSeedsShopTab, setActiveSeedsShopTab] = useState<'seeds'>('seeds');
+  const [storageTab, setStorageTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
+  const [fieldsTab, setFieldsTab] = useState<'fields'>('fields');
+  const [seedsShopTab, setSeedsShopTab] = useState<'seeds'>('seeds');
 
   const handleFieldSelect = (key: string) => {
     if (selected?.type === "field" && selected.key === key) {
@@ -51,7 +51,7 @@ const RightSidebar: React.FC = () => {
           <div className="flex border-b mb-2">
             <button 
               className={`px-2 py-1 font-medium text-sm border-b-2 border-primary text-primary transition-colors`}
-              onClick={() => setActiveFieldsTab('fields')}
+              onClick={() => setFieldsTab('fields')}
             >
               Campos
             </button>
@@ -93,7 +93,7 @@ const RightSidebar: React.FC = () => {
           <div className="flex border-b mb-2">
             <button 
               className={`px-2 py-1 font-medium text-sm border-b-2 border-primary text-primary transition-colors`}
-              onClick={() => setActiveSeedsShopTab('seeds')}
+              onClick={() => setSeedsShopTab('seeds')}
             >
               Comprar
             </button>
@@ -133,38 +133,38 @@ const RightSidebar: React.FC = () => {
           <div className="flex border-b mb-2">
             <button 
               className={`px-2 py-1 font-medium text-sm border-b-2 ${
-                activeTab === 'resources' 
+                storageTab === 'resources' 
                   ? 'border-primary text-primary' 
                   : 'border-transparent text-gray-500 hover:text-primary'
               } transition-colors`}
-              onClick={() => setActiveTab('resources')}
+              onClick={() => setStorageTab('resources')}
             >
               Recursos
             </button>
             <button 
               className={`px-2 py-1 font-medium text-sm border-b-2 ${
-                activeTab === 'crops' 
+                storageTab === 'crops' 
                   ? 'border-primary text-primary' 
                   : 'border-transparent text-gray-500 hover:text-primary'
               } transition-colors`}
-              onClick={() => setActiveTab('crops')}
+              onClick={() => setStorageTab('crops')}
             >
               Colheitas
             </button>
             <button 
               className={`px-2 py-1 font-medium text-sm border-b-2 ${
-                activeTab === 'seeds' 
+                storageTab === 'seeds' 
                   ? 'border-primary text-primary' 
                   : 'border-transparent text-gray-500 hover:text-primary'
               } transition-colors`}
-              onClick={() => setActiveTab('seeds')}
+              onClick={() => setStorageTab('seeds')}
             >
               Sementes
             </button>
           </div>
           
           {/* Resources tab */}
-          {activeTab === 'resources' && (
+          {storageTab === 'resources' && (
             <div className="max-h-48 overflow-y-auto pr-1">
               <div className="flex items-center justify-between p-2 bg-muted rounded-lg">
                 <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ const RightSidebar: React.FC = () => {
           )}
           
           {/* Crops tab */}
-          {activeTab === 'crops' && (
+          {storageTab === 'crops' && (
             <div className="max-h-48 overflow-y-auto pr-1">
               {Object.entries(resources.crops).map(([key, amount]) => (
                 <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
@@ -220,7 +220,7 @@ const RightSidebar: React.FC = () => {
           )}
           
           {/* Seeds tab */}
-          {activeTab === 'seeds' && (
+          {storageTab === 'seeds' && (
             <div className="max-h-48 overflow-y-auto pr-1">
               {Object.entries(resources.seeds).map(([key, amount]) => (
                 <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-lg">
