@@ -431,6 +431,39 @@ function getHouseForAgent(agentType: 'lumber' | 'miner' | 'farmer') {
   return houses.length > 0 ? houses[0] : undefined;
 }
 
+// Create a new agent when a house is built
+function createNewAgent(structureType: string, tile: GridTile) {
+  const { updateAgent, addLogMessage } = getState();
+  
+  let agentType: 'lumber' | 'miner' | 'farmer';
+  let emoji: string;
+  
+  if (structureType === 'lumberjackHouse') {
+    agentType = 'lumber';
+    emoji = '🧑🏼‍🦰';
+  } else if (structureType === 'minerHouse') {
+    agentType = 'miner';
+    emoji = '👴🏼';
+  } else if (structureType === 'farmerHouse') {
+    agentType = 'farmer';
+    emoji = '👨‍🌾';
+  } else {
+    return; // Not a house that spawns an agent
+  }
+  
+  // Create new agent at the house location
+  updateAgent(agentType, {
+    x: tile.x,
+    y: tile.y,
+    state: 'waiting',
+    timer: 0,
+    target: null,
+    path: []
+  });
+  
+  addLogMessage(`Um novo ${emoji} foi contratado e está esperando em sua casa.`, "🏠");
+}
+
 // Get the water well tile
 function getWaterWellTile() {
   const { gridTiles } = getState();
@@ -568,8 +601,8 @@ function updateLumberjack() {
   
   // Handle moving state - move towards target
   else if (lumber.state === 'moving' && lumber.target) {
-    // Move towards the target more slowly (move only every 15 ticks)
-    const shouldMove = lumber.timer % 15 === 0;
+    // Move towards the target more slowly (move only every 25 ticks)
+    const shouldMove = lumber.timer % 25 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
@@ -690,8 +723,8 @@ function updateLumberjack() {
   
   // Handle storing state - move to storage
   else if (lumber.state === 'storing' && lumber.target) {
-    // Move towards the storage more slowly (move only every 15 ticks)
-    const shouldMove = lumber.timer % 15 === 0;
+    // Move towards the storage more slowly (move only every 25 ticks)
+    const shouldMove = lumber.timer % 25 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
@@ -748,8 +781,8 @@ function updateLumberjack() {
   
   // Handle returning state - move back to house
   else if (lumber.state === 'returning' && lumber.target) {
-    // Move towards home more slowly (move only every 15 ticks)
-    const shouldMove = lumber.timer % 15 === 0;
+    // Move towards home more slowly (move only every 25 ticks)
+    const shouldMove = lumber.timer % 25 === 0;
     let newX = lumber.x;
     let newY = lumber.y;
     
@@ -860,8 +893,8 @@ function updateMiner() {
   
   // Handle moving state - move towards target
   else if (miner.state === 'moving' && miner.target) {
-    // Move towards the target more slowly (move only every 15 ticks)
-    const shouldMove = miner.timer % 15 === 0;
+    // Move towards the target more slowly (move only every 25 ticks)
+    const shouldMove = miner.timer % 25 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
@@ -981,8 +1014,8 @@ function updateMiner() {
   
   // Handle storing state - move to storage
   else if (miner.state === 'storing' && miner.target) {
-    // Move towards the storage more slowly (move only every 15 ticks)
-    const shouldMove = miner.timer % 15 === 0;
+    // Move towards the storage more slowly (move only every 25 ticks)
+    const shouldMove = miner.timer % 25 === 0;
     let newX = miner.x;
     let newY = miner.y;
     
