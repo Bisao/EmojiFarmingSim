@@ -1,60 +1,45 @@
+
 import React from "react";
 import { useGameState } from "@/hooks/use-game-state";
+import { motion } from "framer-motion";
 
-const MobileMenu: React.FC = () => {
+const MobileMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { setActivePanel } = useGameState();
 
   const handlePanelSelect = (panel: string) => {
-    setActivePanel(panel);
+    setActivePanel(panel === 'agriculture' ? 'right' : 'left');
+    onClose();
   };
 
+  const menuItems = [
+    { id: 'shop', emoji: '🛍️', label: 'Loja' },
+    { id: 'storage', emoji: '🏦', label: 'Armazém' },
+    { id: 'resources', emoji: '💰', label: 'Recursos' },
+    { id: 'status', emoji: '📊', label: 'Status' },
+    { id: 'options', emoji: '⚙️', label: 'Opções' }
+  ];
+
   return (
-    <div className="md:hidden bg-card rounded-xl shadow-md p-3 flex flex-col gap-2">
-      <div className="grid grid-cols-3 gap-2">
-        <button 
-          className="p-2 bg-muted rounded-lg flex flex-col items-center transition-colors hover:bg-primary hover:text-white"
-          onClick={() => handlePanelSelect('structures')}
-        >
-          <span className="text-xl">🏡</span>
-          <span className="text-xs">Estruturas</span>
-        </button>
-        <button 
-          className="p-2 bg-muted rounded-lg flex flex-col items-center transition-colors hover:bg-primary hover:text-white"
-          onClick={() => handlePanelSelect('fields')}
-        >
-          <span className="text-xl">🌱</span>
-          <span className="text-xs">Campos</span>
-        </button>
-        <button 
-          className="p-2 bg-muted rounded-lg flex flex-col items-center transition-colors hover:bg-primary hover:text-white"
-          onClick={() => handlePanelSelect('seeds')}
-        >
-          <span className="text-xl">🌾</span>
-          <span className="text-xs">Sementes</span>
-        </button>
-        <button 
-          className="p-2 bg-muted rounded-lg flex flex-col items-center transition-colors hover:bg-primary hover:text-white"
-          onClick={() => handlePanelSelect('storage')}
-        >
-          <span className="text-xl">🏦</span>
-          <span className="text-xs">Armazém</span>
-        </button>
-        <button 
-          className="p-2 bg-muted rounded-lg flex flex-col items-center transition-colors hover:bg-primary hover:text-white"
-          onClick={() => handlePanelSelect('status')}
-        >
-          <span className="text-xl">📊</span>
-          <span className="text-xs">Status</span>
-        </button>
-        <button 
-          className="p-2 bg-muted rounded-lg flex flex-col items-center transition-colors hover:bg-primary hover:text-white"
-          onClick={() => handlePanelSelect('options')}
-        >
-          <span className="text-xl">⚙️</span>
-          <span className="text-xs">Opções</span>
-        </button>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      className="md:hidden bg-card/80 backdrop-blur-sm rounded-xl shadow-lg p-4"
+    >
+      <div className="grid grid-cols-3 gap-3">
+        {menuItems.map(item => (
+          <motion.button
+            key={item.id}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 bg-muted/50 hover:bg-primary/20 active:bg-primary/30 rounded-lg flex flex-col items-center gap-1 transition-colors"
+            onClick={() => handlePanelSelect(item.id)}
+          >
+            <span className="text-2xl">{item.emoji}</span>
+            <span className="text-xs font-medium">{item.label}</span>
+          </motion.button>
+        ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

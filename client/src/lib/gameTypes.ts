@@ -1,10 +1,23 @@
 export type ResourceType = 'tree' | 'bigTree' | 'rock';
-export type StructureType = 'lumberjackHouse' | 'minerHouse' | 'storage' | 'farmerHouse' | 'waterWell';
+export type StructureType = 'lumberjackHouse' | 'minerHouse' | 'storage' | 'farmerHouse' | 'waterWell' | 'pickupTruck' | 'tractor';
+
+export interface WaterWell {
+  buckets: number;
+  maxBuckets: number;
+  generationTimer: number;
+}
 export type FieldType = 'plantio' | 'agua' | 'pasto';
 export type SeedType = 'wheat' | 'corn' | 'carrot' | 'potato' | 'tomato';
 export type FieldState = 'normal' | 'prepared' | 'watered';
-export type AgentState = 'idle' | 'moving' | 'working' | 'returning' | 'storing' | 'resting' | 'waiting' | 'preparing' | 'watering' | 'planting' | 'harvesting' | 'gettingWater' | 'gettingSeed';
-export type SelectionType = { type: 'structure' | 'field' | 'seed', key: string } | null;
+export type AgentState = 'idle' | 'moving' | 'working' | 'returning' | 'storing' | 'resting' | 'waiting' | 'preparing' | 'watering' | 'planting' | 'harvesting' | 'gettingWater' | 'gettingSeed' | 'collectingWater' | 'irrigating';
+export type SelectionType = { type: 'structure' | 'field' | 'seed' | 'remove', key: string } | null;
+export type RemovalConfirmation = {
+  type: 'structure' | 'resource';
+  x: number;
+  y: number;
+  cost?: number;
+  refund?: number;
+} | null;
 export type ActivePanelType = 'structures' | 'fields' | 'seeds' | 'storage' | 'status' | 'options' | null;
 
 export interface Structure {
@@ -46,6 +59,22 @@ export interface GridTile {
   harvestable?: boolean;
   respawnTimer?: number; // Timer for resource respawn
   constructionEmoji?: string; // Emoji to show during construction (🚧)
+  selectedSeed?: SeedType; // Selected seed type for this field
+  waterWell?: WaterWell; // Water well state
+  farmerEmoji?: string; // Current farmer action emoji
+  resourceEmoji?: string; // Resource collection emoji
+  resourceScale?: string; // Scale of the resource emoji
+}
+
+export interface Agent {
+  x: number;
+  y: number;
+  state: AgentState;
+  timer: number;
+  target: GridTile | null;
+  path: {x: number, y: number}[];
+  carryingCrop?: SeedType;
+  seedSelectionTimer?: number; // Timer for waiting for seed selection
 }
 
 export interface Agent {
@@ -56,6 +85,9 @@ export interface Agent {
   target: GridTile | null;
   path: {x: number, y: number}[];
   carryingCrop?: SeedType;  // Track the crop type that the farmer is carrying
+  farmerID?: number;        // Unique ID for each farmer
+  homeX?: number;           // Home house X coordinate
+  homeY?: number;           // Home house Y coordinate
 }
 
 export interface Resources {

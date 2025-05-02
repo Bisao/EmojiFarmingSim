@@ -10,7 +10,7 @@ interface SeedSelectionBalloonProps {
 
 const SeedSelectionBalloon: React.FC<SeedSelectionBalloonProps> = ({ position, onSelect, onClose }) => {
   const { resources, seedMap } = useGameState();
-  
+
   // Filter only seeds that are available
   const availableSeeds = Object.entries(resources.seeds)
     .filter(([_, count]) => count > 0)
@@ -19,7 +19,7 @@ const SeedSelectionBalloon: React.FC<SeedSelectionBalloonProps> = ({ position, o
       count,
       emoji: seedMap[seedType as SeedType].emoji,
     }));
-  
+
   if (availableSeeds.length === 0) {
     return (
       <div 
@@ -27,7 +27,7 @@ const SeedSelectionBalloon: React.FC<SeedSelectionBalloonProps> = ({ position, o
         style={{ 
           left: `${position.x}px`, 
           top: `${position.y}px`, 
-          transform: 'translate(-50%, -120%)',
+          transform: 'translate(-50%, -50%)',
           minWidth: '200px'
         }}
       >
@@ -45,15 +45,18 @@ const SeedSelectionBalloon: React.FC<SeedSelectionBalloonProps> = ({ position, o
       </div>
     );
   }
-  
+
   return (
     <div 
       className="absolute z-50 bg-card dark:bg-card p-3 rounded-lg shadow-lg border border-border"
       style={{ 
         left: `${position.x}px`, 
         top: `${position.y}px`, 
-        transform: 'translate(-50%, -120%)',
-        minWidth: '200px'
+        transform: 'translate(-50%, -50%)',
+        minWidth: '200px',
+        maxWidth: '90%',
+        maxHeight: '90%',
+        overflowY: 'auto'
       }}
     >
       <div className="flex justify-between items-center mb-2">

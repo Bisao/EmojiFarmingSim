@@ -1,0 +1,98 @@
+Atribuições do Fazendeiro
+
+Fila de Tarefas
+
+Deve concluir a tarefa atual antes de iniciar outra.
+
+Se houver várias casas de fazendeiro no grid, cada fazendeiro “lembra” sua casa de origem e não repete o trabalho de outro.
+
+Fluxo Geral
+
+Preparar terreno
+
+Coletar água e regar
+
+Aguardar plantio
+
+Cuidar do crescimento
+
+Colher e armazenar
+
+Retornar à casa (se não houver novas tarefas)
+
+1. Preparar Terreno
+Disparo: ao posicionar um terreno de plantio, surge o emoji 🚧 sobre o tile.
+
+Rotina:
+
+Fazendeiro sai de sua casa e caminha até o tile.
+
+Prepara o terreno por 5 s, alternando ícones:
+
+🔨 (1 s) → 🪚 (1 s) → 🔨 … até cumprir 5 s.
+
+Ao final, remove 🚧 e exibe 🟧 no terreno; fazendeiro volta ao emoji 👨🏼‍🌾.
+
+Verificação de poço:
+
+Se houver algum poço com água no grid, vai ao mais próximo, senão:
+
+Realiza próxima tarefa disponível ou retorna para casa.
+
+2. Coletar Água e Regar
+Coleta de 1 balde:
+
+Caminha até o poço (5 s); durante a coleta, emoji 🪣.
+
+Após 5 s, retorna ao emoji 👨🏼‍🌾 com 1 balde.
+
+Rega:
+
+Caminha até o terreno preparado (5 s); emoji 🚿 durante a rega.
+
+Concluída a rega, emoji do terreno muda para 🟫; fazendeiro volta ao 👨🏼‍🌾.
+
+3. Plantio
+Espera: posicionado ao lado do terreno por 10 s ou até que uma semente seja selecionada.
+
+Seleção de semente:
+
+Deve haver sementes disponíveis em Armazém > Sementes.
+
+Usuário clica sobre o tile para indicar a semente.
+
+Rotina de plantio:
+
+Caminha até o armazém e pega 1 semente (10 s); decrementa 1 no estoque.
+
+Volta ao terreno e planta a semente (sem tempo adicional).
+
+Mantém a mesma semente até nova seleção.
+
+Se não houver tarefas, retorna para casa.
+
+4. Crescimento das Plantas
+Fases:
+
+🌱 — broto: 25 s após plantio
+
+🌿 — planta jovem: mais 25 s
+
+Emoji da colheita — muda para o ícone específico da semente quando pronta
+
+5. Colheita e Armazenamento
+Detecção: se existir planta pronta, fazendeiro:
+
+Sai de casa (ou da posição atual).
+
+Caminha até a planta e colhe (5 s); emoji 🧺 durante a colheita.
+
+Fim: emoji retorna a 👨🏼‍🌾.
+
+Armazenar:
+
+Caminha até o armazém (5 s); emoji 📦 durante o armazenamento.
+
+Cada colheita gera 2–5 itens, adicionados em Armazém > Colheitas.
+
+Se não há tarefas, volta para casa.

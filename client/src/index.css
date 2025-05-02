@@ -4,40 +4,45 @@
 
 @layer base {
   :root {
-    /* Colors */
-    --background: 84 21% 95%;
-    --foreground: 20 12% 18%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 20 12% 18%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 12% 18%;
-    
-    --primary: 102 35% 42%;
-    --primary-foreground: 0 0% 100%;
-    
-    --primary-dark: 102 39% 26%;
-    --primary-light: 102 35% 52%;
-    
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 20 12% 18%;
-    
-    --muted: 84 21% 95%;
-    --muted-foreground: 240 4% 46%;
-    
-    --accent: 40 89% 61%;
-    --accent-foreground: 102 39% 26%;
-    
-    --accent-dark: 40 68% 51%;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 20 6% 90%;
-    --input: 20 6% 90%;
-    --ring: 24 5% 64%;
-    
+    /* Bee-themed Colors */
+    --background: 48 30% 96%;  /* #FBF7E9 - Soft honey background */
+    --foreground: 35 25% 15%;  /* #2D2620 - Dark brown text */
+
+    --card: 48 40% 94%;       /* #F9F3E3 - Light honeycomb */
+    --card-foreground: 35 25% 15%; /* #2D2620 */
+
+    --popover: 48 40% 94%;    /* #F9F3E3 */
+    --popover-foreground: 35 25% 15%; /* #2D2620 */
+
+    --primary: 45 100% 50%;   /* #FFB800 - Vibrant bee yellow */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF */
+
+    --primary-dark: 45 100% 45%; /* #E6A600 - Darker honey */
+    --primary-light: 45 100% 65%; /* #FFCD4D - Light honey */
+
+    --secondary: 35 25% 15%;  /* #2D2620 - Bee black */
+    --secondary-foreground: 48 30% 96%; /* #FBF7E9 */
+
+    --muted: 45 30% 85%;     /* #EBE3CC - Soft honey muted */
+    --muted-foreground: 35 25% 35%; /* #6B5D53 */
+
+    --accent: 25 95% 53%;     /* #FF6B2C */
+    --accent-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --accent-dark: 25 95% 43%; /* #E65517 */
+
+    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --border: 45 30% 75%;    /* #E6D5A7 - Honey border */
+    --input: 45 30% 75%;     /* #E6D5A7 */
+    --ring: 45 100% 50%;     /* #FFB800 - Honey focus ring */
+
+    /* Bee-themed overlays and shadows */
+    --shadow-color: 45 100% 15%; /* Dark honey shadow */
+    --overlay-hover: rgba(255, 184, 0, 0.1); /* Hover state */
+    --overlay-active: rgba(255, 184, 0, 0.2); /* Active state */
+
     /* Resource colors */
     --resource-grass: 101 96% 36%; /* #31B404 - Bright green */
     --resource-soil: 34 49% 69%;
@@ -46,54 +51,54 @@
     --resource-water: 200 77% 74%;
     --resource-pasture: 60 100% 90%;
     --resource-construction: 40 40% 80%;  /* Light color for construction */
-    
+
     /* Game grid variables */
-    --grid-cols: 8;
-    --grid-rows: 7;
-    --tile-size: 50px;
-    --tile-gap: 0.3rem;
-    
-    --radius: 0.75rem;
-    
+    --grid-cols: 12;
+    --grid-rows: 10;
+    --tile-size: 80px;
+    --tile-gap: 0.25rem;
+
+    --radius: 0rem;
+
     /* Font Families */
     --font-sans: 'Inter', sans-serif;
     --font-display: 'Nunito', sans-serif;
   }
- 
+
   .dark {
-    --background: 222 14% 15%;
-    --foreground: 0 0% 95%;
-    
-    --card: 222 16% 20%;
-    --card-foreground: 0 0% 95%;
-    
-    --popover: 222 16% 20%;
-    --popover-foreground: 0 0% 95%;
-    
-    --primary: 102 35% 42%;
-    --primary-foreground: 0 0% 100%;
-    
-    --primary-dark: 102 40% 32%;
-    --primary-light: 102 35% 52%;
-    
-    --secondary: 222 14% 25%;
-    --secondary-foreground: 0 0% 95%;
-    
-    --muted: 222 14% 18%;
-    --muted-foreground: 240 5% 65%;
-    
-    --accent: 40 89% 61%;
-    --accent-foreground: 102 39% 26%;
-    
-    --accent-dark: 40 68% 51%;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 222 14% 30%;
-    --input: 222 14% 30%;
-    --ring: 222 14% 35%;
-    
+    --background: 215 28% 17%;  /* #1C2433 */
+    --foreground: 210 40% 98%; /* #F5F9FF */
+
+    --card: 215 28% 20%;      /* #212A3B */
+    --card-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --popover: 215 28% 20%;   /* #212A3B */
+    --popover-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --primary: 215 90% 50%;   /* #0F62FE */
+    --primary-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --primary-dark: 215 90% 40%; /* #0B4FD6 */
+    --primary-light: 215 90% 60%; /* #3B7FFF */
+
+    --secondary: 145 63% 42%; /* #2E9D74 */
+    --secondary-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --muted: 215 28% 25%;    /* #2A364C */
+    --muted-foreground: 215 25% 65%; /* #A4B0C3 */
+
+    --accent: 25 95% 53%;    /* #FF6B2C */
+    --accent-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --accent-dark: 25 95% 43%; /* #E65517 */
+
+    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive-foreground: 210 40% 98%; /* #F5F9FF */
+
+    --border: 215 28% 25%;   /* #2A364C */
+    --input: 215 28% 25%;    /* #2A364C */
+    --ring: 215 90% 50%;     /* #0F62FE */
+
     /* Resource colors - slightly dimmed for dark mode */
     --resource-grass: 101 80% 30%; /* Darker version of #31B404 for dark mode */
     --resource-soil: 34 40% 50%;
@@ -115,6 +120,55 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-bold;
   }
+
+  /* Game UI improvements */
+  .game-panel {
+    @apply bg-card rounded-xl shadow-md p-4 flex flex-col gap-3 border border-border/10;
+  }
+
+  .game-grid-container {
+    @apply flex items-center justify-center min-h-full overflow-auto p-4;
+  }
+
+  .panel-header {
+    @apply font-display text-lg font-bold text-primary-dark border-b border-muted pb-2 flex items-center gap-2;
+  }
+
+  .tab-button {
+    @apply px-4 py-1.5 font-medium text-sm border-b-2 transition-colors rounded-t-lg;
+  }
+
+  .tab-button-active {
+    @apply border-primary text-primary bg-muted/30;
+  }
+
+  .tab-button-inactive {
+    @apply border-transparent text-gray-500 hover:text-primary hover:bg-muted/20;
+  }
+
+  .item-card {
+    @apply flex items-center justify-between p-3 bg-muted rounded-lg mb-2 hover:bg-muted/80 transition-colors;
+  }
+
+  .item-info {
+    @apply flex items-center gap-3;
+  }
+
+  .item-icon {
+    @apply text-2xl;
+  }
+
+  .item-name {
+    @apply text-sm font-medium;
+  }
+
+  .item-action {
+    @apply flex items-center gap-2;
+  }
+
+  .action-button {
+    @apply bg-primary text-white text-xs rounded-full w-7 h-7 flex items-center justify-center hover:bg-primary-dark transition-colors;
+  }
 }
 
 @layer components {
@@ -122,49 +176,49 @@
   .tile-transition {
     @apply transition-all duration-200 ease-in-out;
   }
-  
+
   /* Progress bars removed */
-  
+
   .agent-move {
     @apply transition-all duration-1000 ease-in-out;
   }
-  
+
   /* Game grid sizing */
   #game-grid {
     display: grid;
-    grid-template-columns: repeat(var(--grid-cols), var(--tile-size));
-    grid-template-rows: repeat(var(--grid-rows), var(--tile-size));
+    grid-template-columns: repeat(10, var(--tile-size));
+    grid-template-rows: repeat(6, var(--tile-size));
     gap: var(--tile-gap);
   }
-  
+
   .agent {
     @apply flex flex-col items-center justify-center pointer-events-none z-10;
   }
-  
+
   /* Animations */
   @keyframes wiggle {
     0%, 100% { transform: rotate(-3deg); }
     50% { transform: rotate(3deg); }
   }
-  
+
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
   }
-  
+
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
   }
-  
+
   .animate-wiggle {
     animation: wiggle 1s ease-in-out infinite;
   }
-  
+
   .animate-bounce-slow {
     animation: bounce 1s ease-in-out infinite;
   }
-  
+
   .animate-pulse-custom {
     animation: pulse 2s ease-in-out infinite;
   }
@@ -174,6 +228,28 @@
 @media (max-width: 640px) {
   :root {
     --tile-size: 40px;
+  }
+
+  .agent {
+    transform: scale(0.8);
+  }
+
+  .tile-transition {
+    @apply transition-transform;
+  }
+
+  .touch-action-none {
+    touch-action: none;
+  }
+
+  .game-grid-mobile {
+    @apply -mx-2 rounded-none shadow-none;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --tile-size: 35px;
   }
 }
 
@@ -193,4 +269,28 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-opacity-25 bg-black;
+}
+
+.max-h-48 {
+  max-height: 14rem;
+}
+
+.w-48 {
+  width: 14rem;
+}
+
+.w-56 {
+  width: 16rem;
+}
+
+.w-64 {
+  width: 18rem;
+}
+
+.p-2 {
+  padding: 0.75rem;
+}
+
+.p-3 {
+  padding: 1rem;
 }

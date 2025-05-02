@@ -1,0 +1,138 @@
+Water Well Mechanics
+
+Initial State:
+
+Once placed on the grid, the well starts empty.
+
+NPCs cannot collect water while it’s empty.
+
+Filling and Generation:
+
+Show a chat message when the well is full.
+
+Each well generates 5 buckets of water, at a rate of 1 bucket every 3 s.
+
+Farmer Duties
+
+Task Queue
+
+Must finish the current task before starting a new one.
+
+If there are multiple farmer houses on the grid, each farmer “remembers” their home and won’t duplicate another’s work.
+
+Overall Flow
+
+Prepare soil
+
+Collect water & irrigate
+
+Wait for planting
+
+Manage plant growth
+
+Harvest & store
+
+Return home (if no tasks remain)
+
+1. Prepare Soil
+Trigger: placing a planting plot shows the 🚧 emoji on that tile.
+
+Routine:
+
+Farmer leaves home and walks to the tile.
+
+Prepares soil for 5 s, alternating icons:
+
+🔨 (1 s) → 🪚 (1 s) → 🔨 … until 5 s elapse.
+
+At the end, remove 🚧 and display 🟧 on the plot; farmer returns to 👨🏼‍🌾.
+
+Well Check:
+
+If there’s any well with water in the grid, go to the nearest one; otherwise,
+
+Proceed to the next available task or return home.
+
+2. Collect Water & Irrigate
+Collect 1 Bucket:
+
+Walk to the well (5 s); use 🪣 during collection.
+
+After 5 s, revert to 👨🏼‍🌾 carrying 1 bucket.
+
+Irrigation:
+
+Walk to the prepared plot (5 s); emoji 🚿 while irrigating.
+
+When done, plot changes to 🟫; farmer returns to 👨🏼‍🌾.
+
+3. Planting
+Wait: stand beside the plot for 10 s or until a seed is selected.
+
+Seed Selection:
+
+Must have seeds available in Storage > Seeds.
+
+Player clicks the plot to choose the seed.
+
+Planting Routine:
+
+Walk to storage and pick 1 seed (10 s); decrement seed stock.
+
+Return to the plot and plant the selected seed (no extra time).
+
+Continue planting that same seed until another is chosen.
+
+If no tasks remain, return home.
+
+4. Plant Growth
+Stages:
+
+🌱 — sprout: 25 s after planting
+
+🌿 — young plant: another 25 s
+
+Harvest emoji — changes to the specific seed’s icon when ready
+
+5. Harvest & Storage
+Detection: if a plant is ripe, the farmer:
+
+Leaves home (or current location).
+
+Walks to the plant and harvests (5 s); emoji 🧺 during harvest.
+
+Returns to 👨🏼‍🌾 when done.
+
+Storage:
+
+Walk to storage (5 s); emoji 📦 during storing.
+
+Each harvest yields 2–5 items, added under Storage > Harvests.
+
+If no tasks remain, go home.
+
+Emoji Legend
+👨🏼‍🌾 — Farmer
+
+🚧 — Plot placed
+
+🔨 / 🪚 — Preparing soil
+
+🟧 — Soil prepared
+
+🪣 — Collecting water
+
+🚿 — Irrigating
+
+🟫 — Soil irrigated
+
+🌱 — Seed planted (sprout)
+
+🌿 — Young plant
+
+[Seed’s Emoji] — Plant ready for harvest
+
+🧺 — Harvesting
+
+📦 — Storing produce
+

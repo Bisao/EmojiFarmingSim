@@ -11,33 +11,33 @@ import {
 
 // Message filter tracking
 const DEBOUNCE_TIME = 5000; // 5 seconds
-const lastMessagesByType: Record<string, { text: string, timestamp: number }> = {};
+const lastMessagesByType: Record<string, { text: string; timestamp: number }> = {};
 
 // Filter log message to avoid too many repeated messages
 function shouldLogMessage(text: string, category: string): boolean {
   const now = Date.now();
   const key = `${category}:${text}`;
   const lastMessage = lastMessagesByType[key];
-  
+
   // If this exact message in this category hasn't been seen or is older than debounce time
   if (!lastMessage || (now - lastMessage.timestamp > DEBOUNCE_TIME)) {
     lastMessagesByType[key] = { text, timestamp: now };
     return true;
   }
-  
+
   return false;
 }
 
 // Define initial state
 const initialGridTiles: GridTile[] = [];
-const cols = 8, rows = 7;
+const cols = 10, rows = 6;
 
 // Generate initial grid
 for (let y = 0; y < rows; y++) {
   for (let x = 0; x < cols; x++) {
     const tile: GridTile = { x, y };
     const r = Math.random();
-    
+
     if (r < 0.1) {
       tile.resource = 'rock';
     } else if (r < 0.3) {
@@ -45,94 +45,40 @@ for (let y = 0; y < rows; y++) {
     } else if (r < 0.4) {
       tile.resource = 'bigTree';
     }
-    
+
     initialGridTiles.push(tile);
   }
 }
 
-// Place initial structures
-const lumberjackPos = Math.floor(Math.random() * initialGridTiles.length);
-initialGridTiles[lumberjackPos] = {
-  ...initialGridTiles[lumberjackPos],
-  resource: undefined,
-  structure: 'lumberjackHouse'
-};
-
-const minerPos = Math.floor(Math.random() * initialGridTiles.length);
-if (minerPos !== lumberjackPos) {
-  initialGridTiles[minerPos] = {
-    ...initialGridTiles[minerPos],
-    resource: undefined,
-    structure: 'minerHouse'
-  };
+// Find a random empty tile for storage
+const emptyTiles = initialGridTiles.filter(tile => !tile.resource && !tile.structure && !tile.type);
+if (emptyTiles.length > 0) {
+    const randomTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+    randomTile.structure = 'storage';
 }
 
-const storagePos = Math.floor(Math.random() * initialGridTiles.length);
-if (storagePos !== lumberjackPos && storagePos !== minerPos) {
-  initialGridTiles[storagePos] = {
-    ...initialGridTiles[storagePos],
-    resource: undefined,
-    structure: 'storage'
-  };
-}
-
-// Place farmer house randomly
-const farmerPos = Math.floor(Math.random() * initialGridTiles.length);
-if (farmerPos !== lumberjackPos && farmerPos !== minerPos && farmerPos !== storagePos) {
-  initialGridTiles[farmerPos] = {
-    ...initialGridTiles[farmerPos],
-    resource: undefined,
-    structure: 'farmerHouse'
-  };
-}
-
-// Place water well randomly
-const wellPos = Math.floor(Math.random() * initialGridTiles.length);
-if (wellPos !== lumberjackPos && wellPos !== minerPos && wellPos !== storagePos && wellPos !== farmerPos) {
-  initialGridTiles[wellPos] = {
-    ...initialGridTiles[wellPos],
-    resource: undefined,
-    structure: 'waterWell'
-  };
-}
-
-// Initialize agent positions
-const lumberjackHouse = initialGridTiles.find(t => t.structure === 'lumberjackHouse');
-const minerHouse = initialGridTiles.find(t => t.structure === 'minerHouse');
+// Initialize agent positions 
 const farmerHouse = initialGridTiles.find(t => t.structure === 'farmerHouse');
 
-const initialAgentLumber: Agent = {
-  x: lumberjackHouse ? lumberjackHouse.x : 0,
-  y: lumberjackHouse ? lumberjackHouse.y : 0,
-  state: 'waiting', // Starts in "waiting" state to leave house after 10 seconds
-  timer: 0, // This will count up to 100 (10 seconds) before leaving
+const initialAgent = {
+  x: 0,
+  y: 0,
+  state: 'waiting',
+  timer: 0,
   target: null,
   path: []
 };
 
-const initialAgentMiner: Agent = {
-  x: minerHouse ? minerHouse.x : 0,
-  y: minerHouse ? minerHouse.y : 0,
-  state: 'waiting', // Starts in "waiting" state to leave house after 10 seconds
-  timer: 0, // This will count up to 100 (10 seconds) before leaving
-  target: null,
-  path: []
-};
-
-const initialAgentFarmer: Agent = {
-  x: farmerHouse ? farmerHouse.x : 0,
-  y: farmerHouse ? farmerHouse.y : 0,
-  state: 'waiting', // Starts in "waiting" state to leave house after 10 seconds
-  timer: 0, // This will count up to 100 (10 seconds) before leaving
-  target: null,
-  path: []
-};
+// Initialize agents as null initially - they will be created when houses are built
+const initialAgentLumber: Agent | null = null;
+const initialAgentMiner: Agent | null = null;
+const initialAgentFarmer: Agent | null = null;
 
 const initialState: GameState = {
   resources: {
-    coins: 1000,
-    wood: 0,
-    stone: 0,
+    coins: 500,
+    wood: 10,
+    stone: 10,
     seeds: { wheat: 0, corn: 0, carrot: 0, potato: 0, tomato: 0 },
     crops: { wheat: 0, corn: 0, carrot: 0, potato: 0, tomato: 0 }
   },
@@ -147,13 +93,13 @@ const initialState: GameState = {
     lumberjackHouse: { name: 'Casa do Lenhador', cost: { wood: 1, stone: 1, coins: 200 }, emoji: '🏡' },
     minerHouse: { name: 'Casa do Minerador', cost: { wood: 1, stone: 1, coins: 250 }, emoji: '🏚' },
     storage: { name: 'Armazém', cost: { wood: 1, stone: 1, coins: 500 }, emoji: '🏦' },
-    farmerHouse: { name: 'Casa do Fazendeiro', cost: { wood: 1, stone: 1, coins: 300 }, emoji: '🏘️' },
+    farmerHouse: { name: 'Casa do Fazendeiro', cost: { wood: 1, stone: 1, coins: 300 }, emoji: '🏘️', description: 'Disponibiliza um fazendeiro para trabalhar' },
     waterWell: { name: 'Poço de Água', cost: { wood: 1, stone: 1, coins: 150 }, emoji: '⛲' }
   },
   fieldMap: {
     plantio: { name: 'Campo de Plantio', cost: { coins: 100 }, color: 'var(--resource-soil)', emoji: '🌱' },
-    agua: { name: 'Campo de Água', cost: { coins: 150 }, color: 'var(--resource-water)', emoji: '' },
-    pasto: { name: 'Campo de Pasto', cost: { coins: 120 }, color: 'var(--resource-pasture)', emoji: '' }
+    agua: { name: 'Campo de Água', cost: { coins: 100, stone: 100, waterBuckets: 25 }, color: 'var(--resource-water)', emoji: '💧' },
+    pasto: { name: 'Campo de Pasto', cost: { coins: 50, cornSeeds: 5 }, color: 'var(--resource-pasture)', emoji: '🌿' }
   },
   seedMap: {
     wheat: { emoji: '🌾', cost: 50, growthTime: 30 },
@@ -198,7 +144,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           }
         }
       };
-      
+
     case 'UPDATE_TILE':
       return {
         ...state,
@@ -208,13 +154,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
             : tile
         )
       };
-      
+
     case 'SET_SELECTED':
       return {
         ...state,
         selected: action.payload
       };
-      
+
     case 'UPDATE_AGENT':
       return {
         ...state,
@@ -226,45 +172,45 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           }
         }
       };
-      
+
     case 'ADD_LOG_MESSAGE':
       // Create formatted timestamp
       const now = new Date();
       const timestamp = now.toLocaleTimeString();
-      
+
       // Create new message
       const newMessage: LogMessage = {
         text: action.payload.text,
         timestamp,
         icon: action.payload.icon
       };
-      
+
       // Limit log to last 100 messages
       const updatedLog = [...state.logMessages, newMessage].slice(-100);
-      
+
       return {
         ...state,
         logMessages: updatedLog
       };
-      
+
     case 'SET_TUTORIAL_VISIBLE':
       return {
         ...state,
         tutorialVisible: action.payload
       };
-      
+
     case 'SET_SOUND_ENABLED':
       return {
         ...state,
         soundEnabled: action.payload
       };
-      
+
     case 'SET_ACTIVE_PANEL':
       return {
         ...state,
         activePanel: action.payload
       };
-      
+
     default:
       return state;
   }
@@ -287,23 +233,23 @@ const GameStateContext = createContext<GameStateContextValue | undefined>(undefi
 // Provider component
 export function GameStateProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
-  
+
   const updateResources = (resources: Partial<GameState['resources']>) => {
     dispatch({ type: 'UPDATE_RESOURCES', payload: resources });
   };
-  
+
   const updateTile = (tile: GridTile) => {
     dispatch({ type: 'UPDATE_TILE', payload: { tile } });
   };
-  
+
   const setSelected = (selected: SelectionType) => {
     dispatch({ type: 'SET_SELECTED', payload: selected });
   };
-  
+
   const updateAgent = (agentType: 'lumber' | 'miner' | 'farmer', agent: Partial<Agent>) => {
     dispatch({ type: 'UPDATE_AGENT', payload: { agentType, agent } });
   };
-  
+
   const addLogMessage = (text: string, icon: string) => {
     // Only log the message if it's not duplicated within the debounce time
     // Use the icon as a category for message filtering
@@ -311,19 +257,19 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'ADD_LOG_MESSAGE', payload: { text, icon } });
     }
   };
-  
+
   const setTutorialVisible = (visible: boolean) => {
     dispatch({ type: 'SET_TUTORIAL_VISIBLE', payload: visible });
   };
-  
+
   const setSoundEnabled = (enabled: boolean) => {
     dispatch({ type: 'SET_SOUND_ENABLED', payload: enabled });
   };
-  
+
   const setActivePanel = (panel: ActivePanelType) => {
     dispatch({ type: 'SET_ACTIVE_PANEL', payload: panel });
   };
-  
+
   const value: GameStateContextValue = {
     ...state,
     updateResources,
@@ -335,7 +281,7 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     setSoundEnabled,
     setActivePanel
   };
-  
+
   return (
     <GameStateContext.Provider value={value}>
       {children}

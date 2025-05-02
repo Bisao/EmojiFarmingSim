@@ -17,7 +17,7 @@ const GameLog: React.FC = () => {
       <h3 className="font-display text-sm font-bold text-primary-dark mb-1">Registro de Atividades</h3>
       <div className="space-y-1 text-sm">
         {logMessages.map((message, index) => (
-          <p key={index} className="text-sm text-gray-700 font-medium">
+          <p key={index} className="text-sm text-gray-700 dark:text-gray-200 font-medium">
             {message.icon} [{message.timestamp}] {message.text}
           </p>
         ))}
