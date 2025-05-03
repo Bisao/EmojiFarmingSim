@@ -67,7 +67,7 @@ const GameArea: React.FC = () => {
         <GameGrid />
 
         {/* Central panels */}
-        {selected && selected.type !== 'store' && !mobileMenuVisible && !isStoreOpen && (
+        {selected && !mobileMenuVisible && !['store'].includes(selected.type) && (
           <div className="absolute inset-4 bg-[#FFF8E1]/95 dark:bg-gray-900/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto border-2 border-amber-200/50">
             <button 
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
