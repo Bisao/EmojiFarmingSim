@@ -66,7 +66,47 @@ const GameArea: React.FC = () => {
       <div className="relative">
         <GameGrid />
 
-        
+        {/* Storage panel will be shown when storage is selected */}
+        {selected && !mobileMenuVisible && selected.type === 'storage' && (
+          <div className="absolute inset-4 bg-[#FFF8E1]/95 dark:bg-gray-900/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto border-2 border-amber-200/50">
+            <button 
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSelected(null)}
+            >
+              ✕
+            </button>
+            
+            <div className="space-y-6">
+              <div className="store-tabs">
+                <button className="store-tab store-tab-active">🪵 Recursos</button>
+                <button className="store-tab store-tab-inactive">🌾 Colheitas</button>
+                <button className="store-tab store-tab-inactive">🌱 Sementes</button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="item-card">
+                  <div className="item-info">
+                    <span className="item-icon">🪵</span>
+                    <span className="item-name">Madeira</span>
+                  </div>
+                  <div className="item-action">
+                    <span className="text-sm font-medium">{resources.wood}</span>
+                  </div>
+                </div>
+
+                <div className="item-card">
+                  <div className="item-info">
+                    <span className="item-icon">🪨</span>
+                    <span className="item-name">Pedra</span>
+                  </div>
+                  <div className="item-action">
+                    <span className="text-sm font-medium">{resources.stone}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Game log */}

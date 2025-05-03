@@ -9,6 +9,8 @@ const MobileMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handlePanelSelect = (panel: string) => {
     if (panel === 'shop') {
       setSelected({ type: 'store', key: null });
+    } else if (panel === 'storage') {
+      setSelected({ type: 'storage', key: null });
     }
     setActivePanel(null);
     onClose();
