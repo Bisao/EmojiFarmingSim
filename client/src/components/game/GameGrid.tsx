@@ -428,16 +428,16 @@ const GameGrid: React.FC = () => {
   return (
     <div className="relative bg-green-100 dark:bg-green-900 rounded-xl shadow-md p-3 overflow-auto flex-1 max-h-[calc(100vh-200px)]">
       {isStoreOpen && (
-        <div className="absolute inset-4 bg-card/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto">
+        <div className="absolute inset-4 store-container z-20 overflow-auto">
           <button 
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-red-500/10 text-red-500 hover:bg-red-500/20"
             onClick={() => setSelected(null)}
           >
             ✕
           </button>
-          <div className="flex mb-4">
+          <div className="store-tabs">
             <button 
-              className={`px-4 py-2 rounded-lg mr-2 ${storeTab === 'structures' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`store-tab ${storeTab === 'structures' ? 'active' : ''}`}
               onClick={() => setStoreTab('structures')}
             >
               Estruturas
