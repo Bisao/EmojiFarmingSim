@@ -14,9 +14,8 @@ const MainGameContainer: React.FC = () => {
       {/* Top bar with game name and player info */}
       <div className="bg-[#FFA726] text-white p-4 shadow-lg flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl bee-flower-animation">🌻</span>
-          <h1 className="text-xl font-bold font-display">Emoji Farming</h1>
-          <span className="text-3xl bee-animation">🐝</span>
+          <span className="text-3xl animate-bounce-slow">🐝</span>
+          <h1 className="text-xl font-bold font-display">BeeBuilder</h1>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-[#FB8C00]/50 px-3 py-1.5 rounded-lg">
