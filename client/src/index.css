@@ -270,8 +270,8 @@
   #game-grid {
     display: grid;
     grid-template-columns: repeat(7, 60px);
-    grid-auto-rows: 52px;
-    gap: 2px;
+    grid-auto-rows: 60px;
+    gap: 4px;
     margin: 0 auto;
     padding: 16px;
     position: relative;
@@ -282,23 +282,12 @@
 
   .tile-transition {
     width: 56px;
-    height: 48px;
+    height: 56px;
     position: relative;
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
     background: linear-gradient(135deg, #ffd86f 0%, #ffb52e 100%);
     border: 1px solid rgba(255, 191, 0, 0.3);
     transition: all 0.3s ease;
-    margin-top: -12px;
-  }
-
-  /* Offset odd rows for perfect honeycomb pattern */
-  .tile-transition[data-y="odd"] {
-    transform: translateX(35px);
-  }
-
-  /* First row adjustment */
-  .tile-transition[data-y="0"] {
-    margin-top: 0;
+    border-radius: 8px;
   }
 
   .game-grid-container {
