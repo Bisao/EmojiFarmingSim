@@ -270,14 +270,14 @@
     grid-template-rows: repeat(6, minmax(35px, var(--tile-size)));
     gap: var(--tile-gap);
     margin: 0 auto;
-    max-width: 100%;
+    width: 95%;
     overflow: auto;
   }
 
   @media (max-width: 768px) {
     #game-grid {
-      grid-template-columns: repeat(10, 35px);
-      grid-template-rows: repeat(6, 35px);
+      grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(6, 1fr);
       gap: 2px;
       width: 95%;
       margin: 0 auto;
