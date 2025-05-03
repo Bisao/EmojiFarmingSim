@@ -1,6 +1,15 @@
 import { GridTile, SeedType, ResourceType } from "./gameTypes";
 import { useGameStateContext } from "./gameState";
 
+// Define and export seedMap
+export const seedMap: Record<SeedType, { emoji: string; cost: number; growthTime: number }> = {
+  wheat: { emoji: '🌾', cost: 5, growthTime: 55 },
+  corn: { emoji: '🌽', cost: 8, growthTime: 65 },
+  carrot: { emoji: '🥕', cost: 10, growthTime: 45 },
+  potato: { emoji: '🥔', cost: 12, growthTime: 75 },
+  tomato: { emoji: '🍅', cost: 15, growthTime: 60 }
+};
+
 // Create a state instance to be used by game logic functions
 let gameStateInstance: ReturnType<typeof useGameStateContext> | null = null;
 
