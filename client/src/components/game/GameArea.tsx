@@ -127,11 +127,17 @@ const GameArea: React.FC = () => {
                 )}
                 {storageTab === 'crops' && (
                   <div className="space-y-2">
-                    {Object.entries(resources.crops).map(([cropType, amount]) => (
-                      <div key={cropType} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                    {[
+                      { type: 'wheat', emoji: '🌾' },
+                      { type: 'corn', emoji: '🌾' },
+                      { type: 'carrot', emoji: '🥕' },
+                      { type: 'potato', emoji: '🥔' },
+                      { type: 'tomato', emoji: '🍅' }
+                    ].map(({ type, emoji }) => (
+                      <div key={type} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
                         <div className="flex items-center gap-2">
-                          <span className="text-xl">{cropType === 'wheat' ? '🌾' : cropType === 'corn' ? '🌽' : '🥕'}</span>
-                          <span className="text-sm font-medium">{amount}</span>
+                          <span className="text-xl">{emoji}</span>
+                          <span className="text-sm font-medium">{resources.crops[type] || 0}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <span className="text-xs text-gray-500">10🪙</span>
@@ -145,14 +151,20 @@ const GameArea: React.FC = () => {
                 )}
                 {storageTab === 'seeds' && (
                   <div className="space-y-2">
-                    {Object.entries(resources.seeds).map(([seedType, amount]) => (
-                      <div key={seedType} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                    {[
+                      { type: 'wheat', emoji: '🌾' },
+                      { type: 'corn', emoji: '🌾' },
+                      { type: 'carrot', emoji: '🥕' },
+                      { type: 'potato', emoji: '🥔' },
+                      { type: 'tomato', emoji: '🍅' }
+                    ].map(({ type, emoji }) => (
+                      <div key={type} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
                         <div className="flex items-center gap-2">
-                          <span className="text-xl">{seedType === 'wheat' ? '🌾' : seedType === 'corn' ? '🌽' : '🥕'}</span>
-                          <span className="text-sm font-medium">{amount}</span>
+                          <span className="text-xl">{emoji}</span>
+                          <span className="text-sm font-medium">{resources.seeds[type] || 0}</span>
                         </div>
                         <div className="text-xs text-gray-500 px-2">
-                          {amount > 0 ? 'Disponível' : 'Esgotado'}
+                          {(resources.seeds[type] || 0) > 0 ? 'Disponível' : 'Esgotado'}
                         </div>
                       </div>
                     ))}

@@ -26,6 +26,13 @@ const GameHeader: React.FC = () => {
       </h1>
       <div className="flex items-center gap-3">
         <button 
+          onClick={() => setSelected({ type: 'store', key: null })}
+          className="rounded-full w-8 h-8 flex items-center justify-center hover:bg-primary-dark transition-colors"
+          aria-label="Open store"
+        >
+          🛍️
+        </button>
+        <button 
           onClick={toggleSound}
           className="rounded-full w-8 h-8 flex items-center justify-center hover:bg-primary-dark transition-colors"
           aria-label={soundEnabled ? "Disable sound" : "Enable sound"}

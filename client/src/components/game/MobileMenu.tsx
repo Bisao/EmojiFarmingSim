@@ -21,7 +21,6 @@ const MobileMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const menuItems = [
     { id: 'shop', emoji: '🛍️', label: 'Loja' },
     { id: 'storage', emoji: '🏦', label: 'Armazém' },
-    { id: 'resources', emoji: '💰', label: 'Recursos' },
     { id: 'status', emoji: '📊', label: 'Status' },
     { id: 'options', emoji: '⚙️', label: 'Opções' }
   ];
