@@ -7,7 +7,7 @@ import { useGameState } from "@/hooks/use-game-state";
 import { useMobile } from "@/hooks/use-mobile";
 
 const GameArea: React.FC = () => {
-  const { resources, selected } = useGameState();
+  const { resources, selected, setSelected } = useGameState();
   const isMobile = useMobile();
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
 
