@@ -54,7 +54,11 @@ const GameArea: React.FC = () => {
       )}
       
       {/* Mobile navigation menu */}
-      {isMobile && mobileMenuVisible && <MobileMenu onClose={() => setMobileMenuVisible(false)} />}
+      {isMobile && mobileMenuVisible && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <MobileMenu onClose={() => setMobileMenuVisible(false)} />
+        </div>
+      )}
       
       {/* Game grid container */}
       <GameGrid />
