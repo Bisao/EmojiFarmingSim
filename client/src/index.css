@@ -264,12 +264,12 @@
   }
 
   @keyframes bee-fly {
-    0%, 10% { transform: translate(100%, 0); z-index: 20; }
-    25% { transform: translate(50%, -10px); z-index: 20; }
-    40% { transform: translate(-120%, 0); z-index: 20; }
-    40%, 60% { transform: translate(-120%, 0); z-index: 20; }
-    75% { transform: translate(50%, -10px); z-index: 20; }
-    90%, 100% { transform: translate(100%, 0); z-index: 20; }
+    0%, 5% { transform: translate(100%, 0); z-index: 20; }
+    25% { transform: translate(50%, -8px); z-index: 20; }
+    45% { transform: translate(-120%, -8px); z-index: 20; }
+    45%, 55% { transform: translate(-120%, -8px); z-index: 20; }
+    75% { transform: translate(50%, -8px); z-index: 20; }
+    95%, 100% { transform: translate(100%, 0); z-index: 20; }
   }
 
   @keyframes flower-sway {
@@ -279,7 +279,7 @@
   }
 
   .bee-fly-animation {
-    animation: bee-fly 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: bee-fly 25s cubic-bezier(0.45, 0, 0.55, 1) infinite;
     position: absolute;
     right: 0;
   }
