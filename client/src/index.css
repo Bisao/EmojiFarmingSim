@@ -279,6 +279,13 @@
       grid-template-columns: repeat(10, 35px);
       grid-template-rows: repeat(6, 35px);
       gap: 2px;
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    .game-grid-container {
+      width: 95vw;
+      margin: 0 auto;
     }
   }
 
