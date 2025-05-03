@@ -13,7 +13,6 @@ const GameArea: React.FC = () => {
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const [storageTab, setStorageTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
   const isStoreOpen = selected?.type === 'store';
-  const [storageTab, setStorageTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
 
   const toggleMobileMenu = () => {
     setMobileMenuVisible(!mobileMenuVisible);
