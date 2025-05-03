@@ -18,12 +18,6 @@ const MainGameContainer: React.FC = () => {
           <h1 className="text-xl font-bold font-display z-10">Emoji Farming</h1>
           <span className="text-3xl bee-fly-animation absolute">🐝</span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-[#FB8C00]/50 px-3 py-1.5 rounded-lg">
-            <span className="text-xl">🪙</span>
-            <span className="font-medium">100,250</span>
-          </div>
-        </div>
       </div>
       
       <main className="flex-1 p-4 overflow-hidden container mx-auto max-w-7xl">
