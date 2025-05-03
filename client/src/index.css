@@ -234,52 +234,19 @@
   /* Game grid sizing */
   #game-grid {
     display: grid;
-    grid-template-columns: repeat(10, minmax(30px, 50px));
-    grid-template-rows: repeat(6, minmax(30px, 50px));
-    gap: 2px;
+    grid-template-columns: repeat(10, minmax(40px, var(--tile-size)));
+    grid-template-rows: repeat(6, minmax(40px, var(--tile-size)));
+    gap: var(--tile-gap);
     margin: 0 auto;
     max-width: 100%;
     overflow: auto;
-    padding: 1rem;
   }
 
   @media (max-width: 768px) {
     #game-grid {
-      grid-template-columns: repeat(10, minmax(25px, 35px));
-      grid-template-rows: repeat(6, minmax(25px, 35px));
+      grid-template-columns: repeat(10, minmax(30px, 40px));
+      grid-template-rows: repeat(6, minmax(30px, 40px));
     }
-  }
-
-  .store-container {
-    @apply p-4 rounded-xl;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 184, 0, 0.2);
-  }
-
-  .store-tabs {
-    @apply flex gap-2 mb-4 overflow-x-auto pb-2;
-  }
-
-  .store-tab {
-    @apply px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap;
-    background: rgba(255, 184, 0, 0.1);
-  }
-
-  .store-tab.active {
-    @apply text-white;
-    background: rgb(255, 184, 0);
-  }
-
-  .store-grid {
-    @apply grid gap-3;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-
-  .store-item {
-    @apply p-3 rounded-lg flex items-center justify-between;
-    background: rgba(255, 184, 0, 0.05);
-    border: 1px solid rgba(255, 184, 0, 0.1);
   }
 
   .agent {
