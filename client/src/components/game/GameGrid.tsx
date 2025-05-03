@@ -180,7 +180,10 @@ const Tile: React.FC<{
 
   return (
     <div
-      className={`tile-transition relative w-[var(--tile-size)] h-[var(--tile-size)] ${bgColor} border border-green-200 cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95`}
+      className={`tile-transition relative w-[var(--tile-size)] h-[var(--tile-size)] cursor-pointer flex items-center justify-center`}
+      style={{
+        transform: `translateX(${tile.y % 2 ? '50%' : '0'})`,
+      }}
       data-x={tile.x}
       data-y={tile.y}
       onClick={() => onClick(tile)}

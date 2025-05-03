@@ -262,7 +262,7 @@
     @apply transition-all duration-1000 ease-in-out;
   }
 
-  /* Game grid sizing */
+  /* Hexagonal grid */
   #game-grid {
     display: grid;
     grid-template-columns: repeat(7, minmax(35px, var(--tile-size)));
@@ -271,6 +271,29 @@
     margin: 0 auto;
     width: 95%;
     overflow: auto;
+    padding: 20px;
+  }
+
+  .tile-transition {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    background: linear-gradient(135deg, #ffd86f 0%, #ffb52e 100%);
+    border: 2px solid rgba(255, 191, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .tile-transition:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 191, 0, 0.5);
+    border-color: rgba(255, 191, 0, 0.8);
+  }
+
+  .dark .tile-transition {
+    background: linear-gradient(135deg, #4a3600 0%, #2b2000 100%);
+    border-color: rgba(255, 191, 0, 0.2);
+  }
+
+  .dark .tile-transition:hover {
+    border-color: rgba(255, 191, 0, 0.5);
   }
 
   @media (max-width: 768px) {
