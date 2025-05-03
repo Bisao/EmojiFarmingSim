@@ -76,7 +76,49 @@ const GameArea: React.FC = () => {
             {selected.type === 'storage' && (
               <div className="h-full">
                 <h2 className="text-xl font-bold mb-4">Armazém</h2>
-                {/* Storage content */}
+                <div className="flex border-b mb-2">
+                  <button 
+                    className="px-2 py-1 font-medium text-sm border-b-2 border-primary text-primary"
+                  >
+                    Recursos
+                  </button>
+                  <button 
+                    className="px-2 py-1 font-medium text-sm border-b-2 border-transparent text-gray-500"
+                  >
+                    Colheitas
+                  </button>
+                  <button 
+                    className="px-2 py-1 font-medium text-sm border-b-2 border-transparent text-gray-500"
+                  >
+                    Sementes
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🪵</span>
+                      <span className="text-sm font-medium">{resources.wood}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-500">5🪙</span>
+                      <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                        🛒
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🪨</span>
+                      <span className="text-sm font-medium">{resources.stone}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-500">8🪙</span>
+                      <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                        🛒
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
             {selected.type === 'resources' && (
