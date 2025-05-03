@@ -12,11 +12,23 @@ const MainGameContainer: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#FFF8E1] to-[#FFE082] dark:from-[#4A148C] dark:to-[#311B92]">
       {/* Top bar with game name and player info */}
-      <div className="bg-[#FFA726] text-white p-4 shadow-lg flex items-center justify-between">
-        <div className="flex items-center gap-3 relative">
-          <span className="text-3xl flower-animation">🌻</span>
-          <h1 className="text-xl font-bold font-display z-10">Emoji Farming</h1>
-          <span className="text-3xl bee-fly-animation absolute">🐝</span>
+      <div className="bg-gradient-to-r from-[#FFA726] to-[#FB8C00] text-white p-4 shadow-lg flex items-center justify-between sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+        <div className="flex items-center gap-4 relative">
+          <div className="flex items-center gap-2">
+            <span className="text-3xl flower-animation">🌻</span>
+            <h1 className="text-2xl font-bold font-display z-10">Emoji Farming</h1>
+            <span className="text-3xl bee-fly-animation absolute -right-8">🐝</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm">
+            <span className="text-xl">⚡</span>
+            <span className="font-medium">Level 1</span>
+          </div>
+          <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm">
+            <span className="text-xl">🌾</span>
+            <span className="font-medium">Farm</span>
+          </div>
         </div>
       </div>
       
