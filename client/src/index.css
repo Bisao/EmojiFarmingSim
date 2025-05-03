@@ -158,8 +158,8 @@
     @apply flex items-center justify-center p-4;
     position: relative;
     margin: auto;
-    height: calc(100vh - 320px);
-    max-height: 600px;
+    height: calc(100vh - 280px);
+    max-height: 680px;
     width: 100%;
   }
 
