@@ -17,7 +17,7 @@ const GameArea: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 max-w-full overflow-hidden">
+    <div className="flex-1 flex flex-col gap-4 max-w-[1200px] mx-auto overflow-hidden">
       {/* Mobile resources bar (only visible on small screens) */}
       {isMobile && (
         <motion.div 
