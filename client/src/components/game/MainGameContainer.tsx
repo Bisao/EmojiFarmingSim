@@ -4,6 +4,7 @@ import GameHeader from "./GameHeader";
 import GameArea from "./GameArea";
 import { useMobile } from "@/hooks/use-mobile";
 import { useGameState } from "@/hooks/use-game-state";
+import MobileMenu from "./MobileMenu";
 
 const MainGameContainer: React.FC = () => {
   const isMobile = useMobile();
