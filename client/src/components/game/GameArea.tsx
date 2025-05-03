@@ -10,6 +10,7 @@ const GameArea: React.FC = () => {
   const { resources, selected, setSelected } = useGameState();
   const isMobile = useMobile();
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+  const [storageTab, setStorageTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
 
   const toggleMobileMenu = () => {
     setMobileMenuVisible(!mobileMenuVisible);
@@ -78,47 +79,85 @@ const GameArea: React.FC = () => {
                 <h2 className="text-xl font-bold mb-4">Armazém</h2>
                 <div className="flex border-b mb-2">
                   <button 
-                    className="px-2 py-1 font-medium text-sm border-b-2 border-primary text-primary"
+                    className={`px-2 py-1 font-medium text-sm border-b-2 ${storageTab === 'resources' ? 'border-primary text-primary' : 'border-transparent text-gray-500'}`}
+                    onClick={() => setStorageTab('resources')}
                   >
                     Recursos
                   </button>
                   <button 
-                    className="px-2 py-1 font-medium text-sm border-b-2 border-transparent text-gray-500"
+                    className={`px-2 py-1 font-medium text-sm border-b-2 ${storageTab === 'crops' ? 'border-primary text-primary' : 'border-transparent text-gray-500'}`}
+                    onClick={() => setStorageTab('crops')}
                   >
                     Colheitas
                   </button>
                   <button 
-                    className="px-2 py-1 font-medium text-sm border-b-2 border-transparent text-gray-500"
+                    className={`px-2 py-1 font-medium text-sm border-b-2 ${storageTab === 'seeds' ? 'border-primary text-primary' : 'border-transparent text-gray-500'}`}
+                    onClick={() => setStorageTab('seeds')}
                   >
                     Sementes
                   </button>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🪵</span>
-                      <span className="text-sm font-medium">{resources.wood}</span>
+                {storageTab === 'resources' && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🪵</span>
+                        <span className="text-sm font-medium">{resources.wood}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-500">5🪙</span>
+                        <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                          🛒
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">5🪙</span>
-                      <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-                        🛒
-                      </button>
+                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🪨</span>
+                        <span className="text-sm font-medium">{resources.stone}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-500">8🪙</span>
+                        <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                          🛒
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🪨</span>
-                      <span className="text-sm font-medium">{resources.stone}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">8🪙</span>
-                      <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-                        🛒
-                      </button>
-                    </div>
+                )}
+                {storageTab === 'crops' && (
+                  <div className="space-y-2">
+                    {Object.entries(resources.crops).map(([cropType, amount]) => (
+                      <div key={cropType} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{cropType === 'wheat' ? '🌾' : cropType === 'corn' ? '🌽' : '🥕'}</span>
+                          <span className="text-sm font-medium">{amount}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs text-gray-500">10🪙</span>
+                          <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                            🛒
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
+                )}
+                {storageTab === 'seeds' && (
+                  <div className="space-y-2">
+                    {Object.entries(resources.seeds).map(([seedType, amount]) => (
+                      <div key={seedType} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{seedType === 'wheat' ? '🌾' : seedType === 'corn' ? '🌽' : '🥕'}</span>
+                          <span className="text-sm font-medium">{amount}</span>
+                        </div>
+                        <div className="text-xs text-gray-500 px-2">
+                          {amount > 0 ? 'Disponível' : 'Esgotado'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             {selected.type === 'resources' && (
