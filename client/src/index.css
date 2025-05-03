@@ -155,13 +155,13 @@
   }
 
   .game-grid-container {
-    @apply flex items-center justify-center overflow-auto p-4;
+    @apply flex items-center justify-center p-4;
     position: absolute;
     top: calc(50% + 32px);
     left: 50%;
     transform: translate(-50%, -50%);
-    height: calc(100vh - 128px);
-    max-height: 800px;
+    height: calc(100vh - 180px);
+    max-height: 600px;
   }
 
   .panel-header {
@@ -283,8 +283,8 @@
   }
 
   .tile-transition {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     position: relative;
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
     background: linear-gradient(135deg, #ffd86f 0%, #ffb52e 100%);
