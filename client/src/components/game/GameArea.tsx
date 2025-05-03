@@ -149,14 +149,13 @@ const GameArea: React.FC = () => {
                       </div>
                       <div className="item-action">
                         <span className="text-sm font-medium">{amount}</span>
-                        {amount >= 10 && (
-                          <button 
-                            onClick={() => sellCrop(crop)}
-                            className="px-2 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600"
-                          >
-                            Vender 10
-                          </button>
-                        )}
+                        <button 
+                          onClick={() => sellCrop(crop)}
+                          className={`px-2 py-1 ${amount >= 10 ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'} text-white rounded-md text-sm`}
+                          disabled={amount < 10}
+                        >
+                          Vender 10
+                        </button>
                       </div>
                     </div>
                   ))}
