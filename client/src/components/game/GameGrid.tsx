@@ -450,22 +450,10 @@ const GameGrid: React.FC = () => {
               🌾 Terrenos
             </button>
             <button 
-              className={`px-4 py-2 rounded-lg mr-2 ${storeTab === 'seeds' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`store-tab ${storeTab === 'seeds' ? 'store-tab-active' : 'store-tab-inactive'}`}
               onClick={() => setStoreTab('seeds')}
             >
-              Sementes
-            </button>
-            <button 
-              className={`px-4 py-2 rounded-lg mr-2 ${storeTab === 'vehicles' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setStoreTab('vehicles')}
-            >
-              Veículos
-            </button>
-            <button 
-              className={`px-4 py-2 rounded-lg ${storeTab === 'resources' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setStoreTab('resources')}
-            >
-              Recursos
+              🌱 Sementes
             </button>
           </div>
           {storeTab === 'structures' && (
