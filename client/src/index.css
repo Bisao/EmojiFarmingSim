@@ -270,26 +270,26 @@
   /* Hexagonal grid */
   #game-grid {
     display: grid;
-    grid-template-columns: repeat(7, 70px);
-    grid-auto-rows: 60px;
-    gap: 3px;
+    grid-template-columns: repeat(7, 60px);
+    grid-auto-rows: 52px;
+    gap: 2px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 16px;
     position: relative;
     width: fit-content;
     height: fit-content;
-    min-height: 500px;
+    min-height: 450px;
   }
 
   .tile-transition {
-    width: 50px;
-    height: 50px;
+    width: 56px;
+    height: 48px;
     position: relative;
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
     background: linear-gradient(135deg, #ffd86f 0%, #ffb52e 100%);
     border: 1px solid rgba(255, 191, 0, 0.3);
     transition: all 0.3s ease;
-    margin-top: -15px;
+    margin-top: -12px;
   }
 
   /* Offset odd rows for perfect honeycomb pattern */
