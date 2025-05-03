@@ -5,9 +5,15 @@ import { useGameState } from "@/hooks/use-game-state";
 const GameHeader: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { soundEnabled, setSoundEnabled, setTutorialVisible, setSelected } = useGameState();
+  const isMobile = useMobile();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   const toggleSound = () => {
@@ -25,6 +31,15 @@ const GameHeader: React.FC = () => {
         Emoji Farming 🐝
       </h1>
       <div className="flex items-center gap-3">
+        {isMobile && (
+          <button
+            onClick={toggleMobileMenu}
+            className="rounded-full w-8 h-8 flex items-center justify-center hover:bg-primary-dark transition-colors"
+            aria-label="Toggle mobile menu"
+          >
+            ≡
+          </button>
+        )}
         <button 
           onClick={() => setSelected({ type: 'store', key: null })}
           className="rounded-full w-8 h-8 flex items-center justify-center hover:bg-primary-dark transition-colors"
