@@ -263,26 +263,27 @@
     animation: wiggle 1s ease-in-out infinite;
   }
 
-  @keyframes bee-to-flower {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-20px); }
-    50% { transform: translateX(-20px) translateY(-5px); }
-    75% { transform: translateX(0) translateY(-5px); }
-    100% { transform: translateX(0); }
+  @keyframes bee-fly {
+    0% { transform: translate(100%, 0); }
+    25% { transform: translate(-50%, -10px); }
+    50% { transform: translate(-100%, 0); }
+    75% { transform: translate(-50%, 10px); }
+    100% { transform: translate(100%, 0); }
   }
 
-  @keyframes flower-wiggle {
-    0% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
-    100% { transform: rotate(-5deg); }
+  @keyframes flower-sway {
+    0% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+    100% { transform: rotate(-8deg); }
   }
 
-  .bee-animation {
-    animation: bee-to-flower 3s ease-in-out infinite;
+  .bee-fly-animation {
+    animation: bee-fly 4s ease-in-out infinite;
+    right: 0;
   }
 
-  .bee-flower-animation {
-    animation: flower-wiggle 2s ease-in-out infinite;
+  .flower-animation {
+    animation: flower-sway 3s ease-in-out infinite;
   }
 
   .animate-pulse-custom {
