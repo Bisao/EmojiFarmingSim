@@ -8,6 +8,7 @@ import { useGameState } from "@/hooks/use-game-state";
 const MainGameContainer: React.FC = () => {
   const isMobile = useMobile();
   const { setSelected } = useGameState();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#FFF8E1] to-[#FFE082] dark:from-[#4A148C] dark:to-[#311B92]">
@@ -28,6 +29,8 @@ const MainGameContainer: React.FC = () => {
           </button>
         </div>
       </div>
+      
+      {mobileMenuOpen && <MobileMenu onClose={() => setMobileMenuOpen(false)} />}
       
       <main className="flex-1 p-4 overflow-hidden container mx-auto max-w-7xl">
         <GameArea />
