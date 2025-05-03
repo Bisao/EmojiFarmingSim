@@ -157,10 +157,10 @@
   .game-grid-container {
     @apply flex items-center justify-center p-4;
     position: relative;
-    margin: 0 auto;
-    margin-top: 48px;
-    height: calc(100vh - 280px);
+    margin: auto;
+    height: calc(100vh - 320px);
     max-height: 600px;
+    width: 100%;
   }
 
   .panel-header {
