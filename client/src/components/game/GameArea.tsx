@@ -19,7 +19,7 @@ const GameArea: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 max-w-full overflow-hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-amber-200/50">
+    <div className="flex-1 flex flex-col gap-4 max-w-full overflow-hidden honeycomb-bg backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-amber-400/50">
       {/* Mobile resources bar (only visible on small screens) */}
       {isMobile && (
         <motion.div 
@@ -78,24 +78,36 @@ const GameArea: React.FC = () => {
             </button>
 
             <div className="space-y-6">
-              <div className="store-tabs">
+              <div className="flex gap-2 p-2 bg-amber-100 rounded-xl">
                 <button 
-                  className={`store-tab ${storageTab === 'resources' ? 'store-tab-active' : 'store-tab-inactive'}`}
+                  className={`btn-hexagon px-4 py-2 flex items-center gap-2 font-medium transition-colors ${
+                    storageTab === 'resources' 
+                    ? 'bg-amber-400 text-amber-900' 
+                    : 'bg-amber-200 text-amber-700 hover:bg-amber-300'
+                  }`}
                   onClick={() => setStorageTab('resources')}
                 >
-                  🪵 Recursos
+                  🐝 Recursos
                 </button>
                 <button 
-                  className={`store-tab ${storageTab === 'crops' ? 'store-tab-active' : 'store-tab-inactive'}`}
+                  className={`btn-hexagon px-4 py-2 flex items-center gap-2 font-medium transition-colors ${
+                    storageTab === 'crops' 
+                    ? 'bg-amber-400 text-amber-900' 
+                    : 'bg-amber-200 text-amber-700 hover:bg-amber-300'
+                  }`}
                   onClick={() => setStorageTab('crops')}
                 >
-                  🌾 Colheitas
+                  🍯 Colheitas
                 </button>
                 <button 
-                  className={`store-tab ${storageTab === 'seeds' ? 'store-tab-active' : 'store-tab-inactive'}`}
+                  className={`btn-hexagon px-4 py-2 flex items-center gap-2 font-medium transition-colors ${
+                    storageTab === 'seeds' 
+                    ? 'bg-amber-400 text-amber-900' 
+                    : 'bg-amber-200 text-amber-700 hover:bg-amber-300'
+                  }`}
                   onClick={() => setStorageTab('seeds')}
                 >
-                  🌱 Sementes
+                  🌼 Sementes
                 </button>
               </div>
 
