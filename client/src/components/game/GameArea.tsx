@@ -19,7 +19,7 @@ const GameArea: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 max-w-full overflow-hidden honeycomb-bg backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-amber-400/50">
+    <div className="flex-1 flex flex-col gap-4 max-w-full overflow-hidden bg-amber-50/90 dark:bg-amber-900/30 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-amber-300/80" style={{backgroundImage: 'linear-gradient(30deg, rgba(245,158,11,0.1) 12%, transparent 12.5%, transparent 87%, rgba(245,158,11,0.1) 87.5%, rgba(245,158,11,0.1)), linear-gradient(150deg, rgba(245,158,11,0.1) 12%, transparent 12.5%, transparent 87%, rgba(245,158,11,0.1) 87.5%, rgba(245,158,11,0.1)), linear-gradient(30deg, rgba(245,158,11,0.1) 12%, transparent 12.5%, transparent 87%, rgba(245,158,11,0.1) 87.5%, rgba(245,158,11,0.1)), linear-gradient(150deg, rgba(245,158,11,0.1) 12%, transparent 12.5%, transparent 87%, rgba(245,158,11,0.1) 87.5%, rgba(245,158,11,0.1))', backgroundSize: '80px 140px'}}>
       {/* Mobile resources bar (only visible on small screens) */}
       {isMobile && (
         <motion.div 
@@ -28,15 +28,15 @@ const GameArea: React.FC = () => {
           className="bg-card/80 backdrop-blur-sm rounded-xl shadow-lg p-3 flex items-center justify-between gap-2 sticky top-0 z-50"
         >
           <div className="flex gap-3">
-            <motion.div whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 bg-muted/30 px-3 py-1.5 rounded-lg">
+            <motion.div whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 bg-amber-100 dark:bg-amber-800/50 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-700">
               <span className="text-xl">🪙</span>
               <span className="font-semibold">{resources.coins}</span>
             </motion.div>
-            <motion.div whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 bg-muted/30 px-3 py-1.5 rounded-lg">
+            <motion.div whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 bg-amber-100 dark:bg-amber-800/50 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-700">
               <span className="text-xl">🪵</span>
               <span className="font-semibold">{resources.wood}</span>
             </motion.div>
-            <motion.div whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 bg-muted/30 px-3 py-1.5 rounded-lg">
+            <motion.div whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 bg-amber-100 dark:bg-amber-800/50 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-700">
               <span className="text-xl">🪨</span>
               <span className="font-semibold">{resources.stone}</span>
             </motion.div>

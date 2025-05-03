@@ -30,6 +30,25 @@
     --background: 215 28% 17%;  /* #1C2433 */
     --foreground: 210 40% 98%; /* #F5F9FF */
 
+.honeycomb-pattern {
+  background-color: #FFF8E1;
+  background-image: 
+    radial-gradient(circle farthest-side at 0% 50%, #FFF8E1 23.5%, rgba(240, 166, 17, 0.15) 0),
+    radial-gradient(circle farthest-side at 50% 50%, rgba(240, 166, 17, 0.15) 24%, #FFF8E1 0),
+    radial-gradient(circle farthest-side at 100% 50%, #FFF8E1 23.5%, rgba(240, 166, 17, 0.15) 0);
+  background-size: 60px 60px;
+  background-repeat: repeat;
+}
+
+.dark .honeycomb-pattern {
+  background-color: rgba(20, 20, 20, 0.9);
+  background-image: 
+    radial-gradient(circle farthest-side at 0% 50%, rgba(20, 20, 20, 0.9) 23.5%, rgba(240, 166, 17, 0.05) 0),
+    radial-gradient(circle farthest-side at 50% 50%, rgba(240, 166, 17, 0.05) 24%, rgba(20, 20, 20, 0.9) 0),
+    radial-gradient(circle farthest-side at 100% 50%, rgba(20, 20, 20, 0.9) 23.5%, rgba(240, 166, 17, 0.05) 0);
+}
+
+
     --card: 215 28% 20%;      /* #212A3B */
     --card-foreground: 210 40% 98%; /* #F5F9FF */
 
