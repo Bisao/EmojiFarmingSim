@@ -468,7 +468,7 @@ const GameGrid: React.FC = () => {
             </button>
           </div>
           {storeTab === 'structures' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
               {Object.entries(structureMap).map(([key, structure]) => (
                 <div key={key} className="item-card">
                   <div className="item-info">
@@ -491,7 +491,7 @@ const GameGrid: React.FC = () => {
             </div>
           )}
           {storeTab === 'fields' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
               {Object.entries(fieldMap).map(([key, field]) => (
                 <div key={key} className="item-card">
                   <div className="item-info">
@@ -514,7 +514,7 @@ const GameGrid: React.FC = () => {
             </div>
           )}
           {storeTab === 'seeds' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
               {Object.entries(seedMap).map(([key, seed]) => (
                 <div key={key} className="item-card">
                   <div className="item-info">
@@ -547,7 +547,7 @@ const GameGrid: React.FC = () => {
             </div>
           )}
           {storeTab === 'vehicles' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
               <div className="item-card">
                 <div className="item-info">
                   <span className="item-icon">🛻</span>
@@ -585,7 +585,7 @@ const GameGrid: React.FC = () => {
             </div>
           )}
           {storeTab === 'resources' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
               <div className="item-card">
                 <div className="item-info">
                   <span className="item-icon">🪵</span>

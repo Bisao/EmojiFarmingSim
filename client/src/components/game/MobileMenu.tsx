@@ -30,7 +30,7 @@ const MobileMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="md:hidden bg-card/95 backdrop-blur-sm rounded-xl shadow-lg p-4 w-[90vw] max-w-md mx-auto"
+      className="md:hidden bg-card/95 backdrop-blur-sm rounded-xl shadow-lg p-4 w-[95vw] max-w-sm mx-auto fixed bottom-16 left-1/2 transform -translate-x-1/2"
     >
       <div className="grid grid-cols-3 gap-3">
         {menuItems.map(item => (
