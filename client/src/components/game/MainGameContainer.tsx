@@ -22,11 +22,11 @@ const MainGameContainer: React.FC = () => {
         </div>
         <div className="flex items-center">
           <button
-            onClick={() => setMobileMenuOpen(true)}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 hover:bg-[#FB8C00]/50 rounded-lg transition-colors"
-            aria-label="Open menu"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
-            <span className="text-2xl">≡</span>
+            <span className="text-2xl">{mobileMenuOpen ? "✕" : "≡"}</span>
           </button>
         </div>
       </div>

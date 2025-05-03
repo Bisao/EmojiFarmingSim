@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useGameState } from "@/hooks/use-game-state";
 import { motion } from "framer-motion";
@@ -28,9 +27,15 @@ const MobileMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1a1b26]/95 backdrop-blur-sm rounded-xl shadow-lg p-4 z-50"
+      className="fixed inset-0 flex items-center justify-center bg-[#1a1b26]/95 backdrop-blur-sm z-50"
     >
-      <div className="grid grid-cols-2 gap-4">
+      <div className="relative grid grid-cols-2 gap-4 bg-[#1a1b26] rounded-xl shadow-lg p-6 mx-4">
+        <button
+          onClick={onClose}
+          className="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full"
+        >
+          ✕
+        </button>
         {menuItems.map(item => (
           <motion.button
             key={item.id}
