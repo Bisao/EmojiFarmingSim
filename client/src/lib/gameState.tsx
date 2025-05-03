@@ -30,7 +30,7 @@ function shouldLogMessage(text: string, category: string): boolean {
 
 // Define initial state
 const initialGridTiles: GridTile[] = [];
-const cols = 10, rows = 6;
+const cols = 9, rows = 9;
 
 // Generate initial grid
 for (let y = 0; y < rows; y++) {
