@@ -417,6 +417,7 @@ const GameGrid: React.FC = () => {
 
   const handleStructureSelect = (key: string) => {
     setSelected({ type: "structure", key });
+    setStoreTab('structures'); // Reset store tab
   };
 
   const handleFieldSelect = (key: string) => {
