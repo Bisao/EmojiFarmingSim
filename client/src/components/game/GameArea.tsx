@@ -17,7 +17,7 @@ const GameArea: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 max-w-full overflow-hidden">
+    <div className="flex-1 flex flex-col gap-4 max-w-full overflow-hidden bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-amber-200/50">
       {/* Mobile resources bar (only visible on small screens) */}
       {isMobile && (
         <motion.div 
@@ -67,7 +67,7 @@ const GameArea: React.FC = () => {
 
         {/* Central panels */}
         {selected && selected.type !== 'store' && (
-          <div className="absolute inset-4 bg-card/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto">
+          <div className="absolute inset-4 bg-[#FFF8E1]/95 dark:bg-gray-900/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto border-2 border-amber-200/50">
             <button 
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => setSelected(null)}
