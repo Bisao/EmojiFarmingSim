@@ -277,7 +277,7 @@
     padding: 16px;
     position: relative;
     width: fit-content;
-    height: fit-content;
+    height: calc(90vh - 260px);
     min-height: 450px;
   }
 
