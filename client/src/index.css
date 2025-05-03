@@ -266,8 +266,8 @@
   /* Game grid sizing */
   #game-grid {
     display: grid;
-    grid-template-columns: repeat(10, minmax(40px, var(--tile-size)));
-    grid-template-rows: repeat(6, minmax(40px, var(--tile-size)));
+    grid-template-columns: repeat(10, minmax(35px, var(--tile-size)));
+    grid-template-rows: repeat(6, minmax(35px, var(--tile-size)));
     gap: var(--tile-gap);
     margin: 0 auto;
     max-width: 100%;
@@ -276,8 +276,17 @@
 
   @media (max-width: 768px) {
     #game-grid {
-      grid-template-columns: repeat(10, minmax(30px, 40px));
-      grid-template-rows: repeat(6, minmax(30px, 40px));
+      grid-template-columns: repeat(10, 35px);
+      grid-template-rows: repeat(6, 35px);
+      gap: 2px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    #game-grid {
+      grid-template-columns: repeat(10, 32px);
+      grid-template-rows: repeat(6, 32px);
+      gap: 2px;
     }
   }
 
