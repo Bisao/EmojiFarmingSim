@@ -31,9 +31,12 @@ const MainGameContainer: React.FC = () => {
         </div>
       </div>
       
-      {mobileMenuOpen && <MobileMenu onClose={() => setMobileMenuOpen(false)} />}
-      
-      <main className="flex-1 p-4 overflow-hidden container mx-auto max-w-7xl">
+      <main className="flex-1 p-4 overflow-hidden container mx-auto max-w-7xl relative">
+        {mobileMenuOpen && (
+          <div className="absolute inset-0 flex items-center justify-center z-50">
+            <MobileMenu onClose={() => setMobileMenuOpen(false)} />
+          </div>
+        )}
         <GameArea />
         
         {/* Store button fixed in bottom right with honey theme */}
