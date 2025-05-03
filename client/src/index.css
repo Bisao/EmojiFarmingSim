@@ -265,9 +265,9 @@
   /* Hexagonal grid */
   #game-grid {
     display: grid;
-    grid-template-columns: repeat(7, 60px);
-    grid-auto-rows: 52px;
-    gap: 2px 4px;
+    grid-template-columns: repeat(7, 70px);
+    grid-auto-rows: 60px;
+    gap: 3px;
     margin: 0 auto;
     padding: 20px;
     position: relative;
@@ -277,18 +277,24 @@
   }
 
   .tile-transition {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     position: relative;
-    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
     background: linear-gradient(135deg, #ffd86f 0%, #ffb52e 100%);
     border: 1px solid rgba(255, 191, 0, 0.3);
     transition: all 0.3s ease;
+    margin-top: -15px;
   }
 
   /* Offset odd rows for perfect honeycomb pattern */
   .tile-transition[data-y="odd"] {
-    transform: translateX(30px);
+    transform: translateX(35px);
+  }
+
+  /* First row adjustment */
+  .tile-transition[data-y="0"] {
+    margin-top: 0;
   }
 
   .game-grid-container {
