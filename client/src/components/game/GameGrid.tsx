@@ -436,18 +436,18 @@ const GameGrid: React.FC = () => {
           >
             ✕
           </button>
-          <div className="flex mb-4">
+          <div className="store-tabs">
             <button 
-              className={`px-4 py-2 rounded-lg mr-2 ${storeTab === 'structures' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`store-tab ${storeTab === 'structures' ? 'store-tab-active' : 'store-tab-inactive'}`}
               onClick={() => setStoreTab('structures')}
             >
-              Estruturas
+              🏗️ Estruturas
             </button>
             <button 
-              className={`px-4 py-2 rounded-lg mr-2 ${storeTab === 'fields' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`store-tab ${storeTab === 'fields' ? 'store-tab-active' : 'store-tab-inactive'}`}
               onClick={() => setStoreTab('fields')}
             >
-              Terrenos
+              🌾 Terrenos
             </button>
             <button 
               className={`px-4 py-2 rounded-lg mr-2 ${storeTab === 'seeds' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
