@@ -208,11 +208,11 @@
   }
 
   .store-tabs {
-    @apply flex justify-center gap-2 mb-4 w-full max-w-[600px] mx-auto px-2;
+    @apply flex justify-center gap-1.5 mb-3 w-full max-w-[500px] mx-auto px-2;
   }
 
   .store-tab {
-    @apply flex-1 px-3 py-2.5 text-center font-semibold transition-all duration-300 transform hover:scale-105 text-amber-900;
+    @apply flex-1 px-2 py-2 text-center font-medium text-sm transition-all duration-300 transform hover:scale-105 text-amber-900;
     background: linear-gradient(135deg, #FFD86F 0%, #FFB52E 100%);
     clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
   }
