@@ -66,8 +66,8 @@ const GameArea: React.FC = () => {
       <div className="relative">
         <GameGrid />
 
-        {/* Central panels */}
-        {selected && !mobileMenuVisible && !['store'].includes(selected.type) && (
+        {/* Only store panel will be shown */}
+        {selected && !mobileMenuVisible && selected.type === 'store' && (
           <div className="absolute inset-4 bg-[#FFF8E1]/95 dark:bg-gray-900/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto border-2 border-amber-200/50">
             <button 
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -75,122 +75,7 @@ const GameArea: React.FC = () => {
             >
               ✕
             </button>
-            {selected.type === 'storage' && (
-              <div className="h-full">
-                <h2 className="text-xl font-bold mb-4">Armazém</h2>
-                <div className="flex border-b mb-2">
-                  <button 
-                    className={`px-2 py-1 font-medium text-sm border-b-2 ${storageTab === 'resources' ? 'border-primary text-primary' : 'border-transparent text-gray-500'}`}
-                    onClick={() => setStorageTab('resources')}
-                  >
-                    Recursos
-                  </button>
-                  <button 
-                    className={`px-2 py-1 font-medium text-sm border-b-2 ${storageTab === 'crops' ? 'border-primary text-primary' : 'border-transparent text-gray-500'}`}
-                    onClick={() => setStorageTab('crops')}
-                  >
-                    Colheitas
-                  </button>
-                  <button 
-                    className={`px-2 py-1 font-medium text-sm border-b-2 ${storageTab === 'seeds' ? 'border-primary text-primary' : 'border-transparent text-gray-500'}`}
-                    onClick={() => setStorageTab('seeds')}
-                  >
-                    Sementes
-                  </button>
-                </div>
-                {storageTab === 'resources' && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🪵</span>
-                        <span className="text-sm font-medium">{resources.wood}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">5🪙</span>
-                        <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-                          🛒
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🪨</span>
-                        <span className="text-sm font-medium">{resources.stone}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">8🪙</span>
-                        <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-                          🛒
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {storageTab === 'crops' && (
-                  <div className="space-y-2">
-                    {[
-                      { type: 'wheat', emoji: '🌾' },
-                      { type: 'corn', emoji: '🌾' },
-                      { type: 'carrot', emoji: '🥕' },
-                      { type: 'potato', emoji: '🥔' },
-                      { type: 'tomato', emoji: '🍅' }
-                    ].map(({ type, emoji }) => (
-                      <div key={type} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">{emoji}</span>
-                          <span className="text-sm font-medium">{resources.crops[type] || 0}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs text-gray-500">10🪙</span>
-                          <button className="bg-primary text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-                            🛒
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {storageTab === 'seeds' && (
-                  <div className="space-y-2">
-                    {[
-                      { type: 'wheat', emoji: '🌾' },
-                      { type: 'corn', emoji: '🌾' },
-                      { type: 'carrot', emoji: '🥕' },
-                      { type: 'potato', emoji: '🥔' },
-                      { type: 'tomato', emoji: '🍅' }
-                    ].map(({ type, emoji }) => (
-                      <div key={type} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">{emoji}</span>
-                          <span className="text-sm font-medium">{resources.seeds[type] || 0}</span>
-                        </div>
-                        <div className="text-xs text-gray-500 px-2">
-                          {(resources.seeds[type] || 0) > 0 ? 'Disponível' : 'Esgotado'}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-            {selected.type === 'resources' && (
-              <div className="h-full">
-                <h2 className="text-xl font-bold mb-4">Recursos</h2>
-                {/* Resources content */}
-              </div>
-            )}
-            {selected.type === 'status' && (
-              <div className="h-full">
-                <h2 className="text-xl font-bold mb-4">Status</h2>
-                {/* Status content */}
-              </div>
-            )}
-            {selected.type === 'options' && (
-              <div className="h-full">
-                <h2 className="text-xl font-bold mb-4">Opções</h2>
-                {/* Options content */}
-              </div>
-            )}
+            {/* Store content would go here */}
           </div>
         )}
       </div>
