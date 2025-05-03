@@ -61,7 +61,45 @@ const GameArea: React.FC = () => {
       )}
       
       {/* Game grid container */}
-      <GameGrid />
+      <div className="relative">
+        <GameGrid />
+        
+        {/* Central panels */}
+        {selected && selected.type !== 'store' && (
+          <div className="absolute inset-4 bg-card/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto">
+            <button 
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSelected(null)}
+            >
+              ✕
+            </button>
+            {selected.type === 'storage' && (
+              <div className="h-full">
+                <h2 className="text-xl font-bold mb-4">Armazém</h2>
+                {/* Storage content */}
+              </div>
+            )}
+            {selected.type === 'resources' && (
+              <div className="h-full">
+                <h2 className="text-xl font-bold mb-4">Recursos</h2>
+                {/* Resources content */}
+              </div>
+            )}
+            {selected.type === 'status' && (
+              <div className="h-full">
+                <h2 className="text-xl font-bold mb-4">Status</h2>
+                {/* Status content */}
+              </div>
+            )}
+            {selected.type === 'options' && (
+              <div className="h-full">
+                <h2 className="text-xl font-bold mb-4">Opções</h2>
+                {/* Options content */}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
       
       {/* Game log */}
       <GameLog />

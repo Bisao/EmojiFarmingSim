@@ -9,14 +9,12 @@ const MobileMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handlePanelSelect = (panel: string) => {
     if (panel === 'shop') {
       setSelected({ type: 'store', key: null });
-      setActivePanel(null);
     } else if (panel === 'storage' || panel === 'resources' || panel === 'status') {
-      setActivePanel('right');
-      setSelected(null);
+      setSelected({ type: panel, key: null });
     } else if (panel === 'options') {
-      setActivePanel('left');
-      setSelected(null);
+      setSelected({ type: 'options', key: null });
     }
+    setActivePanel(null);
     onClose();
   };
 
