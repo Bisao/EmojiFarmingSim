@@ -55,7 +55,7 @@ const GameArea: React.FC = () => {
       
       {/* Mobile navigation menu */}
       {isMobile && mobileMenuVisible && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <MobileMenu onClose={() => setMobileMenuVisible(false)} />
         </div>
       )}
