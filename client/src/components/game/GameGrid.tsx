@@ -182,8 +182,9 @@ const Tile: React.FC<{
     <div
       className={`tile-transition relative w-[var(--tile-size)] h-[var(--tile-size)] cursor-pointer flex items-center justify-center`}
       style={{
-        transform: `translateX(${tile.y % 2 ? '50%' : '0'})`,
+        transform: tile.y % 2 ? 'translateX(5px)' : 'none',
       }}
+      data-y={tile.y % 2 ? 'odd' : 'even'}
       data-x={tile.x}
       data-y={tile.y}
       onClick={() => onClick(tile)}
