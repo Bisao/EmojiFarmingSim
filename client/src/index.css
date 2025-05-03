@@ -270,8 +270,8 @@
   /* Hexagonal grid */
   #game-grid {
     display: grid;
-    grid-template-columns: repeat(7, minmax(45px, 1fr));
-    grid-auto-rows: minmax(45px, 1fr);
+    grid-template-columns: repeat(7, minmax(40px, 1fr));
+    grid-auto-rows: minmax(40px, 1fr);
     gap: 4px;
     margin: 0 auto;
     padding: 8px;
@@ -283,8 +283,8 @@
   }
 
   .tile-transition {
-    width: 100%;
-    height: 100%;
+    width: 40px;
+    height: 40px;
     position: relative;
     background: linear-gradient(135deg, #ffd86f 0%, #ffb52e 100%);
     border: 1px solid rgba(255, 191, 0, 0.3);
