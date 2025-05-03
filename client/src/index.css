@@ -150,6 +150,30 @@
     @apply w-8 h-8 flex items-center justify-center bg-[#FFA726] text-white rounded-full hover:bg-[#FB8C00] transition-colors;
   }
 
+  @keyframes flower-sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+
+  .flower-animation {
+    animation: flower-sway 3s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  @keyframes bee-fly {
+    0%, 10% { transform: translate(100%, 0); z-index: 20; }
+    25% { transform: translate(50%, -10px); z-index: 20; }
+    40% { transform: translate(-120%, 0); z-index: 20; }
+    40%, 60% { transform: translate(-120%, 0); z-index: 20; }
+    75% { transform: translate(50%, -10px); z-index: 20; }
+    90%, 100% { transform: translate(100%, 0); z-index: 20; }
+  }
+
+  .bee-fly-animation {
+    animation: bee-fly 15s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    position: absolute;
+  }
+
   .tile-transition {
     @apply transition-all duration-200 hover:scale-105 active:scale-95 border-2 border-amber-200/30;
   }

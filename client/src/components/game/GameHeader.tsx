@@ -21,8 +21,8 @@ const GameHeader: React.FC = () => {
   return (
     <header className="bg-primary shadow-md p-4 text-white flex justify-between items-center backdrop-blur-sm bg-opacity-95 sticky top-0 z-50">
       <h1 className="font-display text-xl md:text-2xl font-bold flex items-center gap-2">
-        <span className="text-2xl md:text-3xl">🌻</span> 
-        Emoji Farming 🐝
+        <span className="text-2xl md:text-3xl flower-animation">🌻</span> 
+        Emoji Farming <span className="bee-fly-animation">🐝</span>
       </h1>
       <div className="flex items-center gap-3">
         <button 
