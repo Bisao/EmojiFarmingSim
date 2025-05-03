@@ -688,7 +688,7 @@ const GameGrid: React.FC = () => {
           )}
         </div>
       </div>
-      {removalConfirmation && (
+      {removalConfirmation && removalConfirmation.type && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30">
           <div className="absolute bg-card p-4 rounded-lg shadow-lg max-w-sm" style={{
             left: `${removalConfirmation.x * (80 + 4)}px`,

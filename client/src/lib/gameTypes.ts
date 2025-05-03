@@ -12,9 +12,9 @@ export type FieldState = 'normal' | 'prepared' | 'watered';
 export type AgentState = 'idle' | 'moving' | 'working' | 'returning' | 'storing' | 'resting' | 'waiting' | 'preparing' | 'watering' | 'planting' | 'harvesting' | 'gettingWater' | 'gettingSeed' | 'collectingWater' | 'irrigating';
 export type SelectionType = { type: 'structure' | 'field' | 'seed' | 'remove', key: string } | null;
 export type RemovalConfirmation = {
-  type: 'structure' | 'resource';
-  x: number;
-  y: number;
+  type?: 'structure' | 'resource';
+  x?: number;
+  y?: number;
   cost?: number;
   refund?: number;
 } | null;
