@@ -1,6 +1,7 @@
 import React from "react";
 import { useTheme } from "@/lib/ThemeProvider";
 import { useGameState } from "@/hooks/use-game-state";
+import useMobile from "@/hooks/use-mobile";
 
 const GameHeader: React.FC = () => {
   const { theme, setTheme } = useTheme();
