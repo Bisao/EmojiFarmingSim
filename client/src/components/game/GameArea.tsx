@@ -66,7 +66,7 @@ const GameArea: React.FC = () => {
       )}
 
       {/* Game grid container */}
-      <div className="relative">
+      <div className="relative flex items-center justify-center min-h-[500px]">
         <GameGrid />
 
         {/* Storage panel will be shown when storage is selected */}
