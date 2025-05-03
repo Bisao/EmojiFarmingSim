@@ -4,10 +4,16 @@ import { useGameState } from "@/hooks/use-game-state";
 import { motion } from "framer-motion";
 
 const MobileMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { setActivePanel } = useGameState();
+  const { setActivePanel, setSelected } = useGameState();
 
   const handlePanelSelect = (panel: string) => {
-    setActivePanel(panel === 'agriculture' ? 'right' : 'left');
+    if (panel === 'shop') {
+      setSelected({ type: 'store', key: null });
+    } else if (panel === 'storage' || panel === 'resources' || panel === 'status') {
+      setActivePanel('right');
+    } else if (panel === 'options') {
+      setActivePanel('left');
+    }
     onClose();
   };
 
