@@ -2041,6 +2041,7 @@ function updateFarmer() {
     const shouldMove = farmer.timer % 25 === 0;
     let newX = farmer.x;
     let newY = farmer.y;
+    const newTimer = farmer.timer + 1;
 
     if (shouldMove && farmer.target) {
       if (farmer.x < farmer.target.x) newX += 1;
@@ -2057,7 +2058,7 @@ function updateFarmer() {
     if (arrived) {
       // If just arrived, start the getting seed timer
       if (farmer.timer < 100) {
-        //        // 10 seconds (100 ticks) as specified
+        // 10 seconds (100 ticks) as specified
         updateAgent("farmer", {
           x: newX,
           y: newY,
