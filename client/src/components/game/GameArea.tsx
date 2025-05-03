@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import GameGrid from "./GameGrid";
-import { sellResource, sellCrop } from "@/lib/gameLogic";
+import { sellResource, sellCrop, seedMap } from "@/lib/gameLogic";
 import GameLog from "./GameLog";
 import MobileMenu from "./MobileMenu";
-import { useGameState } from "@/hooks/use-game-state";
 import { useMobile } from "@/hooks/use-mobile";
+import { useGameState } from "@/hooks/use-game-state";
 
 const GameArea: React.FC = () => {
   const { resources, selected, setSelected } = useGameState();
@@ -76,7 +76,7 @@ const GameArea: React.FC = () => {
             >
               ✕
             </button>
-            
+
             <div className="space-y-6">
               <div className="store-tabs">
                 <button 
