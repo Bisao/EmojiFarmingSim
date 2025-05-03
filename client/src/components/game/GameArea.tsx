@@ -7,10 +7,10 @@ import { useGameState } from "@/hooks/use-game-state";
 import { useMobile } from "@/hooks/use-mobile";
 
 const GameArea: React.FC = () => {
-  const { resources } = useGameState();
+  const { resources, selected } = useGameState();
   const isMobile = useMobile();
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
-  
+
   const toggleMobileMenu = () => {
     setMobileMenuVisible(!mobileMenuVisible);
   };
@@ -52,18 +52,18 @@ const GameArea: React.FC = () => {
           </motion.button>
         </motion.div>
       )}
-      
+
       {/* Mobile navigation menu */}
       {isMobile && mobileMenuVisible && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <MobileMenu onClose={() => setMobileMenuVisible(false)} />
         </div>
       )}
-      
+
       {/* Game grid container */}
       <div className="relative">
         <GameGrid />
-        
+
         {/* Central panels */}
         {selected && selected.type !== 'store' && (
           <div className="absolute inset-4 bg-card/95 backdrop-blur rounded-xl shadow-xl z-20 p-4 overflow-auto">
@@ -100,7 +100,7 @@ const GameArea: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       {/* Game log */}
       <GameLog />
     </div>
