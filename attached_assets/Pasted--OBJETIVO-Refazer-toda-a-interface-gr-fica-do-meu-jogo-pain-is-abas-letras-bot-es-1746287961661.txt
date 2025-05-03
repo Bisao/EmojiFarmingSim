@@ -1,0 +1,66 @@
+---
+
+**[OBJETIVO]**  
+Refazer toda a interface gráfica do meu jogo (painéis, abas, letras, botões e qualquer elemento de UI) com tema “abelha”, usando emojis para torná-la mais atraente para adolescentes e crianças.
+
+---
+
+**[CONTEXTO DO PROJETO]**  
+- O código está hospedado no Replit: contém arquivos HTML, CSS, JS e gráficos (ícones/emojis).  
+- O jogo é baseado em emojis e precisa manter essa linguagem visual.  
+- O público-alvo são usuários jovens (10–18 anos).
+
+---
+
+**[REQUISITOS PRINCIPAIS]**  
+1. **Inspeção de todos os arquivos:**  
+   - Identificar onde estão definidos estilos globais, componentes de UI e event handlers.  
+   - Gerar um relatório rápido com os arquivos-chave (ex.: `index.html`, `styles.css`, `app.js`, pastas de imagens).  
+
+2. **Design e Layout:**  
+   - Painéis e containers: criar recortes com cantos arredondados (border-radius), sombras suaves e contornos inspirados em favos de mel.  
+   - Abas e menus: estilo de “botão-flor” de favo, com transições suaves ao passar o mouse.  
+   - Botões principais e secundários: formas orgânicas (hexágonos leves), com microinterações (hover, pressed).  
+   - Tipografia: fontes arredondadas e divertidas; hierarquia clara (títulos grandes, texto de apoio legível).  
+
+3. **Paleta de cores:**  
+   - Tons de amarelo, preto e branco (variações de mel, pólen e abelhas).  
+   - Destaques em laranja/dourado para botões de ação.  
+
+4. **Uso de emojis e ícones:**  
+   - Inserir emojis 🐝🍯🌼 para reforçar o tema (ex.: em botões “Iniciar 🐝”, “Configurações ⚙️🐝”).  
+   - Substituir ícones genéricos por emojis ou ícones vetoriais de abelhas/favos.  
+
+5. **Responsividade e Acessibilidade:**  
+   - Garantir boa visualização em telas de celular e desktop.  
+   - Contraste de cores adequado e alt-text para ícones.
+
+---
+
+**[ENTREGÁVEIS ESPERADOS]**  
+1. **Guia de estilo** (arquivo Markdown ou PDF) com componentes, paleta de cores, tipografia e exemplos de uso de emojis.  
+2. **Snippets de código** para HTML/CSS/JS de cada componente (painel, aba, botão).  
+3. **Mockups simples** (pode ser em HTML+CSS no próprio Replit) demonstrando a nova UI.  
+4. **Checklist de implementação**: instruções passo a passo para substituir o estilo antigo.
+
+---
+
+**[INSTRUÇÕES DE FLUXO]**  
+1. Percorra automaticamente todos os arquivos do projeto e liste os pontos de entrada de UI (IDs, classes, componentes).  
+2. Proponha modificações de design/componentização.  
+3. Forneça exemplos de código e ajustes de CSS.  
+4. Ao final, ofereça um preview em HTML funcional no Replit.
+
+---
+
+**[TOM E ESTILO]**  
+- Linguagem clara e objetiva.  
+- Exemplos diretos e bem comentados.  
+- Foco em práticas modernas de UI/UX.  
+- Use emojis onde fizer sentido para reforçar o tema.
+
+---
+
+**[COMECE AGORA]**  
+1. Confirme acesso ao repositório no Replit e liste os arquivos principais.  
+2. Proponha o primeiro esqueleto de painel com tema abelha.
