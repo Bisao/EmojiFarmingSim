@@ -1,3 +1,4 @@
+
 import React from "react";
 import GameHeader from "./GameHeader";
 import GameArea from "./GameArea";
@@ -12,10 +13,9 @@ const MainGameContainer: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#FFF8E1] to-[#FFE082] dark:from-[#4A148C] dark:to-[#311B92]">
       {/* Top bar with game name and player info */}
       <div className="bg-[#FFA726] text-white p-4 shadow-lg flex items-center justify-between">
-        <div className="relative flex items-center gap-3 min-w-[200px]">
-          <span className="text-3xl flower-animation">🌻</span>
-          <h1 className="text-xl font-bold font-display">Emoji Farming</h1>
-          <span className="text-3xl bee-fly-animation">🐝</span>
+        <div className="flex items-center gap-3">
+          <span className="text-3xl animate-bounce-slow">🐝</span>
+          <h1 className="text-xl font-bold font-display">BeeBuilder</h1>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-[#FB8C00]/50 px-3 py-1.5 rounded-lg">
@@ -24,10 +24,10 @@ const MainGameContainer: React.FC = () => {
           </div>
         </div>
       </div>
-
+      
       <main className="flex-1 p-4 overflow-hidden container mx-auto max-w-7xl">
         <GameArea />
-
+        
         {/* Store button fixed in bottom right with honey theme */}
         <button 
           onClick={() => setSelected({ type: 'store', key: null })}

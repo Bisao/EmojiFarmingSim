@@ -263,29 +263,8 @@
     animation: wiggle 1s ease-in-out infinite;
   }
 
-  @keyframes bee-fly {
-    0%, 5% { transform: translate(100%, 0); z-index: 20; }
-    25% { transform: translate(50%, -8px); z-index: 20; }
-    45% { transform: translate(-120%, -8px); z-index: 20; }
-    45%, 55% { transform: translate(-120%, -8px); z-index: 20; }
-    75% { transform: translate(50%, -8px); z-index: 20; }
-    95%, 100% { transform: translate(100%, 0); z-index: 20; }
-  }
-
-  @keyframes flower-sway {
-    0% { transform: rotate(-8deg); }
-    50% { transform: rotate(8deg); }
-    100% { transform: rotate(-8deg); }
-  }
-
-  .bee-fly-animation {
-    animation: bee-fly 15s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-    position: absolute;
-    right: 0;
-  }
-
-  .flower-animation {
-    animation: flower-sway 3s ease-in-out infinite;
+  .animate-bounce-slow {
+    animation: bounce 1s ease-in-out infinite;
   }
 
   .animate-pulse-custom {
