@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import GameGrid from "./GameGrid";
+import { sellResource, sellCrop } from "@/lib/gameLogic";
 import GameLog from "./GameLog";
 import MobileMenu from "./MobileMenu";
 import { useGameState } from "@/hooks/use-game-state";
@@ -10,6 +11,7 @@ const GameArea: React.FC = () => {
   const { resources, selected, setSelected } = useGameState();
   const isMobile = useMobile();
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+  const [storageTab, setStorageTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
   const isStoreOpen = selected?.type === 'store';
   const [storageTab, setStorageTab] = useState<'resources' | 'crops' | 'seeds'>('resources');
 
@@ -78,32 +80,105 @@ const GameArea: React.FC = () => {
             
             <div className="space-y-6">
               <div className="store-tabs">
-                <button className="store-tab store-tab-active">🪵 Recursos</button>
-                <button className="store-tab store-tab-inactive">🌾 Colheitas</button>
-                <button className="store-tab store-tab-inactive">🌱 Sementes</button>
+                <button 
+                  className={`store-tab ${storageTab === 'resources' ? 'store-tab-active' : 'store-tab-inactive'}`}
+                  onClick={() => setStorageTab('resources')}
+                >
+                  🪵 Recursos
+                </button>
+                <button 
+                  className={`store-tab ${storageTab === 'crops' ? 'store-tab-active' : 'store-tab-inactive'}`}
+                  onClick={() => setStorageTab('crops')}
+                >
+                  🌾 Colheitas
+                </button>
+                <button 
+                  className={`store-tab ${storageTab === 'seeds' ? 'store-tab-active' : 'store-tab-inactive'}`}
+                  onClick={() => setStorageTab('seeds')}
+                >
+                  🌱 Sementes
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="item-card">
-                  <div className="item-info">
-                    <span className="item-icon">🪵</span>
-                    <span className="item-name">Madeira</span>
+              {storageTab === 'resources' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="item-card">
+                    <div className="item-info">
+                      <span className="item-icon">🪵</span>
+                      <span className="item-name">Madeira</span>
+                    </div>
+                    <div className="item-action">
+                      <span className="text-sm font-medium">{resources.wood}</span>
+                      {resources.wood >= 10 && (
+                        <button 
+                          onClick={() => sellResource('wood')}
+                          className="px-2 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600"
+                        >
+                          Vender 10
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="item-action">
-                    <span className="text-sm font-medium">{resources.wood}</span>
-                  </div>
-                </div>
 
-                <div className="item-card">
-                  <div className="item-info">
-                    <span className="item-icon">🪨</span>
-                    <span className="item-name">Pedra</span>
-                  </div>
-                  <div className="item-action">
-                    <span className="text-sm font-medium">{resources.stone}</span>
+                  <div className="item-card">
+                    <div className="item-info">
+                      <span className="item-icon">🪨</span>
+                      <span className="item-name">Pedra</span>
+                    </div>
+                    <div className="item-action">
+                      <span className="text-sm font-medium">{resources.stone}</span>
+                      {resources.stone >= 10 && (
+                        <button 
+                          onClick={() => sellResource('stone')}
+                          className="px-2 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600"
+                        >
+                          Vender 10
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {storageTab === 'crops' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(resources.crops).map(([crop, amount]) => (
+                    <div key={crop} className="item-card">
+                      <div className="item-info">
+                        <span className="item-icon">{seedMap[crop].emoji}</span>
+                        <span className="item-name">{crop}</span>
+                      </div>
+                      <div className="item-action">
+                        <span className="text-sm font-medium">{amount}</span>
+                        {amount >= 10 && (
+                          <button 
+                            onClick={() => sellCrop(crop)}
+                            className="px-2 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600"
+                          >
+                            Vender 10
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {storageTab === 'seeds' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(resources.seeds).map(([seed, amount]) => (
+                    <div key={seed} className="item-card">
+                      <div className="item-info">
+                        <span className="item-icon">{seedMap[seed].emoji}</span>
+                        <span className="item-name">{seed}</span>
+                      </div>
+                      <div className="item-action">
+                        <span className="text-sm font-medium">{amount}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
