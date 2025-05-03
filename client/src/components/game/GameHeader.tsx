@@ -4,7 +4,7 @@ import { useGameState } from "@/hooks/use-game-state";
 
 const GameHeader: React.FC = () => {
   const { theme, setTheme } = useTheme();
-  const { soundEnabled, setSoundEnabled, setTutorialVisible } = useGameState();
+  const { soundEnabled, setSoundEnabled, setTutorialVisible, setSelected } = useGameState();
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
