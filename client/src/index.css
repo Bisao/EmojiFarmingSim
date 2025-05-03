@@ -40,26 +40,6 @@
   background-repeat: repeat;
 }
 
-/* Top bar animations */
-.flower-animation {
-  animation: gentle-swing 3s ease-in-out infinite;
-}
-
-.bee-fly-animation {
-  animation: fly-around 4s ease-in-out infinite;
-}
-
-@keyframes gentle-swing {
-  0%, 100% { transform: rotate(-5deg); }
-  50% { transform: rotate(5deg); }
-}
-
-@keyframes fly-around {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(10px); }
-}
-
-
 .dark .honeycomb-pattern {
   background-color: rgba(20, 20, 20, 0.9);
   background-image: 
